@@ -1,0 +1,222 @@
+.ot-container {
+  max-width: 800px;
+  margin: 30px auto;
+  padding: 0 20px;
+}
+
+.ot-loading {
+  text-align: center;
+  padding: 60px 0;
+  color: #6b7280;
+}
+
+/* No tracking */
+.ot-no-tracking {
+  text-align: center;
+  padding: 60px 0;
+  color: #6b7280;
+}
+
+.ot-no-tracking p {
+  margin: 6px 0;
+}
+
+/* Header */
+.ot-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.ot-back-link {
+  padding: 8px 16px;
+  background: #f3f4f6;
+  color: #374151;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+.ot-back-link:hover {
+  background: #e5e7eb;
+}
+
+.ot-title {
+  font-size: 1.5rem;
+  margin: 0;
+  flex: 1;
+}
+
+.ot-order-id {
+  font-weight: 700;
+  color: #6b7280;
+  font-size: 0.95rem;
+}
+
+/* Delivered banner */
+.ot-delivered-banner {
+  background: #16a34a;
+  color: #fff;
+  text-align: center;
+  padding: 16px;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 1.2rem;
+  margin-bottom: 20px;
+}
+
+/* Status bar */
+.ot-status-bar {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  padding: 20px;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+}
+
+.ot-status-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+}
+
+.ot-step-dot {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  transition: background 0.3s;
+}
+
+.ot-step-label {
+  font-size: 0.7rem;
+  text-align: center;
+  color: #9ca3af;
+  font-weight: 500;
+}
+
+.ot-status-step.active .ot-step-label {
+  color: #374151;
+  font-weight: 600;
+}
+
+/* ETA */
+.ot-eta {
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 12px;
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.ot-eta-label {
+  color: #6b7280;
+  font-size: 0.95rem;
+}
+
+.ot-eta-value {
+  font-weight: 700;
+  font-size: 1.2rem;
+  color: #15803d;
+}
+
+/* Delivery boy */
+.ot-delivery-boy {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 20px;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  margin-bottom: 20px;
+}
+
+.ot-db-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: #2563eb;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.ot-db-name {
+  font-weight: 600;
+  font-size: 1rem;
+  margin: 0;
+}
+
+.ot-db-phone {
+  color: #6b7280;
+  font-size: 0.9rem;
+  margin: 2px 0 0;
+}
+
+/* Map */
+.ot-map-wrapper {
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid #e5e7eb;
+  margin-bottom: 20px;
+}
+
+.ot-map {
+  height: 350px;
+  width: 100%;
+}
+
+/* Address card */
+.ot-address-card {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 18px 20px;
+  margin-bottom: 30px;
+}
+
+.ot-address-card h3 {
+  font-size: 1rem;
+  color: #374151;
+  margin: 0 0 10px 0;
+}
+
+.ot-address-card p {
+  margin: 3px 0;
+  font-size: 0.95rem;
+  color: #4b5563;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .ot-header {
+    flex-wrap: wrap;
+  }
+
+  .ot-status-bar {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .ot-status-step {
+    flex-direction: row;
+    gap: 10px;
+  }
+
+  .ot-map {
+    height: 250px;
+  }
+}

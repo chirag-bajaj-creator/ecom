@@ -11,6 +11,12 @@ const productRoutes = require('./routes/product.routes');
 const searchRoutes = require('./routes/search.routes');
 const cartRoutes = require('./routes/cart.routes');
 const wishlistRoutes = require('./routes/wishlist.routes');
+const checkoutRoutes = require('./routes/checkout.routes');
+const orderRoutes = require('./routes/order.routes');
+const paymentRoutes = require('./routes/payment.routes');
+const profileRoutes = require('./routes/profile.routes');
+const deliveryRoutes = require('./routes/delivery.routes');
+const path = require('path');
 
 const app = express();
 
@@ -52,6 +58,14 @@ app.use('/api/v1', productRoutes);
 app.use('/api/v1/search', searchRoutes);
 app.use('/api/v1/cart', cartRoutes);
 app.use('/api/v1/wishlist', wishlistRoutes);
+app.use('/api/v1/checkout', checkoutRoutes);
+app.use('/api/v1/orders', orderRoutes);
+app.use('/api/v1/payments', paymentRoutes);
+app.use('/api/v1/profile', profileRoutes);
+app.use('/api/v1/delivery', deliveryRoutes);
+
+// Serve uploaded files
+app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
 // 404 handler
 app.use((req, res) => {

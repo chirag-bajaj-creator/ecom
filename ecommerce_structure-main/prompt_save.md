@@ -269,3 +269,75 @@ now what to make in phase 3 review before making
 ```
 start
 ```
+
+## 2026-03-13 — Recall All Memory
+**Context:** User wants to check what phase they were on and recall all saved memory.
+```
+hey do you remember all my memory of on which phase I was and recall all memory
+```
+
+## 2026-03-13 — Phase 3 Already Built
+**Context:** User corrected me — Phase 3 was already built, told me to check workspace.
+```
+you forget phase 3 is build check my workspace
+```
+
+## 2026-03-13 — Create help_claude.md
+**Context:** User wants a comprehensive file in workspace so Claude remembers everything across sessions.
+```
+make the file named help_claude.md which is for you everytime i open the vs code so remeber all the things which we done in these two days transfer all into that md file
+```
+
+## 2026-03-13 — Start Phase 4
+**Context:** User wants to start Phase 4 (Checkout & Orders) — says it's very important, wants it done efficiently.
+```
+now this is the phase 4 which i very important can you do it efficently
+```
+
+## 2026-03-13 — Phase 4 Approved
+**Context:** User approved Phase 4 plan.
+```
+get set go aproved
+```
+
+## 2026-03-13 — Docker compose not found
+**Context:** docker-compose up failing with "no configuration file provided: not found"
+```
+what is this problem
+```
+
+## 2026-03-13 — Checkout not working
+**Context:** Checkout flow is broken, possibly a route issue.
+```
+their is problem with this check out it is not working i think any route is broken
+```
+
+## 2026-03-13 — Phase 4 Complete, Phase 5 Plan Review
+**Context:** Phase 4 tested and working. User wants Phase 5 plan review before starting.
+```
+now all things reviewing is done for phase 4 now phase 5 plan review first then i ask for lets go
+```
+
+## 2026-03-13 — Customer Tracking Page Missing
+**Context:** User pointed out the customer-facing live tracking page was missing from Phase 5 plan.
+```
+i think you forget something where is tracking page with live map for the people is it in the coming phases
+```
+
+## 2026-03-13 — Leaflet for Maps
+**Context:** User chose Leaflet (free, open-source) over Google Maps for live tracking map.
+```
+leaflet
+```
+
+## 2026-03-13 — Phase 5 Approved
+**Context:** User approved Phase 5 plan with Leaflet maps + customer tracking.
+```
+let's go
+```
+
+## 2026-03-13 — Save Everything to help_claude.md
+**Context:** User wants all today's work saved in detail to help_claude.md for next session continuity.
+```
+save all chats today we did in the help_claude as it will help you tommorow to back you and make it more enrtiching dont make summary comapct be it be long i have nothing to do without it it is for your betterment
+```
