@@ -1,0 +1,80 @@
+.home {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.home-content {
+  flex: 1;
+}
+
+.hero-section {
+  text-align: center;
+  padding: 48px 0 32px;
+}
+
+.hero-section h1 {
+  font-size: 36px;
+  font-weight: 800;
+  background: linear-gradient(135deg, #ff6b00, #1565c0);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 8px;
+}
+
+.hero-section p {
+  font-size: 16px;
+  color: #666;
+}
+
+.category-section {
+  margin-bottom: 32px;
+}
+
+.section-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 12px;
+}
+
+.empty-message {
+  color: #999;
+  font-size: 14px;
+  padding: 16px 0;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  padding: 24px 0;
+}
+
+.pagination button {
+  padding: 8px 18px;
+  background: linear-gradient(135deg, #ff6b00, #1565c0);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.pagination button:hover:not(:disabled) {
+  opacity: 0.9;
+}
+
+.pagination button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.pagination span {
+  font-size: 14px;
+  color: #666;
+}
