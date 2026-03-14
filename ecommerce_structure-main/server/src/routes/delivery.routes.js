@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const { authenticate, requireRole } = require("../middleware/auth");
+const upload = require("../middleware/upload");
 const {
   toggleStatus,
   getCurrentOrder,
@@ -27,9 +28,9 @@ router.get("/current-order", getCurrentOrder);
 // Location
 router.post("/location", updateLocation);
 
-// Pickup & Deliver
-router.post("/pickup", confirmPickup);
-router.post("/deliver", confirmDelivery);
+// Pickup & Deliver (multipart — expects "photo" field)
+router.post("/pickup", upload.single("photo"), confirmPickup);
+router.post("/deliver", upload.single("photo"), confirmDelivery);
 
 // History & Earnings
 router.get("/history", getDeliveryHistory);

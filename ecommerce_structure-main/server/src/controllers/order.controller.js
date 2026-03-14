@@ -2,6 +2,7 @@ const Order = require("../models/Order");
 const CartItem = require("../models/CartItem");
 const Product = require("../models/Product");
 const DeliveryTracking = require("../models/DeliveryTracking");
+const DeliveryBoy = require("../models/DeliveryBoy");
 const User = require("../models/User");
 
 // GET /api/v1/orders?page=1&limit=10
@@ -91,8 +92,18 @@ const cancelOrder = async (req, res, next) => {
       });
     }
 
+    // Free up delivery boy if assigned
+    const tracking = await DeliveryTracking.findOne({ orderId: order._id });
+    if (tracking) {
+      await DeliveryBoy.findByIdAndUpdate(tracking.deliveryBoyId, {
+        currentOrderId: null,
+      });
+      await DeliveryTracking.deleteOne({ _id: tracking._id });
+    }
+
     order.status = "cancelled";
     order.cancelledAt = new Date();
+    order.deliveryBoyId = null;
 
     // Auto-refund if payment was successful
     if (order.paymentStatus === "success") {

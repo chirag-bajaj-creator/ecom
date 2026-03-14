@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { useDelivery } from '../../contexts/DeliveryContext';
@@ -22,6 +22,8 @@ const DeliveryDashboard = () => {
 
   const [toggling, setToggling] = useState(false);
   const [actionLoading, setActionLoading] = useState(false);
+  const [photoAction, setPhotoAction] = useState(null); // 'pickup' or 'deliver'
+  const fileInputRef = useRef(null);
 
   useEffect(() => {
     if (!isAuthenticated || user?.role !== 'delivery') {
@@ -40,27 +42,42 @@ const DeliveryDashboard = () => {
     }
   };
 
-  const handlePickup = async () => {
-    setActionLoading(true);
-    try {
-      await markPickedUp(currentOrder._id);
-    } catch (err) {
-      alert(err.response?.data?.error?.message || 'Failed to confirm pickup');
-    } finally {
-      setActionLoading(false);
-    }
+  const handlePickup = () => {
+    setPhotoAction('pickup');
+    fileInputRef.current.value = '';
+    fileInputRef.current.click();
   };
 
-  const handleDeliver = async () => {
+  const handleDeliver = () => {
     if (!window.confirm('Confirm delivery to customer?')) return;
+    setPhotoAction('deliver');
+    fileInputRef.current.value = '';
+    fileInputRef.current.click();
+  };
+
+  const handlePhotoSelected = async (e) => {
+    const file = e.target.files[0];
+    if (!file) {
+      setPhotoAction(null);
+      return;
+    }
+
     setActionLoading(true);
     try {
-      const res = await markDelivered(currentOrder._id);
-      alert(`Order delivered! You earned ₹${res.data?.earning || 30}`);
+      if (photoAction === 'pickup') {
+        await markPickedUp(currentOrder._id, file);
+      } else if (photoAction === 'deliver') {
+        const res = await markDelivered(currentOrder._id, file);
+        const msg = res.data?.photoVerified
+          ? `Order delivered & verified! (${res.data.verificationScore}% match) You earned ₹${res.data?.earning || 30}`
+          : `Order delivered (flagged for review — ${res.data?.verificationScore}% match). You earned ₹${res.data?.earning || 30}`;
+        alert(msg);
+      }
     } catch (err) {
-      alert(err.response?.data?.error?.message || 'Failed to confirm delivery');
+      alert(err.response?.data?.error?.message || `Failed to confirm ${photoAction}`);
     } finally {
       setActionLoading(false);
+      setPhotoAction(null);
     }
   };
 
@@ -170,16 +187,26 @@ const DeliveryDashboard = () => {
             </div>
           )}
 
+          {/* Hidden file input for camera/photo */}
+          <input
+            type="file"
+            accept="image/*"
+            capture="environment"
+            ref={fileInputRef}
+            onChange={handlePhotoSelected}
+            style={{ display: 'none' }}
+          />
+
           {/* Action Buttons */}
           <div className="dd-actions">
             {(tracking?.status === 'assigned' || tracking?.status === 'picking_up') && (
               <button className="dd-action-btn pickup" onClick={handlePickup} disabled={actionLoading}>
-                {actionLoading ? 'Processing...' : 'Confirm Pickup'}
+                {actionLoading ? 'Uploading photo...' : '📷 Confirm Pickup'}
               </button>
             )}
             {(tracking?.status === 'picked_up' || tracking?.status === 'on_the_way') && (
               <button className="dd-action-btn deliver" onClick={handleDeliver} disabled={actionLoading}>
-                {actionLoading ? 'Processing...' : 'Confirm Delivery'}
+                {actionLoading ? 'Verifying...' : '📷 Confirm Delivery'}
               </button>
             )}
           </div>

@@ -2,6 +2,9 @@ const DeliveryBoy = require("../models/DeliveryBoy");
 const DeliveryTracking = require("../models/DeliveryTracking");
 const Order = require("../models/Order");
 const { getWss } = require("../websocket/deliverySocket");
+const { getDrivingETA, assignPendingOrders } = require("../services/orderAssignment");
+const { uploadPhoto, comparePhotos } = require("../services/photoVerification");
+const User = require("../models/User");
 
 // Ensure DeliveryBoy record exists for this user
 const ensureDeliveryBoy = async (userId) => {
@@ -23,6 +26,13 @@ const toggleStatus = async (req, res, next) => {
       deliveryBoy.lastActiveAt = new Date();
     }
     await deliveryBoy.save();
+
+    // If coming online and no active order, check for pending unassigned orders
+    if (isOnline && !deliveryBoy.currentOrderId) {
+      assignPendingOrders(deliveryBoy._id).catch((err) =>
+        console.error("Pending order assignment error:", err.message)
+      );
+    }
 
     res.json({
       success: true,
@@ -101,14 +111,36 @@ const updateLocation = async (req, res, next) => {
     deliveryBoy.lastActiveAt = new Date();
     await deliveryBoy.save();
 
-    // Update tracking record if active order
-    if (deliveryBoy.currentOrderId) {
-      await DeliveryTracking.findOneAndUpdate(
-        { orderId: deliveryBoy.currentOrderId, deliveryBoyId: deliveryBoy._id },
-        { currentLat: lat, currentLng: lng }
+    // If online with no active order, check for pending unassigned orders
+    if (deliveryBoy.isOnline && !deliveryBoy.currentOrderId) {
+      assignPendingOrders(deliveryBoy._id).catch((err) =>
+        console.error("Pending order assignment error:", err.message)
       );
+    }
 
-      // Broadcast to customer tracking WebSocket
+    // Update tracking record if active order + recalculate live ETA
+    if (deliveryBoy.currentOrderId) {
+      const tracking = await DeliveryTracking.findOne({
+        orderId: deliveryBoy.currentOrderId,
+        deliveryBoyId: deliveryBoy._id,
+      });
+
+      if (tracking) {
+        tracking.currentLat = lat;
+        tracking.currentLng = lng;
+
+        // Recalculate ETA using OSRM if delivery coordinates exist
+        if (tracking.deliveryLat && tracking.deliveryLng) {
+          const newETA = await getDrivingETA(lat, lng, tracking.deliveryLat, tracking.deliveryLng);
+          if (newETA) {
+            tracking.estimatedArrival = new Date(Date.now() + Math.min(newETA, 120) * 60 * 1000);
+          }
+        }
+
+        await tracking.save();
+      }
+
+      // Broadcast to customer tracking WebSocket with live ETA
       const wss = getWss();
       if (wss) {
         const trackingData = JSON.stringify({
@@ -117,6 +149,7 @@ const updateLocation = async (req, res, next) => {
           lat,
           lng,
           status: "on_the_way",
+          estimatedArrival: tracking ? tracking.estimatedArrival : null,
         });
         wss.clients.forEach((client) => {
           if (
@@ -135,11 +168,19 @@ const updateLocation = async (req, res, next) => {
   }
 };
 
-// POST /api/v1/delivery/pickup
+// POST /api/v1/delivery/pickup (multipart: photo + orderId)
 const confirmPickup = async (req, res, next) => {
+  console.log("CLOUDINARY:", process.env.CLOUDINARY_CLOUD_NAME, process.env.CLOUDINARY_API_KEY ? "KEY_SET" : "KEY_MISSING", process.env.CLOUDINARY_API_SECRET ? "SECRET_SET" : "SECRET_MISSING");
   try {
     const { orderId } = req.body;
     const deliveryBoy = await ensureDeliveryBoy(req.user._id);
+
+    if (!req.file) {
+      return res.status(400).json({
+        success: false,
+        error: { code: "PHOTO_REQUIRED", message: "Pickup photo is required" },
+      });
+    }
 
     if (!deliveryBoy.currentOrderId || deliveryBoy.currentOrderId.toString() !== orderId) {
       return res.status(400).json({
@@ -167,8 +208,12 @@ const confirmPickup = async (req, res, next) => {
       });
     }
 
+    // Upload pickup photo to Cloudinary
+    const pickupPhotoUrl = await uploadPhoto(req.file.buffer, `pickup/${orderId}`);
+
     tracking.status = "picked_up";
     tracking.pickedUpAt = new Date();
+    tracking.pickupPhotoUrl = pickupPhotoUrl;
     await tracking.save();
 
     // Update order status
@@ -185,19 +230,26 @@ const confirmPickup = async (req, res, next) => {
 
     res.json({
       success: true,
-      message: "Order picked up",
-      data: { status: "picked_up" },
+      message: "Order picked up — photo captured",
+      data: { status: "picked_up", pickupPhotoUrl },
     });
   } catch (error) {
     next(error);
   }
 };
 
-// POST /api/v1/delivery/deliver
+// POST /api/v1/delivery/deliver (multipart: photo + orderId)
 const confirmDelivery = async (req, res, next) => {
   try {
     const { orderId } = req.body;
     const deliveryBoy = await ensureDeliveryBoy(req.user._id);
+
+    if (!req.file) {
+      return res.status(400).json({
+        success: false,
+        error: { code: "PHOTO_REQUIRED", message: "Delivery photo is required" },
+      });
+    }
 
     if (!deliveryBoy.currentOrderId || deliveryBoy.currentOrderId.toString() !== orderId) {
       return res.status(400).json({
@@ -225,9 +277,31 @@ const confirmDelivery = async (req, res, next) => {
       });
     }
 
-    // Mark tracking as delivered
+    if (!tracking.pickupPhotoUrl) {
+      return res.status(400).json({
+        success: false,
+        error: { code: "NO_PICKUP_PHOTO", message: "Pickup photo is missing — cannot verify delivery" },
+      });
+    }
+
+    // Upload delivery photo to Cloudinary
+    const deliveryPhotoUrl = await uploadPhoto(req.file.buffer, `delivery/${orderId}`);
+
+    // Auto-verify: compare pickup vs delivery photos
+    let verification = { similarity: 0, verified: false };
+    try {
+      verification = await comparePhotos(tracking.pickupPhotoUrl, deliveryPhotoUrl);
+    } catch (err) {
+      console.error("Photo verification failed, flagging for manual review:", err.message);
+    }
+
+    // Mark tracking as delivered with verification data
     tracking.status = "delivered";
     tracking.deliveredAt = new Date();
+    tracking.deliveryPhotoUrl = deliveryPhotoUrl;
+    tracking.photoVerified = verification.verified;
+    tracking.verificationScore = verification.similarity;
+    tracking.verifiedAt = new Date();
     await tracking.save();
 
     // Update order status
@@ -240,6 +314,34 @@ const confirmDelivery = async (req, res, next) => {
     deliveryBoy.totalEarnings += deliveryEarning;
     await deliveryBoy.save();
 
+    // Get delivery boy name for admin notification
+    const deliveryUser = await User.findById(deliveryBoy.userId).select("name").lean();
+    const deliveryBoyName = deliveryUser ? deliveryUser.name : "Unknown";
+
+    // Notify admin via WebSocket about verification result
+    const wss = getWss();
+    if (wss) {
+      const adminNotification = JSON.stringify({
+        type: "photo_verification_result",
+        orderId,
+        deliveryBoyId: deliveryBoy._id.toString(),
+        deliveryBoyName,
+        pickupPhotoUrl: tracking.pickupPhotoUrl,
+        deliveryPhotoUrl,
+        verificationScore: verification.similarity,
+        photoVerified: verification.verified,
+        message: verification.verified
+          ? `Order #${orderId} verified (${verification.similarity}% match) — Delivery by ${deliveryBoyName}`
+          : `Order #${orderId} NEEDS REVIEW (${verification.similarity}% match) — Delivery by ${deliveryBoyName}`,
+      });
+
+      wss.clients.forEach((client) => {
+        if (client.readyState === 1 && client.role === "admin") {
+          client.send(adminNotification);
+        }
+      });
+    }
+
     // Broadcast delivered status to customer
     broadcastTrackingUpdate(orderId, {
       type: "status_update",
@@ -247,10 +349,22 @@ const confirmDelivery = async (req, res, next) => {
       status: "delivered",
     });
 
+    // Delivery boy is now free — check for pending unassigned orders
+    assignPendingOrders(deliveryBoy._id).catch((err) =>
+      console.error("Pending order assignment error:", err.message)
+    );
+
     res.json({
       success: true,
-      message: "Order delivered successfully",
-      data: { status: "delivered", earning: deliveryEarning },
+      message: verification.verified
+        ? "Order delivered & verified successfully"
+        : "Order delivered — flagged for manual review",
+      data: {
+        status: "delivered",
+        earning: deliveryEarning,
+        photoVerified: verification.verified,
+        verificationScore: verification.similarity,
+      },
     });
   } catch (error) {
     next(error);

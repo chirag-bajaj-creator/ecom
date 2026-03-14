@@ -31,8 +31,8 @@ const signupLimiter = rateLimit({
   },
 });
 
-router.post('/signup', signupLimiter, validateSignup, signup);
-router.post('/login', loginLimiter, validateLogin, login);
+router.post('/signup', validateSignup, signup);
+router.post('/login', validateLogin, login);
 router.post('/logout', authenticate, logout);
 router.post('/refresh-token', refreshAccessToken);
 router.post('/forgot-password', forgotPassword);

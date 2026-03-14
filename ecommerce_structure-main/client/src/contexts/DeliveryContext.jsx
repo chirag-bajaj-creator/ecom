@@ -91,9 +91,14 @@ export const DeliveryProvider = ({ children }) => {
     }
   };
 
-  const markPickedUp = async (orderId) => {
+  const markPickedUp = async (orderId, photoFile) => {
     try {
-      const res = await api.post('/delivery/pickup', { orderId });
+      const formData = new FormData();
+      formData.append('orderId', orderId);
+      formData.append('photo', photoFile);
+      const res = await api.post('/delivery/pickup', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
       await fetchCurrentOrder();
       return res.data;
     } catch (err) {
@@ -101,9 +106,14 @@ export const DeliveryProvider = ({ children }) => {
     }
   };
 
-  const markDelivered = async (orderId) => {
+  const markDelivered = async (orderId, photoFile) => {
     try {
-      const res = await api.post('/delivery/deliver', { orderId });
+      const formData = new FormData();
+      formData.append('orderId', orderId);
+      formData.append('photo', photoFile);
+      const res = await api.post('/delivery/deliver', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
       setCurrentOrder(null);
       setTracking(null);
       return res.data;
