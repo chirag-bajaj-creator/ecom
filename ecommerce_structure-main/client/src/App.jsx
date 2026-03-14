@@ -15,6 +15,12 @@ import MyProfile from './pages/customer/MyProfile';
 import OrderTracking from './pages/customer/OrderTracking';
 import DeliveryDashboard from './pages/delivery/DeliveryDashboard';
 import DeliveryHistory from './pages/delivery/DeliveryHistory';
+import AdminDashboard from './pages/admin/AdminDashboard';
+import AdminProducts from './pages/admin/AdminProducts';
+import AdminOrders from './pages/admin/AdminOrders';
+import AdminUsers from './pages/admin/AdminUsers';
+import AdminDelivery from './pages/admin/AdminDelivery';
+import AdminCharges from './pages/admin/AdminCharges';
 
 function App() {
   const { user } = useAuth();
@@ -70,15 +76,52 @@ function App() {
         }
       />
 
-      {/* Admin routes (placeholder for Phase 5) */}
+      {/* Admin routes */}
       <Route
         path="/admin/dashboard"
         element={
           <ProtectedRoute roles={['admin']}>
-            <div className="container" style={{ padding: '40px', textAlign: 'center' }}>
-              <h2>Admin Dashboard</h2>
-              <p>Coming in Phase 5</p>
-            </div>
+            <AdminDashboard />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/products"
+        element={
+          <ProtectedRoute roles={['admin']}>
+            <AdminProducts />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/orders"
+        element={
+          <ProtectedRoute roles={['admin']}>
+            <AdminOrders />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/users"
+        element={
+          <ProtectedRoute roles={['admin']}>
+            <AdminUsers />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/delivery"
+        element={
+          <ProtectedRoute roles={['admin']}>
+            <AdminDelivery />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/charges"
+        element={
+          <ProtectedRoute roles={['admin']}>
+            <AdminCharges />
           </ProtectedRoute>
         }
       />

@@ -1,0 +1,142 @@
+.charges-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+.charges-form-section,
+.charges-audit-section {
+  background: #fff;
+  border-radius: 10px;
+  padding: 24px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.charges-form-section h2,
+.charges-audit-section h2 {
+  margin: 0 0 20px 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #1a1a2e;
+}
+
+.charge-field {
+  margin-bottom: 18px;
+}
+
+.charge-field label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 6px;
+}
+
+.charge-field input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: 600;
+  box-sizing: border-box;
+  transition: border-color 0.2s;
+}
+
+.charge-field input:focus {
+  outline: none;
+  border-color: #e94560;
+}
+
+.charge-hint {
+  display: block;
+  font-size: 11px;
+  color: #999;
+  margin-top: 4px;
+}
+
+.charge-save-btn {
+  width: 100%;
+  padding: 12px;
+  background: #e94560;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+  margin-top: 8px;
+}
+
+.charge-save-btn:hover:not(:disabled) {
+  background: #d63851;
+}
+
+.charge-save-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Audit Log */
+.audit-log-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-height: 500px;
+  overflow-y: auto;
+}
+
+.audit-entry {
+  padding: 12px;
+  background: #fafafa;
+  border-radius: 6px;
+  border-left: 3px solid #e94560;
+}
+
+.audit-entry-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.audit-field {
+  font-size: 13px;
+  font-weight: 600;
+  color: #1a1a2e;
+}
+
+.audit-date {
+  font-size: 11px;
+  color: #999;
+}
+
+.audit-entry-values {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+}
+
+.audit-old {
+  color: #ef4444;
+  font-weight: 500;
+  text-decoration: line-through;
+}
+
+.audit-arrow {
+  color: #999;
+  font-size: 12px;
+}
+
+.audit-new {
+  color: #22c55e;
+  font-weight: 600;
+}
+
+@media (max-width: 1024px) {
+  .charges-layout {
+    grid-template-columns: 1fr;
+  }
+}

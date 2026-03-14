@@ -44,7 +44,8 @@ ecommerce_structure-main/ecommerce_structure-main/
 │       │   ├── Payment.js           # Payment records
 │       │   ├── Address.js           # User addresses
 │       │   ├── DeliveryBoy.js       # Delivery boy profile (online, GPS, earnings)
-│       │   └── DeliveryTracking.js  # Real-time delivery tracking
+│       │   ├── DeliveryTracking.js  # Real-time delivery tracking
+│       │   └── ChargeConfig.js     # Configurable charges + audit log
 │       ├── controllers/
 │       │   ├── auth.controller.js   # signup, login, logout, refresh, forgot-password
 │       │   ├── product.controller.js# CRUD + search + filters
@@ -55,7 +56,8 @@ ecommerce_structure-main/ecommerce_structure-main/
 │       │   ├── payment.controller.js# Mock payment processing
 │       │   ├── profile.controller.js# Profile CRUD + addresses + change password
 │       │   ├── delivery.controller.js# Toggle online, current order, pickup, deliver, location
-│       │   └── deliveryHistory.controller.js # History + earnings
+│       │   ├── deliveryHistory.controller.js # History + earnings
+│       │   └── admin.controller.js    # Dashboard, orders, users, delivery, charges
 │       ├── routes/
 │       │   ├── auth.routes.js
 │       │   ├── product.routes.js
@@ -66,7 +68,8 @@ ecommerce_structure-main/ecommerce_structure-main/
 │       │   ├── order.routes.js
 │       │   ├── payment.routes.js
 │       │   ├── profile.routes.js
-│       │   └── delivery.routes.js
+│       │   ├── delivery.routes.js
+│       │   └── admin.routes.js        # Admin endpoints (requireRole admin)
 │       ├── services/
 │       │   └── orderAssignment.js   # Nearest delivery boy algorithm (Haversine)
 │       └── websocket/
@@ -86,7 +89,8 @@ ecommerce_structure-main/ecommerce_structure-main/
 │       ├── components/
 │       │   ├── layout/
 │       │   │   ├── Navbar.jsx        # Main navbar with search, cart, profile dropdown
-│       │   │   └── Footer.jsx
+│       │   │   ├── Footer.jsx
+│       │   │   └── AdminSidebar.jsx + AdminSidebar.css  # Admin sidebar nav
 │       │   └── search/
 │       │       └── SearchBar.jsx     # Debounced search with autocomplete
 │       ├── routes/
@@ -106,9 +110,16 @@ ecommerce_structure-main/ecommerce_structure-main/
 │           │   ├── MyOrders.jsx + MyOrders.css
 │           │   ├── MyProfile.jsx + MyProfile.css
 │           │   └── OrderTracking.jsx + OrderTracking.css  (Leaflet map)
-│           └── delivery/
-│               ├── DeliveryDashboard.jsx + DeliveryDashboard.css
-│               └── DeliveryHistory.jsx + DeliveryHistory.css
+│           ├── delivery/
+│           │   ├── DeliveryDashboard.jsx + DeliveryDashboard.css
+│           │   └── DeliveryHistory.jsx + DeliveryHistory.css
+│           └── admin/
+│               ├── AdminDashboard.jsx + AdminDashboard.css
+│               ├── AdminProducts.jsx + AdminProducts.css
+│               ├── AdminOrders.jsx + AdminOrders.css
+│               ├── AdminUsers.jsx + AdminUsers.css
+│               ├── AdminDelivery.jsx + AdminDelivery.css
+│               └── AdminCharges.jsx + AdminCharges.css
 ```
 
 ---
@@ -375,16 +386,91 @@ assigned → picking_up → picked_up → on_the_way → delivered
 
 ---
 
-## Remaining Phase
+## Phase 6 — Admin Portal (COMPLETE & TESTED on 2026-03-14)
 
-### Phase 6 — Admin Portal (NEXT)
-- Admin dashboard with analytics/stats
-- Product management (full CRUD with UI)
-- Order management (view all, filter by status, cancel, refund, update status)
-- User management (view all users, roles)
-- Delivery boy monitoring (online status, active deliveries)
-- Charge management (delivery charge, surge, handling — with audit log)
-- Admin order stats: total orders, orders by status, revenue, refunds
+**Backend:**
+- `models/ChargeConfig.js` — deliveryCharge, freeDeliveryThreshold, surgeCharge, handlingCharge + auditLog array
+- `controllers/admin.controller.js` — 8 endpoints: getDashboardStats, getAllOrders, updateOrderStatus, cancelOrder, getAllUsers, getDeliveryBoys, getCharges, updateCharges
+- `routes/admin.routes.js` — all routes protected with `authenticate, requireRole('admin')`
+- `app.js` — registered `/api/v1/admin` route
+- Added product CRUD routes: POST/PUT/DELETE `/api/v1/products` with admin auth
+- Added `createProduct`, `updateProduct`, `deleteProduct` to product.controller.js
+
+**Frontend:**
+- `components/layout/AdminSidebar.jsx + .css` — sidebar nav with 6 links, responsive (collapses to icons on mobile)
+- `pages/admin/AdminDashboard.jsx + .css` — stats cards (orders, revenue, refunds, products, users, delivery boys), orders by status bars, recent orders table
+- `pages/admin/AdminProducts.jsx + .css` — product table with category dropdown, add/edit modal, delete with confirm, pagination
+- `pages/admin/AdminOrders.jsx + .css` — order list with status filter, expandable detail (items, address, charges), status update buttons, cancel (only before pickup)
+- `pages/admin/AdminUsers.jsx + .css` — user list with role filter, avatar, role badges, pagination
+- `pages/admin/AdminDelivery.jsx + .css` — delivery boy cards with online/offline status, active order info, GPS, earnings, refresh button
+- `pages/admin/AdminCharges.jsx + .css` — charge config editor with audit log (old → new values)
+
+**App.jsx routes added:**
+- `/admin/dashboard` → AdminDashboard
+- `/admin/products` → AdminProducts
+- `/admin/orders` → AdminOrders
+- `/admin/users` → AdminUsers
+- `/admin/delivery` → AdminDelivery
+- `/admin/charges` → AdminCharges
+
+**Bugs fixed during Phase 6:**
+- Product CRUD routes didn't exist — added POST/PUT/DELETE with admin auth
+- Product model uses `categoryId` (ObjectId ref to Category) not `category` string — updated AdminProducts to use category dropdown from `/api/v1/categories`
+- Product `slug` field required but not set in create — explicitly generate slug in createProduct controller
+- Order charges are flat fields (`grandTotal`, `totalAmount`, `deliveryCharge`, `surgeCharge`, `handlingCharge`) NOT nested under `charges` — fixed all admin controllers and frontend references
+- Cancel order restricted to `status === 'ordered'` only (before pickup) — both admin and customer side — to reduce refund rate
+
+**Key Design Decision:**
+- Cancel only allowed when status is "ordered" (before delivery boy picks up). Once picked up, no cancellation allowed. This reduces refund rate.
+
+---
+
+## All Phases COMPLETE — Security Audit Pending
+
+All 6 phases are built and tested. Next step is security hardening before deployment.
+
+---
+
+## Security Audit Results (2026-03-14)
+
+### Already Implemented ✓
+- Helmet.js security headers
+- CORS restricted to frontend URL
+- Global rate limiting (100 req/min)
+- Body size limit (10MB)
+- bcrypt password hashing (10 salt rounds)
+- JWT access token (15min) + refresh token (7 days)
+- RBAC — requireRole middleware (user, delivery, admin)
+- User enumeration prevention (same error for invalid email vs wrong password)
+- Password reset with crypto tokens (15min expiry)
+- Refresh token rotation (old deleted, new issued)
+- Admin invite code from environment variable
+- File upload — 2MB limit, jpg/png only, safe filename generation
+- Error handler — no stack traces leaked to client
+- Stock validation at checkout
+- Password excluded from JSON responses (toJSON method)
+- Input validation (email regex, 10-digit phone, strong password rules)
+
+### CRITICAL — Must Fix Before Deployment ✗
+1. **Stock race condition** — stock check and decrement are separate DB operations, overselling possible under concurrent requests. Fix: use MongoDB transactions or atomic $inc with $gte condition
+2. **No XSS sanitization** — user input (name, address, product description) not sanitized before storage/display. Fix: add sanitize-html or DOMPurify
+3. **Tokens in localStorage** — access + refresh tokens stored in localStorage, vulnerable to XSS. Fix: move to httpOnly secure cookies
+4. **No CSRF protection** — no CSRF tokens or SameSite cookie enforcement. Fix: add csurf middleware or double-submit pattern (required if moving to cookies)
+5. **Password reset token returned in response body** — should be sent via email only, not exposed in API response. Fix: integrate email service (nodemailer)
+
+### HIGH — Should Fix Before Deployment ✗
+6. **No per-endpoint rate limiting** — login, signup, forgot-password share global 100/min limit. Fix: add specific rate limiters (5 login/15min, 3 signup/hr already defined in auth routes but need verification)
+7. **No account lockout** — unlimited password attempts after rate limit resets. Fix: track failed attempts per user, lock after 5 failures for 15min
+8. **/uploads directory listing exposed** — express.static serves all files, directory browsable. Fix: disable directory listing or add access control
+9. **No file magic byte validation** — only checks file extension, not actual file content. Fix: use file-type package to verify magic bytes
+10. **Weak dev fallback secrets in env.js** — guessable default values for JWT secrets and admin invite code. Fix: remove fallbacks, require env vars in production
+
+### MEDIUM — Should Fix ✗
+11. No custom CSP policy (only Helmet defaults) — configure strict Content-Security-Policy
+12. No security event logging (failed logins, suspicious activity) — add structured logging
+13. No audit trail for sensitive operations (password change, order cancel, admin actions)
+14. No NoSQL injection protection — MongoDB operator injection ($ne, $gt) not blocked
+15. Address fields not validated (city, state accept any string, pincode format not enforced)
 
 ---
 
@@ -403,7 +489,7 @@ assigned → picking_up → picked_up → on_the_way → delivered
 - GET `/` — list with pagination + filters
 - GET `/:id` — detail
 - GET `/suggestions?q=` — autocomplete
-- POST `/` — create (admin)
+- POST `/` — create (admin, requires name + price + categoryId)
 - PUT `/:id` — update (admin)
 - DELETE `/:id` — delete (admin)
 
@@ -459,6 +545,16 @@ assigned → picking_up → picked_up → on_the_way → delivered
 - GET `/history?period=&page=&limit=` — delivery history
 - GET `/earnings` — earnings summary
 
+### Admin (`/api/v1/admin`) — all require admin role
+- GET `/dashboard` — stats (total orders, revenue, refunds, users, products, delivery boys)
+- GET `/orders?status=&page=&limit=` — all orders with filters
+- PATCH `/orders/:id/status` — update order status
+- POST `/orders/:id/cancel` — cancel order (only if status=ordered) + refund + restore stock
+- GET `/users?role=&page=&limit=` — all users with role filter
+- GET `/delivery-boys` — all delivery boys with status + active orders
+- GET `/charges` — current charge config
+- PATCH `/charges` — update charges with audit log
+
 ### WebSocket (`/ws`)
 - `?type=delivery&token=` — delivery boy connection
 - `?type=tracking&orderId=&token=` — customer tracking
@@ -484,7 +580,12 @@ assigned → picking_up → picked_up → on_the_way → delivered
 | `/orders/:orderId/tracking` | Order Tracking (Leaflet map) | Yes |
 | `/delivery/dashboard` | Delivery Dashboard | Yes (delivery role) |
 | `/delivery/history` | Delivery History | Yes (delivery role) |
-| `/admin/dashboard` | Admin Dashboard | Yes (admin role) — placeholder |
+| `/admin/dashboard` | Admin Dashboard (stats, charts) | Yes (admin role) |
+| `/admin/products` | Admin Product Management (CRUD) | Yes (admin role) |
+| `/admin/orders` | Admin Order Management | Yes (admin role) |
+| `/admin/users` | Admin User Management | Yes (admin role) |
+| `/admin/delivery` | Admin Delivery Boy Monitoring | Yes (admin role) |
+| `/admin/charges` | Admin Charge Management + Audit Log | Yes (admin role) |
 | `/dashboard` | Role-based redirect | Yes |
 
 ---
@@ -589,4 +690,11 @@ npm run dev
 - Phase 4 (Checkout, Orders, Payments, Profile) — built + tested, fixed multiple issues
 - Phase 5 (Delivery Boy Portal + Customer Tracking) — built, awaiting testing
 - Created help_claude.md for cross-session memory
-- Next: Test Phase 5, then build Phase 6 (Admin Portal)
+
+**Day 3 (2026-03-14):**
+- Phase 5 confirmed tested and working
+- Phase 6 (Admin Portal) — built + tested
+- Fixed product CRUD (missing routes, categoryId, slug), order charges field paths, cancel-only-before-pickup
+- Full security audit completed — 16 items implemented, 15 items pending
+- All 6 phases COMPLETE
+- Next: Security hardening (critical + high items), then deployment to Render + Vercel + MongoDB Atlas

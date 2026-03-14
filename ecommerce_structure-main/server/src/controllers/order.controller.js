@@ -75,12 +75,12 @@ const cancelOrder = async (req, res, next) => {
       });
     }
 
-    if (!["ordered", "shipped"].includes(order.status)) {
+    if (order.status !== "ordered") {
       return res.status(400).json({
         success: false,
         error: {
           code: "CANNOT_CANCEL",
-          message: `Cannot cancel order with status "${order.status}"`,
+          message: "Cannot cancel order after pickup. Only orders with status 'ordered' can be cancelled.",
         },
       });
     }

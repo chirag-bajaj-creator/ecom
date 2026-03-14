@@ -1,7 +1,7 @@
 const express = require('express');
 const rateLimit = require('express-rate-limit');
-const { getCategories, getProducts, searchProducts, getSuggestions, getProductById } = require('../controllers/product.controller');
-const { optionalAuth } = require('../middleware/auth');
+const { getCategories, getProducts, searchProducts, getSuggestions, getProductById, createProduct, updateProduct, deleteProduct } = require('../controllers/product.controller');
+const { optionalAuth, authenticate, requireRole } = require('../middleware/auth');
 
 const router = express.Router();
 
@@ -22,5 +22,10 @@ router.get('/products', getProducts);
 router.get('/products/search', optionalAuth, searchProducts);
 router.get('/products/suggestions', suggestionLimiter, getSuggestions);
 router.get('/products/:id', getProductById);
+
+// Admin product CRUD
+router.post('/products', authenticate, requireRole('admin'), createProduct);
+router.put('/products/:id', authenticate, requireRole('admin'), updateProduct);
+router.delete('/products/:id', authenticate, requireRole('admin'), deleteProduct);
 
 module.exports = router;

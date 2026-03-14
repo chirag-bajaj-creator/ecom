@@ -16,6 +16,7 @@ const orderRoutes = require('./routes/order.routes');
 const paymentRoutes = require('./routes/payment.routes');
 const profileRoutes = require('./routes/profile.routes');
 const deliveryRoutes = require('./routes/delivery.routes');
+const adminRoutes = require('./routes/admin.routes');
 const path = require('path');
 
 const app = express();
@@ -63,6 +64,7 @@ app.use('/api/v1/orders', orderRoutes);
 app.use('/api/v1/payments', paymentRoutes);
 app.use('/api/v1/profile', profileRoutes);
 app.use('/api/v1/delivery', deliveryRoutes);
+app.use('/api/v1/admin', adminRoutes);
 
 // Serve uploaded files
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));

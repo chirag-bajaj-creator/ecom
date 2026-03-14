@@ -1,0 +1,37 @@
+.total-count {
+  font-size: 16px;
+  font-weight: 400;
+  color: #888;
+}
+
+.user-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.user-name-cell {
+  font-weight: 600;
+  color: #1a1a2e;
+}
+
+.user-email-cell {
+  color: #666;
+  font-size: 13px;
+}
+
+.role-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #fff;
+  text-transform: uppercase;
+}
