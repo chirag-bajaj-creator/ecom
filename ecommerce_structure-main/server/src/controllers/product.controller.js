@@ -58,7 +58,7 @@ const getProducts = async (req, res, next) => {
 // GET /api/v1/products/search?q=&page=&limit=
 const searchProducts = async (req, res, next) => {
   try {
-    const { q, page = 1, limit = 20 } = req.query;
+    const { q, _escapedQ, page = 1, limit = 20 } = req.query;
 
     if (!q || q.trim().length === 0) {
       return res.status(400).json({
@@ -71,7 +71,7 @@ const searchProducts = async (req, res, next) => {
     const limitNum = Math.min(100, Math.max(1, parseInt(limit) || 20));
     const skip = (pageNum - 1) * limitNum;
 
-    const regex = new RegExp(q.trim(), 'i');
+    const regex = new RegExp(_escapedQ || q.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i');
     const filter = {
       $or: [{ name: regex }, { description: regex }],
     };
@@ -121,7 +121,8 @@ const getSuggestions = async (req, res, next) => {
       return res.json({ success: true, data: { suggestions: [] } });
     }
 
-    const regex = new RegExp('^' + q.trim(), 'i');
+    const escaped = q.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const regex = new RegExp('^' + escaped, 'i');
     const limitNum = Math.min(10, Math.max(1, parseInt(limit) || 10));
 
     const products = await Product.find({ name: regex })

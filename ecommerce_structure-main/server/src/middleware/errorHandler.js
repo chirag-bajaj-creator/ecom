@@ -47,12 +47,13 @@ const errorHandler = (err, req, res, next) => {
     });
   }
 
-  // Default server error
+  // Default server error — hide internal details in production
+  const isProduction = process.env.NODE_ENV === 'production';
   res.status(err.statusCode || 500).json({
     success: false,
     error: {
       code: err.code || 'INTERNAL_ERROR',
-      message: err.message || 'Internal server error',
+      message: isProduction ? 'Internal server error' : (err.message || 'Internal server error'),
     },
   });
 };

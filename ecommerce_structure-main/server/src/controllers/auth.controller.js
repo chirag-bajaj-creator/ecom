@@ -205,10 +205,12 @@ const forgotPassword = async (req, res, next) => {
     }
 
     const user = await User.findOne({ email });
+
+    // Always return same response to prevent account enumeration
     if (!user) {
-      return res.status(404).json({
-        success: false,
-        error: { code: 'USER_NOT_FOUND', message: 'No account found with this email' },
+      return res.json({
+        success: true,
+        message: 'If an account with that email exists, a reset token has been generated.',
       });
     }
 
@@ -221,7 +223,7 @@ const forgotPassword = async (req, res, next) => {
 
     res.json({
       success: true,
-      message: 'Password reset token generated. Use it to reset your password.',
+      message: 'If an account with that email exists, a reset token has been generated.',
       data: { resetToken },
     });
   } catch (error) {

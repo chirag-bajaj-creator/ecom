@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const { authenticate, requireRole } = require("../middleware/auth");
+const { validateLocation } = require("../middleware/validate");
 const upload = require("../middleware/upload");
 const {
   toggleStatus,
@@ -26,7 +27,7 @@ router.patch("/status", toggleStatus);
 router.get("/current-order", getCurrentOrder);
 
 // Location
-router.post("/location", updateLocation);
+router.post("/location", validateLocation, updateLocation);
 
 // Pickup & Deliver (multipart — expects "photo" field)
 router.post("/pickup", upload.single("photo"), confirmPickup);

@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { authenticate, requireRole } = require('../middleware/auth');
+const { validateObjectId, validateCharges } = require('../middleware/validate');
 const {
   getDashboardStats,
   getAllOrders,
@@ -20,8 +21,8 @@ router.get('/dashboard', getDashboardStats);
 
 // Orders
 router.get('/orders', getAllOrders);
-router.patch('/orders/:id/status', updateOrderStatus);
-router.post('/orders/:id/cancel', cancelOrder);
+router.patch('/orders/:id/status', validateObjectId('id'), updateOrderStatus);
+router.post('/orders/:id/cancel', validateObjectId('id'), cancelOrder);
 
 // Users
 router.get('/users', getAllUsers);
@@ -31,6 +32,6 @@ router.get('/delivery-boys', getDeliveryBoys);
 
 // Charges
 router.get('/charges', getCharges);
-router.patch('/charges', updateCharges);
+router.patch('/charges', validateCharges, updateCharges);
 
 module.exports = router;

@@ -3,6 +3,7 @@ const router = express.Router();
 const multer = require("multer");
 const path = require("path");
 const { authenticate } = require("../middleware/auth");
+const { validateAddress, validateObjectId } = require("../middleware/validate");
 const {
   getProfile,
   updateProfile,
@@ -48,9 +49,9 @@ router.post("/change-password", authenticate, changePassword);
 
 // Addresses
 router.get("/addresses", authenticate, getAddresses);
-router.post("/addresses", authenticate, addAddress);
-router.patch("/addresses/:addressId", authenticate, updateAddress);
-router.delete("/addresses/:addressId", authenticate, deleteAddress);
-router.patch("/addresses/:addressId/default", authenticate, setDefaultAddress);
+router.post("/addresses", authenticate, validateAddress, addAddress);
+router.patch("/addresses/:addressId", authenticate, validateObjectId('addressId'), updateAddress);
+router.delete("/addresses/:addressId", authenticate, validateObjectId('addressId'), deleteAddress);
+router.patch("/addresses/:addressId/default", authenticate, validateObjectId('addressId'), setDefaultAddress);
 
 module.exports = router;

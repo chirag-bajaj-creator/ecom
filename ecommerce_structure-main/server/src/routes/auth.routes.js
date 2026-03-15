@@ -6,8 +6,11 @@ const { validateSignup, validateLogin } = require('../middleware/validate');
 
 const router = express.Router();
 
-// Rate limiters
-const loginLimiter = rateLimit({
+// Rate limiters (skip in test mode)
+const isTest = process.env.NODE_ENV === 'test';
+const noOp = (req, res, next) => next();
+
+const loginLimiter = isTest ? noOp : rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 5,
   message: {
@@ -19,7 +22,7 @@ const loginLimiter = rateLimit({
   },
 });
 
-const signupLimiter = rateLimit({
+const signupLimiter = isTest ? noOp : rateLimit({
   windowMs: 60 * 60 * 1000, // 1 hour
   max: 3,
   message: {
@@ -31,12 +34,24 @@ const signupLimiter = rateLimit({
   },
 });
 
-router.post('/signup', validateSignup, signup);
-router.post('/login', validateLogin, login);
+const passwordResetLimiter = isTest ? noOp : rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 3,
+  message: {
+    success: false,
+    error: {
+      code: 'TOO_MANY_REQUESTS',
+      message: 'Too many password reset attempts. Please try again after 15 minutes.',
+    },
+  },
+});
+
+router.post('/signup', signupLimiter, validateSignup, signup);
+router.post('/login', loginLimiter, validateLogin, login);
 router.post('/logout', authenticate, logout);
 router.post('/refresh-token', refreshAccessToken);
-router.post('/forgot-password', forgotPassword);
-router.post('/reset-password', resetPassword);
+router.post('/forgot-password', passwordResetLimiter, forgotPassword);
+router.post('/reset-password', passwordResetLimiter, resetPassword);
 router.get('/me', authenticate, getMe);
 
 module.exports = router;

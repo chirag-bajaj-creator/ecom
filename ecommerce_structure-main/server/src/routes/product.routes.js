@@ -2,6 +2,7 @@ const express = require('express');
 const rateLimit = require('express-rate-limit');
 const { getCategories, getProducts, searchProducts, getSuggestions, getProductById, createProduct, updateProduct, deleteProduct } = require('../controllers/product.controller');
 const { optionalAuth, authenticate, requireRole } = require('../middleware/auth');
+const { validateObjectId, validateSearch } = require('../middleware/validate');
 
 const router = express.Router();
 
@@ -19,13 +20,13 @@ const suggestionLimiter = rateLimit({
 
 router.get('/categories', getCategories);
 router.get('/products', getProducts);
-router.get('/products/search', optionalAuth, searchProducts);
-router.get('/products/suggestions', suggestionLimiter, getSuggestions);
-router.get('/products/:id', getProductById);
+router.get('/products/search', optionalAuth, validateSearch, searchProducts);
+router.get('/products/suggestions', suggestionLimiter, validateSearch, getSuggestions);
+router.get('/products/:id', validateObjectId('id'), getProductById);
 
 // Admin product CRUD
 router.post('/products', authenticate, requireRole('admin'), createProduct);
-router.put('/products/:id', authenticate, requireRole('admin'), updateProduct);
-router.delete('/products/:id', authenticate, requireRole('admin'), deleteProduct);
+router.put('/products/:id', authenticate, requireRole('admin'), validateObjectId('id'), updateProduct);
+router.delete('/products/:id', authenticate, requireRole('admin'), validateObjectId('id'), deleteProduct);
 
 module.exports = router;

@@ -1,0 +1,12 @@
+ Password hashing (bcrypt, 10 rounds)
+  - JWT access token (15min) + refresh token (7 days) with rotation
+  - RBAC middleware (requireRole)
+  - Helmet (basic security headers)
+  - CORS restricted to frontend URL
+  - General rate limiting (100 req/min)
+  - Input validation on signup/login
+  - Body size limit (10MB)
+  - File upload MIME filter + 5MB limit
+  - Password excluded from JSON responses
+  - Account enumeration prevention on login (same error message)
+  - Error handling (no stack traces leaked)
