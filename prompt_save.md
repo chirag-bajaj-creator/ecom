@@ -148,6 +148,12 @@ delivery boy online but not getting order from user, only showing "fetching cust
 WebSocket connecting to wss://ecomclient-mu.vercel.app:5000/ws — WRONG, should be Render backend URL
 ```
 
+## 2026-03-16 — Only Real Users + Payment Integration Left
+**Context:** If delivery boy and WebSocket connections work correctly after fix, only real users and payment integration are left to make the app production-ready.
+```
+if delivery boy and all connections work now correctly then to make it real only real users and payment integration left
+```
+
 ## 2026-03-16 — Live Charge Updates Not at Payment
 **Context:** Admin sets delivery charge, surge charge, handling charges (4 inputs). These should update live everywhere (wishlist, cart) but NOT change at the time of payment/checkout.
 ```
@@ -158,5 +164,17 @@ one problem delivery charge, surge charge, and charges 4 inputs are there in the
 **Context:** User added category field to AdminProducts.jsx form but getting "name, price, category required" error when submitting.
 ```
 it is saying name price category required when clicking add product form so i want to make the change that i want to make my category and under which products to be listed but and to be updated to the backend database also so i made category field in adminproducts.jsx instead of that but clicking giving the error name product category not found
+```
+
+## 2026-03-16 — Remove Password Complexity & Login Rate Limit
+**Context:** User wants simple passwords allowed (no complexity rules) and remove the 5 login attempts / 15 min lockout. Document everything in make_future.md before making changes.
+```
+remove the complex password checks simple password should be allowed and remove the 5 login attempts try again after 15 minutes in that make_future.md write what code you remove and what process you do and new code also before vs after comparsion for code and process shoudl be there
+```
+
+## 2026-03-16 — Revamp Admin Add Product Form (Category-First with Multiple Products)
+**Context:** User wants to redesign the Admin Add Product form. Instead of adding one product at a time, admin picks/types a category first, then specifies how many products to add under it, and fills details for each product in one form submission.
+```
+their is image-copy.png i want like to change the form that each category should have the drop down for the fields like name,description,price,stock,imageurl,category and all should in the one form and should be added simulatenously like one category done then their si the fields name,description,price,stock,imageurl,category and the fields and their is the one more field is field number means how much type of differnet products under this category this is how admin add product should change it should show all the products on the user also as i want that it should follow same category in vertcial and products under category card form which is listed and followed by you in my website as we previously made
 ```
 

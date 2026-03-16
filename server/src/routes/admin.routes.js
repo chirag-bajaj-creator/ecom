@@ -10,7 +10,8 @@ const {
   getAllUsers,
   getDeliveryBoys,
   getCharges,
-  updateCharges
+  updateCharges,
+  cleanupProducts
 } = require('../controllers/admin.controller');
 
 // All routes require admin role
@@ -33,5 +34,8 @@ router.get('/delivery-boys', getDeliveryBoys);
 // Charges
 router.get('/charges', getCharges);
 router.patch('/charges', validateCharges, updateCharges);
+
+// Cleanup
+router.delete('/cleanup-products', cleanupProducts);
 
 module.exports = router;

@@ -155,6 +155,61 @@ const getProductById = async (req, res, next) => {
   }
 };
 
+// POST /api/v1/products/bulk (admin)
+const createBulkProducts = async (req, res, next) => {
+  try {
+    const { categoryName, products } = req.body;
+
+    if (!categoryName || !products || !Array.isArray(products) || products.length === 0) {
+      return res.status(400).json({
+        success: false,
+        error: { code: 'MISSING_FIELDS', message: 'Category name and at least one product are required' },
+      });
+    }
+
+    if (products.length > 50) {
+      return res.status(400).json({
+        success: false,
+        error: { code: 'TOO_MANY', message: 'Maximum 50 products per batch' },
+      });
+    }
+
+    for (let i = 0; i < products.length; i++) {
+      if (!products[i].name || products[i].price === undefined || products[i].price === null) {
+        return res.status(400).json({
+          success: false,
+          error: { code: 'MISSING_FIELDS', message: `Product #${i + 1}: name and price are required` },
+        });
+      }
+    }
+
+    const categorySlug = categoryName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+    let category = await Category.findOne({ slug: categorySlug });
+    if (!category) {
+      category = await Category.create({ name: categoryName, slug: categorySlug });
+    }
+
+    const productDocs = products.map((p) => ({
+      name: p.name,
+      slug: p.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''),
+      description: p.description || '',
+      price: Number(p.price),
+      stock: p.stock ? Number(p.stock) : 0,
+      image: p.image || null,
+      categoryId: category._id,
+    }));
+
+    const created = await Product.insertMany(productDocs);
+
+    res.status(201).json({
+      success: true,
+      data: { category, products: created, count: created.length },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 // POST /api/v1/products (admin)
 const createProduct = async (req, res, next) => {
   try {
@@ -244,4 +299,4 @@ const deleteProduct = async (req, res, next) => {
   }
 };
 
-module.exports = { getCategories, getProducts, searchProducts, getSuggestions, getProductById, createProduct, updateProduct, deleteProduct };
+module.exports = { getCategories, getProducts, searchProducts, getSuggestions, getProductById, createProduct, createBulkProducts, updateProduct, deleteProduct };

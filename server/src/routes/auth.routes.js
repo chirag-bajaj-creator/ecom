@@ -10,18 +10,6 @@ const router = express.Router();
 const isTest = process.env.NODE_ENV === 'test';
 const noOp = (req, res, next) => next();
 
-const loginLimiter = isTest ? noOp : rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 5,
-  message: {
-    success: false,
-    error: {
-      code: 'TOO_MANY_LOGIN_ATTEMPTS',
-      message: 'Too many login attempts. Please try again after 15 minutes.',
-    },
-  },
-});
-
 const signupLimiter = isTest ? noOp : rateLimit({
   windowMs: 60 * 60 * 1000, // 1 hour
   max: 3,
@@ -47,7 +35,7 @@ const passwordResetLimiter = isTest ? noOp : rateLimit({
 });
 
 router.post('/signup', signupLimiter, validateSignup, signup);
-router.post('/login', loginLimiter, validateLogin, login);
+router.post('/login', validateLogin, login);
 router.post('/logout', authenticate, logout);
 router.post('/refresh-token', refreshAccessToken);
 router.post('/forgot-password', passwordResetLimiter, forgotPassword);

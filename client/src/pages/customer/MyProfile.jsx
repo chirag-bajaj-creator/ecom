@@ -304,7 +304,6 @@ const MyProfile = () => {
             <input type="password" placeholder="Current Password" value={passwordForm.currentPassword} onChange={(e) => setPasswordForm({ ...passwordForm, currentPassword: e.target.value })} required />
             <input type="password" placeholder="New Password" value={passwordForm.newPassword} onChange={(e) => setPasswordForm({ ...passwordForm, newPassword: e.target.value })} required />
             <input type="password" placeholder="Confirm New Password" value={passwordForm.confirmPassword} onChange={(e) => setPasswordForm({ ...passwordForm, confirmPassword: e.target.value })} required />
-            <p className="password-hint">Min 8 chars, 1 uppercase, 1 number, 1 special character</p>
             <button type="submit" className="btn-change-pwd">Change Password</button>
             {passwordMsg && <p className={`msg ${passwordMsg.includes('success') ? 'msg-success' : 'msg-error'}`}>{passwordMsg}</p>}
           </form>

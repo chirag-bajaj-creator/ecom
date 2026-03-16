@@ -82,18 +82,6 @@ const changePassword = async (req, res, next) => {
       });
     }
 
-    // Password rules: min 8, 1 uppercase, 1 special, 1 number
-    const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{8,}$/;
-    if (!passwordRegex.test(newPassword)) {
-      return res.status(400).json({
-        success: false,
-        error: {
-          code: "WEAK_PASSWORD",
-          message: "Password must be min 8 chars with 1 uppercase, 1 number, 1 special character",
-        },
-      });
-    }
-
     const user = await User.findById(req.user._id);
     const isMatch = await user.comparePassword(currentPassword);
     if (!isMatch) {

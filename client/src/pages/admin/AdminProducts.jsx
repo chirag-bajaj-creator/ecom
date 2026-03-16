@@ -3,11 +3,14 @@ import api from '../../api/axios';
 import AdminSidebar from '../../components/layout/AdminSidebar';
 import './AdminProducts.css';
 
+const emptyProduct = () => ({ name: '', description: '', price: '', stock: '', image: '' });
+
 const AdminProducts = () => {
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
+  const [showBulkModal, setShowBulkModal] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -19,6 +22,11 @@ const AdminProducts = () => {
     image: '',
     categoryName: ''
   });
+  const [bulkCategory, setBulkCategory] = useState('');
+  const [bulkCount, setBulkCount] = useState('');
+  const [bulkProducts, setBulkProducts] = useState([]);
+  const [bulkGenerated, setBulkGenerated] = useState(false);
+  const [bulkSubmitting, setBulkSubmitting] = useState(false);
 
   useEffect(() => {
     fetchProducts();
@@ -49,9 +57,58 @@ const AdminProducts = () => {
   };
 
   const openAddModal = () => {
-    setEditingProduct(null);
-    setForm({ name: '', description: '', price: '', stock: '', image: '', categoryName: '' });
-    setShowModal(true);
+    setBulkCategory('');
+    setBulkCount('');
+    setBulkProducts([]);
+    setBulkGenerated(false);
+    setShowBulkModal(true);
+  };
+
+  const handleGenerateFields = () => {
+    const count = parseInt(bulkCount);
+    if (!bulkCategory.trim() || !count || count < 1) {
+      alert('Enter category name and number of products');
+      return;
+    }
+    if (count > 50) {
+      alert('Maximum 50 products per batch');
+      return;
+    }
+    setBulkProducts(Array.from({ length: count }, () => emptyProduct()));
+    setBulkGenerated(true);
+  };
+
+  const updateBulkProduct = (index, field, value) => {
+    setBulkProducts(prev => prev.map((p, i) => i === index ? { ...p, [field]: value } : p));
+  };
+
+  const handleBulkSubmit = async (e) => {
+    e.preventDefault();
+    for (let i = 0; i < bulkProducts.length; i++) {
+      if (!bulkProducts[i].name || !bulkProducts[i].price) {
+        alert(`Product #${i + 1}: Name and Price are required`);
+        return;
+      }
+    }
+    setBulkSubmitting(true);
+    try {
+      await api.post('/products/bulk', {
+        categoryName: bulkCategory,
+        products: bulkProducts.map(p => ({
+          ...p,
+          price: Number(p.price),
+          stock: p.stock ? Number(p.stock) : 0
+        }))
+      });
+      setShowBulkModal(false);
+      fetchProducts();
+      fetchCategories();
+    } catch (error) {
+      console.error('Failed to bulk create:', error.response?.data);
+      alert(error.response?.data?.error?.message || 'Failed to create products');
+    } finally {
+      setBulkSubmitting(false);
+    }
   };
 
   const openEditModal = (product) => {
@@ -120,7 +177,7 @@ const AdminProducts = () => {
       <main className="admin-content">
         <div className="admin-page-header">
           <h1 className="admin-page-title">Products</h1>
-          <button className="admin-add-btn" onClick={openAddModal}>+ Add Product</button>
+          <button className="admin-add-btn" onClick={openAddModal}>+ Add Products</button>
         </div>
 
         <div className="admin-table-container">
@@ -182,10 +239,11 @@ const AdminProducts = () => {
           </div>
         )}
 
+        {/* Edit single product modal */}
         {showModal && (
           <div className="admin-modal-overlay" onClick={() => setShowModal(false)}>
             <div className="admin-modal" onClick={e => e.stopPropagation()}>
-              <h2>{editingProduct ? 'Edit Product' : 'Add Product'}</h2>
+              <h2>Edit Product</h2>
               <form onSubmit={handleSubmit}>
                 <div className="modal-field">
                   <label>Name</label>
@@ -237,17 +295,127 @@ const AdminProducts = () => {
                 </div>
                 <div className="modal-field">
                   <label>Category</label>
-                  <input type='text' value={form.categoryName} onChange={e => setForm({ ...form, categoryName: e.target.value })} required />
+                  <input type="text" value={form.categoryName} onChange={e => setForm({ ...form, categoryName: e.target.value })} required />
                 </div>
                 <div className="modal-actions">
                   <button type="button" className="modal-cancel-btn" onClick={() => setShowModal(false)}>
                     Cancel
                   </button>
-                  <button type="submit" className="modal-save-btn">
-                    {editingProduct ? 'Update' : 'Create'}
-                  </button>
+                  <button type="submit" className="modal-save-btn">Update</button>
                 </div>
               </form>
+            </div>
+          </div>
+        )}
+
+        {/* Bulk add products modal */}
+        {showBulkModal && (
+          <div className="admin-modal-overlay" onClick={() => setShowBulkModal(false)}>
+            <div className="admin-modal bulk-modal" onClick={e => e.stopPropagation()}>
+              <h2>Add Products</h2>
+
+              {!bulkGenerated ? (
+                <div className="bulk-setup">
+                  <div className="modal-field">
+                    <label>Category Name</label>
+                    <input
+                      type="text"
+                      value={bulkCategory}
+                      onChange={e => setBulkCategory(e.target.value)}
+                      placeholder="e.g. Electronics, Clothing..."
+                    />
+                  </div>
+                  <div className="modal-field">
+                    <label>Number of Products</label>
+                    <input
+                      type="number"
+                      value={bulkCount}
+                      onChange={e => setBulkCount(e.target.value)}
+                      min="1"
+                      max="50"
+                      placeholder="How many products under this category?"
+                    />
+                  </div>
+                  <div className="modal-actions">
+                    <button type="button" className="modal-cancel-btn" onClick={() => setShowBulkModal(false)}>
+                      Cancel
+                    </button>
+                    <button type="button" className="modal-save-btn" onClick={handleGenerateFields}>
+                      Generate Fields
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <form onSubmit={handleBulkSubmit}>
+                  <div className="bulk-category-header">
+                    Category: <strong>{bulkCategory}</strong> — {bulkProducts.length} product(s)
+                  </div>
+                  <div className="bulk-products-list">
+                    {bulkProducts.map((p, i) => (
+                      <div key={i} className="bulk-product-block">
+                        <h4>Product #{i + 1}</h4>
+                        <div className="modal-field">
+                          <label>Name</label>
+                          <input
+                            type="text"
+                            value={p.name}
+                            onChange={e => updateBulkProduct(i, 'name', e.target.value)}
+                            required
+                          />
+                        </div>
+                        <div className="modal-field">
+                          <label>Description</label>
+                          <textarea
+                            value={p.description}
+                            onChange={e => updateBulkProduct(i, 'description', e.target.value)}
+                            rows={2}
+                          />
+                        </div>
+                        <div className="modal-row">
+                          <div className="modal-field">
+                            <label>Price (₹)</label>
+                            <input
+                              type="number"
+                              value={p.price}
+                              onChange={e => updateBulkProduct(i, 'price', e.target.value)}
+                              required
+                              min="0"
+                            />
+                          </div>
+                          <div className="modal-field">
+                            <label>Stock</label>
+                            <input
+                              type="number"
+                              value={p.stock}
+                              onChange={e => updateBulkProduct(i, 'stock', e.target.value)}
+                              min="0"
+                            />
+                          </div>
+                        </div>
+                        <div className="modal-field">
+                          <label>Image URL</label>
+                          <input
+                            type="text"
+                            value={p.image}
+                            onChange={e => updateBulkProduct(i, 'image', e.target.value)}
+                          />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="modal-actions">
+                    <button type="button" className="modal-cancel-btn" onClick={() => setShowBulkModal(false)}>
+                      Cancel
+                    </button>
+                    <button type="button" className="modal-back-btn" onClick={() => setBulkGenerated(false)}>
+                      Back
+                    </button>
+                    <button type="submit" className="modal-save-btn" disabled={bulkSubmitting}>
+                      {bulkSubmitting ? 'Creating...' : `Create All ${bulkProducts.length} Products`}
+                    </button>
+                  </div>
+                </form>
+              )}
             </div>
           </div>
         )}

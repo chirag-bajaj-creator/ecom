@@ -22,29 +22,12 @@ const Signup = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const getPasswordStrength = () => {
-    const { password } = formData;
-    const checks = [];
-    if (password.length < 8) checks.push('Min 8 characters');
-    if (!/[A-Z]/.test(password)) checks.push('1 uppercase letter');
-    if (!/[a-z]/.test(password)) checks.push('1 lowercase letter');
-    if (!/\d/.test(password)) checks.push('1 number');
-    if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)) checks.push('1 special character');
-    return checks;
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
 
     if (formData.password !== formData.confirmPassword) {
       setError('Passwords do not match');
-      return;
-    }
-
-    const weaknesses = getPasswordStrength();
-    if (weaknesses.length > 0) {
-      setError('Password needs: ' + weaknesses.join(', '));
       return;
     }
 
@@ -66,8 +49,6 @@ const Signup = () => {
       setLoading(false);
     }
   };
-
-  const passwordHints = getPasswordStrength();
 
   return (
     <div className="auth-overlay">
@@ -124,13 +105,6 @@ const Signup = () => {
               placeholder="Create a password"
               required
             />
-            {formData.password && passwordHints.length > 0 && (
-              <div className="password-hints">
-                {passwordHints.map((hint, i) => (
-                  <span key={i} className="hint">{hint}</span>
-                ))}
-              </div>
-            )}
           </div>
 
           <div className="form-group">

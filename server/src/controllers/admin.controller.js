@@ -4,6 +4,7 @@ const Product = require('../models/Product');
 const Payment = require('../models/Payment');
 const DeliveryBoy = require('../models/DeliveryBoy');
 const DeliveryTracking = require('../models/DeliveryTracking');
+const Category = require('../models/Category');
 const ChargeConfig = require('../models/ChargeConfig');
 
 // GET /api/v1/admin/dashboard
@@ -264,6 +265,22 @@ const updateCharges = async (req, res) => {
   }
 };
 
+// DELETE /api/v1/admin/cleanup-products
+const cleanupProducts = async (req, res) => {
+  try {
+    const productResult = await Product.deleteMany({});
+    const categoryResult = await Category.deleteMany({});
+
+    res.json({
+      message: 'All products and categories deleted',
+      productsDeleted: productResult.deletedCount,
+      categoriesDeleted: categoryResult.deletedCount
+    });
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to cleanup', error: error.message });
+  }
+};
+
 module.exports = {
   getDashboardStats,
   getAllOrders,
@@ -272,5 +289,6 @@ module.exports = {
   getAllUsers,
   getDeliveryBoys,
   getCharges,
-  updateCharges
+  updateCharges,
+  cleanupProducts
 };

@@ -2,8 +2,6 @@
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const phoneRegex = /^\d{10}$/;
-const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{8,}$/;
-
 const validateSignup = (req, res, next) => {
   const { name, email, phone, password, role } = req.body;
   const errors = [];
@@ -24,8 +22,6 @@ const validateSignup = (req, res, next) => {
 
   if (!password) {
     errors.push('Password is required');
-  } else if (!passwordRegex.test(password)) {
-    errors.push('Password must be min 8 chars with 1 uppercase, 1 lowercase, 1 number, 1 special character');
   }
 
   const validRoles = ['user', 'delivery', 'admin'];
