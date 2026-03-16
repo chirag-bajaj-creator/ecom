@@ -2,6 +2,7 @@ const CartItem = require("../models/CartItem");
 const Product = require("../models/Product");
 const Order = require("../models/Order");
 const Address = require("../models/Address");
+const ChargeConfig = require("../models/ChargeConfig");
 const { assignOrder } = require("../services/orderAssignment");
 
 // POST /api/v1/checkout
@@ -71,14 +72,15 @@ const checkout = async (req, res, next) => {
       });
     }
 
-    // Calculate charges
+    // Calculate charges from DB config (locked at order time)
     const totalAmount = orderItems.reduce(
       (sum, item) => sum + item.price * item.quantity,
       0
     );
-    const deliveryCharge = totalAmount >= 500 ? 0 : 40;
-    const handlingCharge = 5;
-    const surgeCharge = 0;
+    const config = await ChargeConfig.findOne() || { deliveryCharge: 40, freeDeliveryThreshold: 500, surgeCharge: 0, handlingCharge: 5 };
+    const deliveryCharge = totalAmount >= config.freeDeliveryThreshold ? 0 : config.deliveryCharge;
+    const handlingCharge = config.handlingCharge;
+    const surgeCharge = config.surgeCharge;
     const grandTotal = totalAmount + deliveryCharge + handlingCharge + surgeCharge;
 
     // Create order
@@ -134,9 +136,10 @@ const getCharges = async (req, res, next) => {
   try {
     const cartTotal = parseFloat(req.query.cartTotal) || 0;
 
-    const deliveryCharge = cartTotal >= 500 ? 0 : 40;
-    const handlingCharge = 5;
-    const surgeCharge = 0;
+    const config = await ChargeConfig.findOne() || { deliveryCharge: 40, freeDeliveryThreshold: 500, surgeCharge: 0, handlingCharge: 5 };
+    const deliveryCharge = cartTotal >= config.freeDeliveryThreshold ? 0 : config.deliveryCharge;
+    const handlingCharge = config.handlingCharge;
+    const surgeCharge = config.surgeCharge;
     const grandTotal = cartTotal + deliveryCharge + handlingCharge + surgeCharge;
 
     res.json({
@@ -147,7 +150,7 @@ const getCharges = async (req, res, next) => {
         surgeCharge,
         handlingCharge,
         grandTotal,
-        freeDeliveryThreshold: 500,
+        freeDeliveryThreshold: config.freeDeliveryThreshold,
       },
     });
   } catch (error) {

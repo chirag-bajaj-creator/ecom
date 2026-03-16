@@ -108,3 +108,41 @@ one thing want to make sure that cancel order only when order is not picked up a
 now full website we made it congrats claude code
 ```
 
+## 2026-03-16 — Localhost MongoDB Connection Error
+**Context:** After successful deployment, user tried running locally and got MongoDB connection error. Also reminded about saving prompts.
+```
+docker compose up -d → MongoDB container running
+npm run dev → MongoDB connection error: querySrv ENOTFOUND _mongodb._tcp.74
+User says: deployed version works fine, why localhost has problem now? Previously no problem.
+```
+
+## 2026-03-16 — React onChange Explanation
+**Context:** User asking what onChange with spread operator does.
+```
+onChange={e => setForm({ ...form, category: e.target.value })} what is the use of this
+```
+
+## 2026-03-16 — Custom Category Input for Products
+**Context:** User wants to type category name when adding product, no pre-seeded categories. Category should be created if it doesn't exist.
+```
+i want that i will make categories no pre seeded categories from now on as i am going to production i want to type category and under which product to be listed
+```
+
+## 2026-03-16 — Check Admin Products Show on User Side
+**Context:** User made changes so admin-added products show on user/customer side. Wants verification.
+```
+product added in the admin will show in the user i made the changes is there any need to correct it
+```
+
+## 2026-03-16 — Live Charge Updates Not at Payment
+**Context:** Admin sets delivery charge, surge charge, handling charges (4 inputs). These should update live everywhere (wishlist, cart) but NOT change at the time of payment/checkout.
+```
+one problem delivery charge, surge charge, and charges 4 inputs are there in the charges section of admin they should be update live anytime like when customer in wishlist add to cart but not at the time of payment
+```
+
+## 2026-03-16 — Admin Add Product Category Field Error
+**Context:** User added category field to AdminProducts.jsx form but getting "name, price, category required" error when submitting.
+```
+it is saying name price category required when clicking add product form so i want to make the change that i want to make my category and under which products to be listed but and to be updated to the backend database also so i made category field in adminproducts.jsx instead of that but clicking giving the error name product category not found
+```
+

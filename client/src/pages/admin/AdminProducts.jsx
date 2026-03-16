@@ -17,7 +17,7 @@ const AdminProducts = () => {
     price: '',
     stock: '',
     image: '',
-    categoryId: ''
+    categoryName: ''
   });
 
   useEffect(() => {
@@ -50,7 +50,7 @@ const AdminProducts = () => {
 
   const openAddModal = () => {
     setEditingProduct(null);
-    setForm({ name: '', description: '', price: '', stock: '', image: '', categoryId: '' });
+    setForm({ name: '', description: '', price: '', stock: '', image: '', categoryName: '' });
     setShowModal(true);
   };
 
@@ -62,7 +62,7 @@ const AdminProducts = () => {
       price: product.price,
       stock: product.stock,
       image: product.image || '',
-      categoryId: product.categoryId?._id || product.categoryId || ''
+      categoryName: product.categoryId?.name || ''
     });
     setShowModal(true);
   };
@@ -76,7 +76,7 @@ const AdminProducts = () => {
         price: Number(form.price),
         stock: Number(form.stock),
         image: form.image,
-        categoryId: form.categoryId
+        categoryName: form.categoryName
       };
 
       if (editingProduct) {
@@ -237,16 +237,7 @@ const AdminProducts = () => {
                 </div>
                 <div className="modal-field">
                   <label>Category</label>
-                  <select
-                    value={form.categoryId}
-                    onChange={e => setForm({ ...form, categoryId: e.target.value })}
-                    required
-                  >
-                    <option value="">Select Category</option>
-                    {categories.map(cat => (
-                      <option key={cat._id} value={cat._id}>{cat.name}</option>
-                    ))}
-                  </select>
+                  <input type='text' value={form.categoryName} onChange={e => setForm({ ...form, categoryName: e.target.value })} required />
                 </div>
                 <div className="modal-actions">
                   <button type="button" className="modal-cancel-btn" onClick={() => setShowModal(false)}>

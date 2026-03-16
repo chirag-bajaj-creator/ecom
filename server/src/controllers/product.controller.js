@@ -158,21 +158,19 @@ const getProductById = async (req, res, next) => {
 // POST /api/v1/products (admin)
 const createProduct = async (req, res, next) => {
   try {
-    const { name, description, price, stock, image, categoryId } = req.body;
+    const { name, description, price, stock, image, categoryName } = req.body;
 
-    if (!name || price === undefined || price === null || !categoryId) {
+    if (!name || price === undefined || price === null || !categoryName) {
       return res.status(400).json({
         success: false,
         error: { code: 'MISSING_FIELDS', message: 'Name, price, and category are required' },
       });
     }
 
-    const category = await Category.findById(categoryId);
+    const categorySlug = categoryName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+    let category = await Category.findOne({ slug: categorySlug });
     if (!category) {
-      return res.status(400).json({
-        success: false,
-        error: { code: 'INVALID_CATEGORY', message: 'Category not found' },
-      });
+      category = await Category.create({ name: categoryName, slug: categorySlug });
     }
 
     const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
@@ -184,7 +182,7 @@ const createProduct = async (req, res, next) => {
       price: Number(price),
       stock: stock ? Number(stock) : 0,
       image: image || null,
-      categoryId,
+      categoryId: category._id
     });
 
     res.status(201).json({ success: true, data: { product } });
@@ -196,7 +194,7 @@ const createProduct = async (req, res, next) => {
 // PUT /api/v1/products/:id (admin)
 const updateProduct = async (req, res, next) => {
   try {
-    const { name, description, price, stock, image, categoryId } = req.body;
+    const { name, description, price, stock, image, categoryName } = req.body;
 
     const product = await Product.findById(req.params.id);
     if (!product) {
@@ -206,14 +204,13 @@ const updateProduct = async (req, res, next) => {
       });
     }
 
-    if (categoryId) {
-      const category = await Category.findById(categoryId);
+    if (categoryName) {
+      const categorySlug = categoryName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+      let category = await Category.findOne({ slug: categorySlug });
       if (!category) {
-        return res.status(400).json({
-          success: false,
-          error: { code: 'INVALID_CATEGORY', message: 'Category not found' },
-        });
+        category = await Category.create({ name: categoryName, slug: categorySlug });
       }
+      product.categoryId = category._id;
     }
 
     if (name !== undefined) product.name = name;
@@ -221,7 +218,6 @@ const updateProduct = async (req, res, next) => {
     if (price !== undefined) product.price = price;
     if (stock !== undefined) product.stock = stock;
     if (image !== undefined) product.image = image;
-    if (categoryId !== undefined) product.categoryId = categoryId;
 
     await product.save();
 

@@ -1,5 +1,6 @@
 const CartItem = require('../models/CartItem');
 const Product = require('../models/Product');
+const ChargeConfig = require('../models/ChargeConfig');
 
 // GET /api/v1/cart
 const getCart = async (req, res, next) => {
@@ -21,9 +22,10 @@ const getCart = async (req, res, next) => {
       };
     });
 
-    const deliveryCharge = subtotal >= 500 ? 0 : 40;
-    const handlingCharge = 5;
-    const surgeCharge = 0;
+    const config = await ChargeConfig.findOne() || { deliveryCharge: 40, freeDeliveryThreshold: 500, surgeCharge: 0, handlingCharge: 5 };
+    const deliveryCharge = subtotal >= config.freeDeliveryThreshold ? 0 : config.deliveryCharge;
+    const handlingCharge = config.handlingCharge;
+    const surgeCharge = config.surgeCharge;
     const grandTotal = subtotal + deliveryCharge + handlingCharge + surgeCharge;
 
     res.json({

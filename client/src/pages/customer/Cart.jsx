@@ -35,12 +35,11 @@ const Cart = () => {
             itemTotal,
           };
         });
-        const deliveryCharge = subtotal >= 500 ? 0 : 40;
-        const handlingCharge = 5;
-        const surgeCharge = 0;
+        const chargesRes = await api.get(`/checkout/charges?cartTotal=${subtotal}`);
+        const c = chargesRes.data.data;
         setCartData({
           items,
-          charges: { subtotal, deliveryCharge, surgeCharge, handlingCharge, grandTotal: subtotal + deliveryCharge + handlingCharge + surgeCharge },
+          charges: { subtotal, deliveryCharge: c.deliveryCharge, surgeCharge: c.surgeCharge, handlingCharge: c.handlingCharge, grandTotal: c.grandTotal },
           itemCount: items.length,
         });
       }
