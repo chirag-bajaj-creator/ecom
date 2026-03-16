@@ -134,6 +134,20 @@ i want that i will make categories no pre seeded categories from now on as i am 
 product added in the admin will show in the user i made the changes is there any need to correct it
 ```
 
+## 2026-03-16 — CI/CD and Deployment Questions
+**Context:** User asking if project follows CI/CD and whether Render auto-deploys like Vercel.
+```
+is my website following cicd
+is render also updated or we have to redeploy as vercel auto detects
+```
+
+## 2026-03-16 — Delivery Boy Not Getting Orders + WebSocket Error
+**Context:** Delivery boy is online but not getting assigned orders. WebSocket connecting to wrong URL (Vercel instead of Render).
+```
+delivery boy online but not getting order from user, only showing "fetching customer"
+WebSocket connecting to wss://ecomclient-mu.vercel.app:5000/ws — WRONG, should be Render backend URL
+```
+
 ## 2026-03-16 — Live Charge Updates Not at Payment
 **Context:** Admin sets delivery charge, surge charge, handling charges (4 inputs). These should update live everywhere (wishlist, cart) but NOT change at the time of payment/checkout.
 ```

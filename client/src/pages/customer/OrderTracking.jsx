@@ -105,9 +105,15 @@ const OrderTracking = () => {
     const token = localStorage.getItem('accessToken');
     if (!token) return;
 
-    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-    const host = window.location.hostname;
-    const wsUrl = `${protocol}//${host}:5000/ws?token=${token}&type=tracking&orderId=${orderId}`;
+    const apiUrl = import.meta.env.VITE_API_URL || '';
+    let wsBase;
+    if (apiUrl) {
+      wsBase = apiUrl.replace(/\/api\/v1$/, '').replace(/^http/, 'ws');
+    } else {
+      const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+      wsBase = `${protocol}//${window.location.hostname}:5000`;
+    }
+    const wsUrl = `${wsBase}/ws?token=${token}&type=tracking&orderId=${orderId}`;
 
     const ws = new WebSocket(wsUrl);
 
