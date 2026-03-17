@@ -5,6 +5,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import { useCart } from '../../contexts/CartContext';
 import Navbar from '../../components/layout/Navbar';
 import Footer from '../../components/layout/Footer';
+import PaymentGateway from '../../components/payment/PaymentGateway';
 import './Checkout.css';
 
 const Checkout = () => {
@@ -20,6 +21,7 @@ const Checkout = () => {
   const [placing, setPlacing] = useState(false);
   const [error, setError] = useState('');
   const [step, setStep] = useState(1); // 1=address, 2=payment, 3=confirm
+  const [showPaymentGateway, setShowPaymentGateway] = useState(false);
 
   // New address form
   const [showAddressForm, setShowAddressForm] = useState(false);
@@ -84,14 +86,17 @@ const Checkout = () => {
     }
   };
 
-  const handlePlaceOrder = async () => {
+  const handleInitiatePayment = () => {
     if (!selectedAddress || !paymentMethod) return;
+    setShowPaymentGateway(true);
+  };
 
+  const handlePaymentSuccess = async () => {
+    setShowPaymentGateway(false);
     setPlacing(true);
     setError('');
 
     try {
-      // Step 1: Create order
       const orderRes = await api.post('/checkout', {
         addressId: selectedAddress,
         paymentMethod,
@@ -99,16 +104,12 @@ const Checkout = () => {
 
       const order = orderRes.data.data.order;
 
-      // Step 2: Process payment
       await api.post('/payments/process', {
         orderId: order._id,
         method: paymentMethod,
       });
 
-      // Step 3: Update cart count
       await fetchCartCount();
-
-      // Navigate to order confirmation
       navigate('/my-orders', { state: { newOrderId: order._id } });
     } catch (err) {
       setError(err.response?.data?.error?.message || 'Failed to place order');
@@ -275,13 +276,23 @@ const Checkout = () => {
 
             <div className="step-buttons">
               <button className="btn-back" onClick={() => setStep(2)}>Back</button>
-              <button className="btn-place-order" onClick={handlePlaceOrder} disabled={placing}>
+              <button className="btn-place-order" onClick={handleInitiatePayment} disabled={placing}>
                 {placing ? 'Placing Order...' : `Place Order — ₹${cartData.charges.grandTotal.toLocaleString()}`}
               </button>
             </div>
           </div>
         )}
       </div>
+
+      {showPaymentGateway && (
+        <PaymentGateway
+          method={paymentMethod}
+          amount={cartData.charges.grandTotal}
+          onSuccess={handlePaymentSuccess}
+          onCancel={() => setShowPaymentGateway(false)}
+        />
+      )}
+
       <Footer />
     </>
   );

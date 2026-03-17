@@ -165,12 +165,13 @@ const SearchBar = () => {
                   {trending.map((t, i) => (
                     <div
                       key={i}
-                      className="search-dropdown-item"
+                      className="search-dropdown-item trending-item"
                       onClick={() => {
                         setQuery(t.query);
                         handleSearch(t.query);
                       }}
                     >
+                      <span className="trending-icon">╱╲╱</span>
                       {t.query}
                     </div>
                   ))}

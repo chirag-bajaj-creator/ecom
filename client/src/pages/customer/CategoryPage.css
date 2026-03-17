@@ -1,0 +1,17 @@
+.category-page-header {
+  text-align: center;
+  padding: 40px 0 24px;
+}
+
+.category-page-title {
+  font-size: 32px;
+  font-weight: 800;
+  color: #1a1a2e;
+  margin-bottom: 6px;
+  text-transform: capitalize;
+}
+
+.category-page-subtitle {
+  font-size: 14px;
+  color: #888;
+}

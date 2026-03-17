@@ -144,8 +144,22 @@ const DeliveryHistory = () => {
                   <span className="dh-customer">{d.customerName}</span>
                 </div>
                 <div className="dh-card-right">
-                  <span className="dh-earning">+₹{d.earning}</span>
-                  <span className="dh-badge">Delivered</span>
+                  {d.adminReviewStatus === 'pending_review' ? (
+                    <>
+                      <span className="dh-earning pipeline">₹{d.earning} (In Review)</span>
+                      <span className="dh-badge pending">Under Review</span>
+                    </>
+                  ) : d.adminReviewStatus === 'rejected' ? (
+                    <>
+                      <span className="dh-earning rejected">₹0</span>
+                      <span className="dh-badge rejected">Images Not Match</span>
+                    </>
+                  ) : (
+                    <>
+                      <span className="dh-earning">+₹{d.earning}</span>
+                      <span className="dh-badge">Delivered</span>
+                    </>
+                  )}
                 </div>
               </div>
               <div className="dh-card-bottom">

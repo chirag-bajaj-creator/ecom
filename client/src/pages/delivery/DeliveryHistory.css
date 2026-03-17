@@ -193,6 +193,11 @@
   font-weight: 600;
 }
 
+.dh-badge.pending { background: #fef3c7; color: #b45309; }
+.dh-badge.rejected { background: #fef2f2; color: #dc2626; }
+.dh-earning.pipeline { color: #b45309; font-size: 0.9rem; }
+.dh-earning.rejected { color: #dc2626; }
+
 .dh-card-bottom {
   display: flex;
   flex-wrap: wrap;

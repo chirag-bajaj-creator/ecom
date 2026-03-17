@@ -31,6 +31,13 @@ const deliveryTrackingSchema = new mongoose.Schema(
     photoVerified: { type: Boolean, default: false },
     verificationScore: { type: Number, default: null },
     verifiedAt: { type: Date, default: null },
+    adminReviewStatus: {
+      type: String,
+      enum: ["auto_approved", "pending_review", "approved", "rejected"],
+      default: null,
+    },
+    adminReviewedAt: { type: Date, default: null },
+    earningsCredited: { type: Boolean, default: false },
   },
   { timestamps: true }
 );

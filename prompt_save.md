@@ -178,3 +178,75 @@ remove the complex password checks simple password should be allowed and remove 
 their is image-copy.png i want like to change the form that each category should have the drop down for the fields like name,description,price,stock,imageurl,category and all should in the one form and should be added simulatenously like one category done then their si the fields name,description,price,stock,imageurl,category and the fields and their is the one more field is field number means how much type of differnet products under this category this is how admin add product should change it should show all the products on the user also as i want that it should follow same category in vertcial and products under category card form which is listed and followed by you in my website as we previously made
 ```
 
+## 2026-03-17 — Bulk Delete All Products
+**Context:** User wants a bulk delete option on admin products page to delete all products.
+```
+i wnat in admin products page to have bulk delet option to delet all prducts
+```
+
+## 2026-03-17 — Delete Button for Each User in Admin
+**Context:** User wants a delete button per user in admin users page to delete that user and their data.
+```
+i wnat the delet button for each user in the admin to dleet that user credentials
+```
+
+## 2026-03-17 — Signup 400 Error
+**Context:** User seeing 400 error on POST /api/v1/auth/signup, asked what the issue is.
+```
+at process.processTicksAndRejections (node:internal/process/task_queues:85:11) POST /api/v1/auth/signup 400 5.515 ms - 180 what is this issue
+```
+
+## 2026-03-17 — Auto Categories Hamburger in Navbar
+**Context:** When categories are created via add product or JSON upload, navbar should auto-show a hamburger menu with category names that redirect to products in same homepage style.
+```
+when certain cetgroies arwe made from add product or add by json the automatice hamburger button should be madfe in the hom page navabr should ahve the cvatgoies name and shoiuld redirect to the products as same style which home page ahs
+```
+
+## 2026-03-17 — Admin Changes Reflect on User Side Without Refresh
+**Context:** Any admin changes (products, categories, etc.) should reflect live on user side without refreshing.
+```
+one thing as i make any changes from admin it should reflect in users without rtefreshiung
+```
+
+## 2026-03-17 — Move Hamburger After Login for Better UX
+**Context:** User wants the categories hamburger menu moved to after the login/profile button for better UX.
+```
+hamburger should be after login i tis more ux benifit
+```
+
+## 2026-03-17 — Prod.json Images Not Showing + Prompt Saving Stopped
+**Context:** User asking why product images from prod.json aren't showing on website, and why prompt saving stopped.
+```
+see my prod.json and why on website when products is hwon why the real imegs which link i put is not showing and why you stopped saving my prompt in prompt_make_cahnges.md
+```
+
+## 2026-03-17 — Address Bar on Home Page
+**Context:** User wants an address bar on the home page showing existing addresses, add new address option, and detect live location feature.
+```
+i want you to make the adrss bar on the home page for the user so that he can see the adress it should ahve the existing adress and new adress ope and detect location to detect live location
+```
+
+## 2026-03-17 — Search by Name Only
+**Context:** User wants search to match product name only, not description.
+```
+dont search products with product description search with the product name only make change in the search bar
+```
+
+## 2026-03-17 — Trending Surge Sign on Product Cards
+**Context:** User wants a ╱╲╱ surge sign badge on product cards that are trending (based on trending searches).
+```
+their should be the surge sign for the tranding products — ╱╲╱ sign for products which are trending
+```
+
+## 2026-03-17 — Mock Payment Gateway
+**Context:** User wants a full custom mock payment gateway for all 3 methods (Credit/Debit, UPI, COD) with realistic UI but no real money. No external gateway (Stripe not in India, Razorpay needs PAN).
+```
+make the flow proper to ask for details dummy for credit card debit and upi and cod but no payment real
+```
+
+## 2026-03-17 — Delivery Photo Review System for Admin
+**Context:** When delivery confirmation photo is flagged for review (low similarity score), it should show in admin's delivery boy page. Admin must approve for earnings to be credited; if rejected, message "contact delivery boy" is sent.
+```
+delivery confirm pickup image which is being sent when it is flagged for review or any violation it should be reflect in the admin box on delivery boy page if admin accepts then only the delivery boy earns otherwise there should be the message contact delivery boy
+```
+

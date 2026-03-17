@@ -6,6 +6,12 @@ const DeliveryBoy = require('../models/DeliveryBoy');
 const DeliveryTracking = require('../models/DeliveryTracking');
 const Category = require('../models/Category');
 const ChargeConfig = require('../models/ChargeConfig');
+const CartItem = require('../models/CartItem');
+const Wishlist = require('../models/Wishlist');
+const Address = require('../models/Address');
+const RefreshToken = require('../models/RefreshToken');
+const SearchHistory = require('../models/SearchHistory');
+const { broadcastCatalogUpdate } = require('../websocket/deliverySocket');
 
 // GET /api/v1/admin/dashboard
 const getDashboardStats = async (req, res) => {
@@ -271,6 +277,7 @@ const cleanupProducts = async (req, res) => {
     const productResult = await Product.deleteMany({});
     const categoryResult = await Category.deleteMany({});
 
+    broadcastCatalogUpdate();
     res.json({
       message: 'All products and categories deleted',
       productsDeleted: productResult.deletedCount,
@@ -278,6 +285,177 @@ const cleanupProducts = async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({ message: 'Failed to cleanup', error: error.message });
+  }
+};
+
+// DELETE /api/v1/admin/cleanup-users
+const cleanupUsers = async (req, res) => {
+  try {
+    // Delete all non-admin users and all their related data
+    const [
+      usersResult,
+      ordersResult,
+      cartResult,
+      wishlistResult,
+      addressResult,
+      paymentResult,
+      trackingResult,
+      deliveryBoyResult,
+      tokenResult,
+      searchResult,
+    ] = await Promise.all([
+      User.deleteMany({ role: { $ne: 'admin' } }),
+      Order.deleteMany({}),
+      CartItem.deleteMany({}),
+      Wishlist.deleteMany({}),
+      Address.deleteMany({}),
+      Payment.deleteMany({}),
+      DeliveryTracking.deleteMany({}),
+      DeliveryBoy.deleteMany({}),
+      RefreshToken.deleteMany({}),
+      SearchHistory.deleteMany({}),
+    ]);
+
+    res.json({
+      message: 'All non-admin users and related data deleted',
+      deleted: {
+        users: usersResult.deletedCount,
+        orders: ordersResult.deletedCount,
+        cartItems: cartResult.deletedCount,
+        wishlists: wishlistResult.deletedCount,
+        addresses: addressResult.deletedCount,
+        payments: paymentResult.deletedCount,
+        tracking: trackingResult.deletedCount,
+        deliveryBoys: deliveryBoyResult.deletedCount,
+        tokens: tokenResult.deletedCount,
+        searchHistory: searchResult.deletedCount,
+      },
+    });
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to cleanup users', error: error.message });
+  }
+};
+
+// DELETE /api/v1/admin/users/:id
+const deleteUser = async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    if (user.role === 'admin') {
+      return res.status(403).json({ message: 'Cannot delete an admin user' });
+    }
+
+    // Delete user and all related data
+    await Promise.all([
+      Order.deleteMany({ userId: user._id }),
+      CartItem.deleteMany({ userId: user._id }),
+      Wishlist.deleteMany({ userId: user._id }),
+      Address.deleteMany({ userId: user._id }),
+      Payment.deleteMany({ userId: user._id }),
+      RefreshToken.deleteMany({ userId: user._id }),
+      SearchHistory.deleteMany({ userId: user._id }),
+    ]);
+
+    if (user.role === 'delivery') {
+      const deliveryBoy = await DeliveryBoy.findOne({ userId: user._id });
+      if (deliveryBoy) {
+        await DeliveryTracking.deleteMany({ deliveryBoyId: deliveryBoy._id });
+        await DeliveryBoy.deleteOne({ _id: deliveryBoy._id });
+      }
+    }
+
+    await User.deleteOne({ _id: user._id });
+
+    res.json({ message: `User "${user.name}" and all related data deleted` });
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to delete user', error: error.message });
+  }
+};
+
+// GET /api/v1/admin/delivery-reviews
+const getDeliveryReviews = async (req, res) => {
+  try {
+    const reviews = await DeliveryTracking.find({
+      adminReviewStatus: 'pending_review',
+      status: 'delivered',
+    })
+      .populate('orderId', 'grandTotal deliveryCharge deliveryAddress items')
+      .populate({
+        path: 'deliveryBoyId',
+        populate: { path: 'userId', select: 'name email phone' },
+      })
+      .sort({ deliveredAt: -1 })
+      .lean();
+
+    res.json({ success: true, data: { reviews } });
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to fetch reviews', error: error.message });
+  }
+};
+
+// PATCH /api/v1/admin/delivery-reviews/:trackingId
+const reviewDelivery = async (req, res) => {
+  try {
+    const { action } = req.body;
+    if (!['approve', 'reject'].includes(action)) {
+      return res.status(400).json({ message: 'Action must be "approve" or "reject"' });
+    }
+
+    const tracking = await DeliveryTracking.findById(req.params.trackingId);
+    if (!tracking) {
+      return res.status(404).json({ message: 'Tracking record not found' });
+    }
+
+    if (tracking.adminReviewStatus !== 'pending_review') {
+      return res.status(400).json({ message: 'This delivery is not pending review' });
+    }
+
+    tracking.adminReviewStatus = action === 'approve' ? 'approved' : 'rejected';
+    tracking.adminReviewedAt = new Date();
+    await tracking.save();
+
+    if (action === 'approve') {
+      // Credit earnings to delivery boy
+      const order = await Order.findById(tracking.orderId);
+      const earning = order ? (order.deliveryCharge || 30) : 30;
+
+      await DeliveryBoy.findByIdAndUpdate(tracking.deliveryBoyId, {
+        $inc: { totalEarnings: earning },
+      });
+
+      tracking.earningsCredited = true;
+      await tracking.save();
+    }
+
+    // Notify delivery boy via WebSocket
+    const { getWss } = require('../websocket/deliverySocket');
+    const wss = getWss();
+    if (wss) {
+      const deliveryBoy = await DeliveryBoy.findById(tracking.deliveryBoyId);
+      if (deliveryBoy) {
+        const msg = JSON.stringify({
+          type: 'review_result',
+          orderId: tracking.orderId.toString(),
+          status: tracking.adminReviewStatus,
+          message: action === 'approve'
+            ? 'Your delivery has been approved. Earnings credited.'
+            : 'Delivery images did not match. Earning not credited for this order.',
+        });
+        wss.clients.forEach((client) => {
+          if (client.readyState === 1 && client.deliveryBoyUserId === deliveryBoy.userId.toString()) {
+            client.send(msg);
+          }
+        });
+      }
+    }
+
+    res.json({
+      success: true,
+      message: action === 'approve' ? 'Delivery approved, earnings credited' : 'Delivery rejected, delivery boy notified',
+    });
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to review delivery', error: error.message });
   }
 };
 
@@ -290,5 +468,9 @@ module.exports = {
   getDeliveryBoys,
   getCharges,
   updateCharges,
-  cleanupProducts
+  cleanupProducts,
+  cleanupUsers,
+  deleteUser,
+  getDeliveryReviews,
+  reviewDelivery
 };

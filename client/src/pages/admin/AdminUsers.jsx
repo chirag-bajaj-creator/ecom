@@ -31,6 +31,18 @@ const AdminUsers = () => {
     }
   };
 
+  const handleDeleteUser = async (user) => {
+    if (!window.confirm(`Are you sure you want to delete "${user.name}" (${user.email})? All their data will be permanently removed.`)) return;
+    try {
+      const { data } = await api.delete(`/admin/users/${user._id}`);
+      alert(data.message);
+      fetchUsers();
+    } catch (error) {
+      console.error('Failed to delete user:', error);
+      alert(error.response?.data?.message || 'Failed to delete user');
+    }
+  };
+
   const roleColors = {
     user: '#3b82f6',
     delivery: '#f59e0b',
@@ -76,6 +88,7 @@ const AdminUsers = () => {
                   <th>Phone</th>
                   <th>Role</th>
                   <th>Joined</th>
+                  <th>Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -95,9 +108,16 @@ const AdminUsers = () => {
                       </span>
                     </td>
                     <td className="date-cell">{new Date(user.createdAt).toLocaleDateString()}</td>
+                    <td>
+                      {user.role !== 'admin' ? (
+                        <button className="user-delete-btn" onClick={() => handleDeleteUser(user)}>Delete</button>
+                      ) : (
+                        <span className="no-action">—</span>
+                      )}
+                    </td>
                   </tr>
                 )) : (
-                  <tr><td colSpan="6" className="no-data">No users found</td></tr>
+                  <tr><td colSpan="7" className="no-data">No users found</td></tr>
                 )}
               </tbody>
             </table>

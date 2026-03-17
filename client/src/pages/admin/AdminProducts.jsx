@@ -27,6 +27,11 @@ const AdminProducts = () => {
   const [bulkProducts, setBulkProducts] = useState([]);
   const [bulkGenerated, setBulkGenerated] = useState(false);
   const [bulkSubmitting, setBulkSubmitting] = useState(false);
+  const [showJsonModal, setShowJsonModal] = useState(false);
+  const [jsonFile, setJsonFile] = useState(null);
+  const [jsonPreview, setJsonPreview] = useState(null);
+  const [jsonError, setJsonError] = useState('');
+  const [jsonSubmitting, setJsonSubmitting] = useState(false);
 
   useEffect(() => {
     fetchProducts();
@@ -111,6 +116,79 @@ const AdminProducts = () => {
     }
   };
 
+  const openJsonModal = () => {
+    setJsonFile(null);
+    setJsonPreview(null);
+    setJsonError('');
+    setShowJsonModal(true);
+  };
+
+  const handleJsonFileChange = (e) => {
+    const file = e.target.files[0];
+    setJsonError('');
+    setJsonPreview(null);
+
+    if (!file) {
+      setJsonFile(null);
+      return;
+    }
+
+    if (!file.name.endsWith('.json')) {
+      setJsonError('Please upload a .json file');
+      setJsonFile(null);
+      return;
+    }
+
+    setJsonFile(file);
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      try {
+        const parsed = JSON.parse(event.target.result);
+        const data = Array.isArray(parsed) ? parsed : [parsed];
+
+        for (let i = 0; i < data.length; i++) {
+          const entry = data[i];
+          if (!entry.category || !Array.isArray(entry.productsList) || entry.productsList.length === 0) {
+            setJsonError(`Entry #${i + 1}: must have "category" and "productsList" fields`);
+            setJsonPreview(null);
+            return;
+          }
+          for (let j = 0; j < entry.productsList.length; j++) {
+            if (!entry.productsList[j].name || entry.productsList[j].price === undefined) {
+              setJsonError(`Entry #${i + 1}, Product #${j + 1}: "name" and "price" are required`);
+              setJsonPreview(null);
+              return;
+            }
+          }
+        }
+
+        setJsonPreview(data);
+      } catch {
+        setJsonError('Invalid JSON format');
+        setJsonPreview(null);
+      }
+    };
+    reader.readAsText(file);
+  };
+
+  const handleJsonSubmit = async () => {
+    if (!jsonPreview) return;
+    setJsonSubmitting(true);
+    try {
+      const res = await api.post('/products/bulk-json', { categories: jsonPreview });
+      alert(`Successfully created ${res.data.data.totalCreated} products across ${res.data.data.categories.length} categories`);
+      setShowJsonModal(false);
+      fetchProducts();
+      fetchCategories();
+    } catch (error) {
+      console.error('Failed to upload JSON products:', error.response?.data);
+      alert(error.response?.data?.error?.message || 'Failed to upload products');
+    } finally {
+      setJsonSubmitting(false);
+    }
+  };
+
   const openEditModal = (product) => {
     setEditingProduct(product);
     setForm({
@@ -149,6 +227,19 @@ const AdminProducts = () => {
     }
   };
 
+  const handleDeleteAll = async () => {
+    if (!window.confirm('Are you sure you want to delete ALL products and categories? This cannot be undone.')) return;
+    try {
+      const { data } = await api.delete('/admin/cleanup-products');
+      alert(`Deleted ${data.productsDeleted} products and ${data.categoriesDeleted} categories`);
+      fetchProducts();
+      fetchCategories();
+    } catch (error) {
+      console.error('Failed to delete all products:', error);
+      alert(error.response?.data?.message || 'Failed to delete all products');
+    }
+  };
+
   const handleDelete = async (id) => {
     if (!window.confirm('Are you sure you want to delete this product?')) return;
     try {
@@ -177,7 +268,11 @@ const AdminProducts = () => {
       <main className="admin-content">
         <div className="admin-page-header">
           <h1 className="admin-page-title">Products</h1>
-          <button className="admin-add-btn" onClick={openAddModal}>+ Add Products</button>
+          <div className="admin-header-actions">
+            <button className="admin-add-btn" onClick={openAddModal}>+ Add Products</button>
+            <button className="admin-add-btn json-upload-btn" onClick={openJsonModal}>Add by JSON</button>
+            <button className="admin-add-btn bulk-delete-btn" onClick={handleDeleteAll}>Delete All</button>
+          </div>
         </div>
 
         <div className="admin-table-container">
@@ -416,6 +511,90 @@ const AdminProducts = () => {
                   </div>
                 </form>
               )}
+            </div>
+          </div>
+        )}
+        {/* JSON upload modal */}
+        {showJsonModal && (
+          <div className="admin-modal-overlay" onClick={() => setShowJsonModal(false)}>
+            <div className="admin-modal bulk-modal" onClick={e => e.stopPropagation()}>
+              <h2>Add Products by JSON</h2>
+
+              <div className="json-format-hint">
+                <strong>Expected format:</strong>
+                <pre>{`[
+  {
+    "category": "Category Name",
+    "products": 2,
+    "productsList": [
+      { "name": "...", "description": "...", "price": 999, "stock": 50, "imageUrl": "..." },
+      { "name": "...", "description": "...", "price": 499, "stock": 30, "imageUrl": "..." }
+    ]
+  }
+]`}</pre>
+              </div>
+
+              <div className="modal-field">
+                <label>Upload JSON File</label>
+                <input
+                  type="file"
+                  accept=".json"
+                  onChange={handleJsonFileChange}
+                  className="json-file-input"
+                />
+              </div>
+
+              {jsonError && <div className="json-error">{jsonError}</div>}
+
+              {jsonPreview && (
+                <div className="json-preview">
+                  <h3>Preview</h3>
+                  <div className="json-preview-list">
+                    {jsonPreview.map((entry, i) => (
+                      <div key={i} className="json-preview-category">
+                        <div className="json-preview-category-header">
+                          <span className="category-tag">{entry.category}</span>
+                          <span className="json-product-count">{entry.productsList.length} product(s)</span>
+                        </div>
+                        <table className="json-preview-table">
+                          <thead>
+                            <tr>
+                              <th>#</th>
+                              <th>Name</th>
+                              <th>Price</th>
+                              <th>Stock</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {entry.productsList.map((p, j) => (
+                              <tr key={j}>
+                                <td>{j + 1}</td>
+                                <td>{p.name}</td>
+                                <td>₹{Number(p.price).toLocaleString()}</td>
+                                <td>{p.stock || 0}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              <div className="modal-actions">
+                <button type="button" className="modal-cancel-btn" onClick={() => setShowJsonModal(false)}>
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  className="modal-save-btn"
+                  disabled={!jsonPreview || jsonSubmitting}
+                  onClick={handleJsonSubmit}
+                >
+                  {jsonSubmitting ? 'Uploading...' : 'Upload All Products'}
+                </button>
+              </div>
             </div>
           </div>
         )}

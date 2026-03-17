@@ -9,18 +9,26 @@ const getCart = async (req, res, next) => {
       .populate('productId', 'name image price stock description')
       .sort({ addedAt: -1 });
 
+    // Remove cart items whose product was deleted
+    const orphaned = items.filter((item) => !item.productId);
+    if (orphaned.length > 0) {
+      await CartItem.deleteMany({ _id: { $in: orphaned.map((i) => i._id) } });
+    }
+
     let subtotal = 0;
-    const cartItems = items.map((item) => {
-      const itemTotal = item.productId.price * item.quantity;
-      subtotal += itemTotal;
-      return {
-        _id: item._id,
-        product: item.productId,
-        quantity: item.quantity,
-        itemTotal,
-        addedAt: item.addedAt,
-      };
-    });
+    const cartItems = items
+      .filter((item) => item.productId)
+      .map((item) => {
+        const itemTotal = item.productId.price * item.quantity;
+        subtotal += itemTotal;
+        return {
+          _id: item._id,
+          product: item.productId,
+          quantity: item.quantity,
+          itemTotal,
+          addedAt: item.addedAt,
+        };
+      });
 
     const config = await ChargeConfig.findOne() || { deliveryCharge: 40, freeDeliveryThreshold: 500, surgeCharge: 0, handlingCharge: 5 };
     const deliveryCharge = subtotal >= config.freeDeliveryThreshold ? 0 : config.deliveryCharge;

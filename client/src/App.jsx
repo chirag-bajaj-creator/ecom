@@ -21,6 +21,7 @@ import AdminOrders from './pages/admin/AdminOrders';
 import AdminUsers from './pages/admin/AdminUsers';
 import AdminDelivery from './pages/admin/AdminDelivery';
 import AdminCharges from './pages/admin/AdminCharges';
+import CategoryPage from './pages/customer/CategoryPage';
 
 function App() {
   const { user } = useAuth();
@@ -35,6 +36,7 @@ function App() {
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/reset-password" element={<ResetPassword />} />
       <Route path="/search" element={<SearchResults />} />
+      <Route path="/category/:slug" element={<CategoryPage />} />
       <Route path="/add-to-cart" element={<Cart />} />
       <Route path="/wishlist" element={<Wishlist />} />
       <Route path="/checkout" element={<Checkout />} />

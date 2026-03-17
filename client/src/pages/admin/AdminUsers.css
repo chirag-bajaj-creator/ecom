@@ -35,3 +35,24 @@
   color: #fff;
   text-transform: uppercase;
 }
+
+.user-delete-btn {
+  padding: 5px 12px;
+  background: #ef4444;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.user-delete-btn:hover {
+  background: #dc2626;
+}
+
+.no-action {
+  color: #ccc;
+  font-size: 14px;
+}

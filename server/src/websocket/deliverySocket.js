@@ -14,6 +14,18 @@ const initWebSocket = (server) => {
     const type = params.type; // "delivery" or "tracking"
     const orderId = params.orderId; // for customer tracking
 
+    // Browse connections don't need auth
+    if (type === "browse") {
+      ws.connectionType = "browse";
+
+      ws.isAlive = true;
+      ws.on("pong", () => { ws.isAlive = true; });
+      ws.on("close", () => { console.log("Browse client disconnected"); });
+      ws.on("error", (err) => { console.error("WebSocket error:", err.message); });
+      console.log("Browse client connected");
+      return;
+    }
+
     if (!token) {
       ws.close(4001, "Token required");
       return;
@@ -81,4 +93,14 @@ const initWebSocket = (server) => {
 
 const getWss = () => wss;
 
-module.exports = { initWebSocket, getWss };
+const broadcastCatalogUpdate = () => {
+  if (!wss) return;
+  const message = JSON.stringify({ type: "catalog_update" });
+  wss.clients.forEach((client) => {
+    if (client.readyState === 1 && client.connectionType === "browse") {
+      client.send(message);
+    }
+  });
+};
+
+module.exports = { initWebSocket, getWss, broadcastCatalogUpdate };

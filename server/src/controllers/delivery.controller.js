@@ -302,16 +302,20 @@ const confirmDelivery = async (req, res, next) => {
     tracking.photoVerified = verification.verified;
     tracking.verificationScore = verification.similarity;
     tracking.verifiedAt = new Date();
+    tracking.adminReviewStatus = verification.verified ? "auto_approved" : "pending_review";
+    tracking.earningsCredited = verification.verified;
     await tracking.save();
 
     // Update order status
     const order = await Order.findByIdAndUpdate(orderId, { status: "delivered" }, { new: true });
 
-    // Update delivery boy stats
+    // Only credit earnings if auto-verified, otherwise hold for admin review
     const deliveryEarning = order.deliveryCharge || 30;
     deliveryBoy.currentOrderId = null;
     deliveryBoy.totalDeliveries += 1;
-    deliveryBoy.totalEarnings += deliveryEarning;
+    if (verification.verified) {
+      deliveryBoy.totalEarnings += deliveryEarning;
+    }
     await deliveryBoy.save();
 
     // Get delivery boy name for admin notification
@@ -340,6 +344,20 @@ const confirmDelivery = async (req, res, next) => {
           client.send(adminNotification);
         }
       });
+
+      // If flagged, notify delivery boy that earning is in pipeline
+      if (!verification.verified) {
+        const deliveryNotification = JSON.stringify({
+          type: "earning_pipeline",
+          orderId,
+          message: "Earning in pipeline — under review. You will be notified once reviewed.",
+        });
+        wss.clients.forEach((client) => {
+          if (client.readyState === 1 && client.deliveryBoyUserId === deliveryBoy.userId.toString()) {
+            client.send(deliveryNotification);
+          }
+        });
+      }
     }
 
     // Broadcast delivered status to customer

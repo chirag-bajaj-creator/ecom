@@ -1,5 +1,6 @@
 const Product = require('../models/Product');
 const Category = require('../models/Category');
+const { broadcastCatalogUpdate } = require('../websocket/deliverySocket');
 
 // GET /api/v1/categories
 const getCategories = async (req, res, next) => {
@@ -72,9 +73,7 @@ const searchProducts = async (req, res, next) => {
     const skip = (pageNum - 1) * limitNum;
 
     const regex = new RegExp(_escapedQ || q.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i');
-    const filter = {
-      $or: [{ name: regex }, { description: regex }],
-    };
+    const filter = { name: regex };
 
     const [products, total] = await Promise.all([
       Product.find(filter)
@@ -200,6 +199,7 @@ const createBulkProducts = async (req, res, next) => {
     }));
 
     const created = await Product.insertMany(productDocs);
+    broadcastCatalogUpdate();
 
     res.status(201).json({
       success: true,
@@ -240,6 +240,7 @@ const createProduct = async (req, res, next) => {
       categoryId: category._id
     });
 
+    broadcastCatalogUpdate();
     res.status(201).json({ success: true, data: { product } });
   } catch (error) {
     next(error);
@@ -275,6 +276,7 @@ const updateProduct = async (req, res, next) => {
     if (image !== undefined) product.image = image;
 
     await product.save();
+    broadcastCatalogUpdate();
 
     res.json({ success: true, data: { product } });
   } catch (error) {
@@ -293,10 +295,84 @@ const deleteProduct = async (req, res, next) => {
       });
     }
 
+    broadcastCatalogUpdate();
     res.json({ success: true, message: 'Product deleted' });
   } catch (error) {
     next(error);
   }
 };
 
-module.exports = { getCategories, getProducts, searchProducts, getSuggestions, getProductById, createProduct, createBulkProducts, updateProduct, deleteProduct };
+// POST /api/v1/products/bulk-json (admin)
+const createBulkJsonProducts = async (req, res, next) => {
+  try {
+    const { categories } = req.body;
+
+    if (!Array.isArray(categories) || categories.length === 0) {
+      return res.status(400).json({
+        success: false,
+        error: { code: 'INVALID_FORMAT', message: 'Expected an array of categories with products' },
+      });
+    }
+
+    let totalCreated = 0;
+    const results = [];
+
+    for (let c = 0; c < categories.length; c++) {
+      const entry = categories[c];
+
+      if (!entry.category || !Array.isArray(entry.productsList) || entry.productsList.length === 0) {
+        return res.status(400).json({
+          success: false,
+          error: { code: 'INVALID_FORMAT', message: `Category entry #${c + 1}: 'category' and 'productsList' are required` },
+        });
+      }
+
+      if (entry.productsList.length > 50) {
+        return res.status(400).json({
+          success: false,
+          error: { code: 'TOO_MANY', message: `Category "${entry.category}": maximum 50 products per category` },
+        });
+      }
+
+      for (let i = 0; i < entry.productsList.length; i++) {
+        const p = entry.productsList[i];
+        if (!p.name || p.price === undefined || p.price === null) {
+          return res.status(400).json({
+            success: false,
+            error: { code: 'MISSING_FIELDS', message: `Category "${entry.category}", Product #${i + 1}: name and price are required` },
+          });
+        }
+      }
+
+      const categorySlug = entry.category.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+      let category = await Category.findOne({ slug: categorySlug });
+      if (!category) {
+        category = await Category.create({ name: entry.category, slug: categorySlug });
+      }
+
+      const productDocs = entry.productsList.map((p) => ({
+        name: p.name,
+        slug: p.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''),
+        description: p.description || '',
+        price: Number(p.price),
+        stock: p.stock ? Number(p.stock) : 0,
+        image: p.imageUrl || p.image || null,
+        categoryId: category._id,
+      }));
+
+      const created = await Product.insertMany(productDocs);
+      totalCreated += created.length;
+      results.push({ category: entry.category, productsCreated: created.length });
+    }
+
+    broadcastCatalogUpdate();
+    res.status(201).json({
+      success: true,
+      data: { totalCreated, categories: results },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+module.exports = { getCategories, getProducts, searchProducts, getSuggestions, getProductById, createProduct, createBulkProducts, createBulkJsonProducts, updateProduct, deleteProduct };

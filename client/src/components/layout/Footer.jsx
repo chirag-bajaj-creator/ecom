@@ -6,8 +6,8 @@ const Footer = () => {
     <footer className="footer">
       <div className="footer-inner">
         <div className="footer-col">
-          <h3 className="footer-brand">ShopKart</h3>
-          <p>contact@shopkart.com</p>
+          <h3 className="footer-brand">ChiragKart</h3>
+          <p>contact@chiragkart.com</p>
           <p>+91 98765 43210</p>
         </div>
 
@@ -21,7 +21,7 @@ const Footer = () => {
       </div>
 
       <div className="footer-bottom">
-        <p>&copy; 2026 ShopKart. All rights reserved.</p>
+        <p>&copy; 2026 ChiragKart. All rights reserved.</p>
       </div>
     </footer>
   );

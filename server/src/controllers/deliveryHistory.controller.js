@@ -77,6 +77,8 @@ const getDeliveryHistory = async (req, res, next) => {
           pickedUpAt: t.pickedUpAt,
           deliveredAt: t.deliveredAt,
           status: t.status,
+          adminReviewStatus: t.adminReviewStatus || "auto_approved",
+          earningsCredited: t.earningsCredited !== false,
         };
       })
     );
@@ -135,10 +137,11 @@ const getEarnings = async (req, res, next) => {
       DeliveryTracking.find({ ...baseFilter, deliveredAt: { $gte: monthStart } }).lean(),
     ]);
 
-    // Calculate earnings from orders
+    // Calculate earnings from orders (only count credited earnings)
     const calcEarnings = async (trackings) => {
       let total = 0;
       for (const t of trackings) {
+        if (t.earningsCredited === false) continue;
         const order = await Order.findById(t.orderId).select("deliveryCharge").lean();
         total += order?.deliveryCharge || 30;
       }

@@ -103,3 +103,16 @@
 .search-dropdown-header button:hover {
   text-decoration: underline;
 }
+
+.trending-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.trending-icon {
+  color: #ff4500;
+  font-weight: 700;
+  font-size: 13px;
+  flex-shrink: 0;
+}

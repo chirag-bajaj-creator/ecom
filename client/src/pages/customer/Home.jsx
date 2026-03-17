@@ -1,10 +1,12 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import api from '../../api/axios';
 import Navbar from '../../components/layout/Navbar';
 import Footer from '../../components/layout/Footer';
 import ProductCard from '../../components/product/ProductCard';
 import SkeletonCard from '../../components/product/SkeletonCard';
 import ProductModal from '../../components/product/ProductModal';
+import useCatalogUpdates from '../../hooks/useCatalogUpdates';
+import AddressBar from '../../components/address/AddressBar';
 import './Home.css';
 
 const Home = () => {
@@ -12,9 +14,7 @@ const Home = () => {
   const [productsByCategory, setProductsByCategory] = useState({});
   const [loading, setLoading] = useState(true);
   const [selectedProductId, setSelectedProductId] = useState(null);
-
-  useEffect(() => {
-    const fetchData = async () => {
+  const fetchData = useCallback(async () => {
       try {
         const catRes = await api.get('/categories');
         const cats = catRes.data.data.categories;
@@ -35,19 +35,23 @@ const Home = () => {
       } finally {
         setLoading(false);
       }
-    };
-
-    fetchData();
   }, []);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  useCatalogUpdates(fetchData);
 
   return (
     <div className="home">
       <Navbar />
+      <AddressBar />
 
       <main className="home-content">
         <div className="container">
           <section className="hero-section">
-            <h1>Welcome to ShopKart</h1>
+            <h1>Welcome to ChiragKart</h1>
             <p>Your one-stop marketplace for everything you need</p>
           </section>
 

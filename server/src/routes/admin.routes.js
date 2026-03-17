@@ -11,7 +11,11 @@ const {
   getDeliveryBoys,
   getCharges,
   updateCharges,
-  cleanupProducts
+  cleanupProducts,
+  cleanupUsers,
+  deleteUser,
+  getDeliveryReviews,
+  reviewDelivery
 } = require('../controllers/admin.controller');
 
 // All routes require admin role
@@ -27,9 +31,14 @@ router.post('/orders/:id/cancel', validateObjectId('id'), cancelOrder);
 
 // Users
 router.get('/users', getAllUsers);
+router.delete('/users/:id', validateObjectId('id'), deleteUser);
 
 // Delivery Boys
 router.get('/delivery-boys', getDeliveryBoys);
+
+// Delivery Photo Reviews
+router.get('/delivery-reviews', getDeliveryReviews);
+router.patch('/delivery-reviews/:trackingId', validateObjectId('trackingId'), reviewDelivery);
 
 // Charges
 router.get('/charges', getCharges);
@@ -37,5 +46,6 @@ router.patch('/charges', validateCharges, updateCharges);
 
 // Cleanup
 router.delete('/cleanup-products', cleanupProducts);
+router.delete('/cleanup-users', cleanupUsers);
 
 module.exports = router;

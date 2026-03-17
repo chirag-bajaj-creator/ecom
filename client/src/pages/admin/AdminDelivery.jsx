@@ -5,10 +5,13 @@ import './AdminDelivery.css';
 
 const AdminDelivery = () => {
   const [deliveryBoys, setDeliveryBoys] = useState([]);
+  const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [reviewLoading, setReviewLoading] = useState({});
 
   useEffect(() => {
     fetchDeliveryBoys();
+    fetchReviews();
   }, []);
 
   const fetchDeliveryBoys = async () => {
@@ -19,6 +22,28 @@ const AdminDelivery = () => {
       console.error('Failed to fetch delivery boys:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchReviews = async () => {
+    try {
+      const { data } = await api.get('/admin/delivery-reviews');
+      setReviews(data.data?.reviews || []);
+    } catch (error) {
+      console.error('Failed to fetch reviews:', error);
+    }
+  };
+
+  const handleReview = async (trackingId, action) => {
+    setReviewLoading((prev) => ({ ...prev, [trackingId]: action }));
+    try {
+      await api.patch(`/admin/delivery-reviews/${trackingId}`, { action });
+      setReviews((prev) => prev.filter((r) => r._id !== trackingId));
+      fetchDeliveryBoys();
+    } catch (error) {
+      alert(error.response?.data?.message || 'Failed to process review');
+    } finally {
+      setReviewLoading((prev) => ({ ...prev, [trackingId]: null }));
     }
   };
 
@@ -58,6 +83,78 @@ const AdminDelivery = () => {
             <div className="stat-value">{totalDeliveries}</div>
           </div>
         </div>
+
+        {reviews.length > 0 && (
+          <div className="review-section">
+            <h2 className="review-section-title">
+              Flagged Deliveries — Pending Review ({reviews.length})
+            </h2>
+            <div className="review-cards-grid">
+              {reviews.map((review) => (
+                <div key={review._id} className="review-card">
+                  <div className="review-card-header">
+                    <span className="review-order-id">
+                      Order #{review.orderId?._id?.slice(-6) || 'N/A'}
+                    </span>
+                    <span className="review-score-badge">
+                      {review.verificationScore}% Match
+                    </span>
+                  </div>
+
+                  <div className="review-delivery-boy">
+                    Delivery Boy: <strong>{review.deliveryBoyId?.userId?.name || 'Unknown'}</strong>
+                    {review.deliveryBoyId?.userId?.phone && (
+                      <span> — {review.deliveryBoyId.userId.phone}</span>
+                    )}
+                  </div>
+
+                  <div className="review-photos">
+                    <div className="review-photo">
+                      <div className="review-photo-label">Pickup Photo</div>
+                      {review.pickupPhotoUrl ? (
+                        <img src={review.pickupPhotoUrl} alt="Pickup" />
+                      ) : (
+                        <div className="review-photo-missing">No photo</div>
+                      )}
+                    </div>
+                    <div className="review-photo">
+                      <div className="review-photo-label">Delivery Photo</div>
+                      {review.deliveryPhotoUrl ? (
+                        <img src={review.deliveryPhotoUrl} alt="Delivery" />
+                      ) : (
+                        <div className="review-photo-missing">No photo</div>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="review-details">
+                    <span>Delivered: {new Date(review.deliveredAt).toLocaleString()}</span>
+                    {review.orderId?.deliveryAddress && (
+                      <span>{review.orderId.deliveryAddress.city}, {review.orderId.deliveryAddress.state}</span>
+                    )}
+                  </div>
+
+                  <div className="review-actions">
+                    <button
+                      className="review-approve-btn"
+                      onClick={() => handleReview(review._id, 'approve')}
+                      disabled={!!reviewLoading[review._id]}
+                    >
+                      {reviewLoading[review._id] === 'approve' ? 'Approving...' : 'Approve & Credit Earnings'}
+                    </button>
+                    <button
+                      className="review-reject-btn"
+                      onClick={() => handleReview(review._id, 'reject')}
+                      disabled={!!reviewLoading[review._id]}
+                    >
+                      {reviewLoading[review._id] === 'reject' ? 'Rejecting...' : 'Reject — Images Not Match'}
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         {loading ? (
           <div className="admin-loading">Loading delivery boys...</div>
