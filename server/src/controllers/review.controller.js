@@ -1,5 +1,6 @@
 const Review = require('../models/Review');
 const Order = require('../models/Order');
+const mongoose = require('mongoose');
 
 exports.createReview = async (req, res) => {
   try {
@@ -56,7 +57,7 @@ exports.getReviews = async (req, res) => {
         .populate('userId', 'name'),
       Review.countDocuments(filter),
       Review.aggregate([
-        { $match: { productId: new require('mongoose').Types.ObjectId(productId) } },
+        { $match: { productId: new mongoose.Types.ObjectId(productId) } },
         {
           $group: {
             _id: null,

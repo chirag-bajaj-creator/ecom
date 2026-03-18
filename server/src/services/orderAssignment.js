@@ -179,7 +179,7 @@ const assignOrder = async (orderId) => {
     }
 
     console.log(
-      `Order ${orderId} assigned to ${nearest.userId.name} (${sorted[0].distance.toFixed(1)}km, ETA: ${estimatedMinutes} mins)`
+      `Order ${orderId} assigned to ${nearest.userId.name} (ETA: ${estimatedMinutes} mins)`
     );
 
     return { deliveryBoy: nearest, tracking };
