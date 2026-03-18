@@ -16,12 +16,6 @@ const DeliveryHistory = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!isAuthenticated || user?.role !== 'delivery') {
-      navigate('/login');
-    }
-  }, [isAuthenticated, user]);
-
-  useEffect(() => {
     fetchHistory();
   }, [period, page]);
 

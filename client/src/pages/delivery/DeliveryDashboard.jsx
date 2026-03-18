@@ -39,12 +39,6 @@ const DeliveryDashboard = () => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  useEffect(() => {
-    if (!isAuthenticated || user?.role !== 'delivery') {
-      navigate('/login');
-    }
-  }, [isAuthenticated, user]);
-
   const handleToggle = async () => {
     setToggling(true);
     try {
