@@ -34,7 +34,7 @@ const passwordResetLimiter = isTest ? noOp : rateLimit({
   },
 });
 
-router.post('/signup', signupLimiter, validateSignup, signup);
+router.post('/signup', validateSignup, signup);
 router.post('/login', validateLogin, login);
 router.post('/logout', authenticate, logout);
 router.post('/refresh-token', refreshAccessToken);
