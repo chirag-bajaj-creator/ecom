@@ -19,9 +19,12 @@ export const DeliveryProvider = ({ children }) => {
   const [tracking, setTracking] = useState(null);
   const [earnings, setEarnings] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [notifications, setNotifications] = useState([]);
+  const [unreadCount, setUnreadCount] = useState(0);
 
   const wsRef = useRef(null);
   const locationIntervalRef = useRef(null);
+  const orderPollRef = useRef(null);
 
   const isDelivery = isAuthenticated && user?.role === 'delivery';
 
@@ -29,6 +32,7 @@ export const DeliveryProvider = ({ children }) => {
   useEffect(() => {
     if (isDelivery) {
       fetchStatus();
+      fetchNotifications();
     } else {
       setLoading(false);
     }
@@ -36,17 +40,20 @@ export const DeliveryProvider = ({ children }) => {
     return () => {
       disconnectWebSocket();
       stopLocationPolling();
+      stopOrderPolling();
     };
   }, [isDelivery]);
 
-  // Manage WebSocket + GPS when online status changes
+  // Manage WebSocket + GPS + order polling when online status changes
   useEffect(() => {
     if (isOnline && isDelivery) {
       connectWebSocket();
       startLocationPolling();
+      startOrderPolling();
     } else {
       disconnectWebSocket();
       stopLocationPolling();
+      stopOrderPolling();
     }
   }, [isOnline, isDelivery]);
 
@@ -132,6 +139,64 @@ export const DeliveryProvider = ({ children }) => {
     }
   };
 
+  const fetchNotifications = async () => {
+    try {
+      const res = await api.get('/notifications');
+      setNotifications(res.data.data.notifications);
+      setUnreadCount(res.data.data.unreadCount);
+    } catch (err) {
+      // silent
+    }
+  };
+
+  const markNotificationRead = async (id) => {
+    try {
+      await api.patch(`/notifications/${id}/read`);
+      setNotifications((prev) =>
+        prev.map((n) => (n._id === id ? { ...n, read: true } : n))
+      );
+      setUnreadCount((prev) => Math.max(0, prev - 1));
+    } catch (err) {
+      // silent
+    }
+  };
+
+  const markAllNotificationsRead = async () => {
+    try {
+      await api.patch('/notifications/read-all');
+      setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
+      setUnreadCount(0);
+    } catch (err) {
+      // silent
+    }
+  };
+
+  // ===== Order Polling (fallback for WebSocket) =====
+  const startOrderPolling = () => {
+    stopOrderPolling();
+    orderPollRef.current = setInterval(async () => {
+      // Only poll if no current order (waiting for assignment)
+      if (!currentOrder) {
+        try {
+          const res = await api.get('/delivery/current-order');
+          if (res.data.data.order) {
+            setCurrentOrder(res.data.data.order);
+            setTracking(res.data.data.tracking);
+          }
+        } catch (err) {
+          // silent
+        }
+      }
+    }, 10000);
+  };
+
+  const stopOrderPolling = () => {
+    if (orderPollRef.current) {
+      clearInterval(orderPollRef.current);
+      orderPollRef.current = null;
+    }
+  };
+
   // ===== WebSocket =====
   const connectWebSocket = () => {
     disconnectWebSocket();
@@ -160,6 +225,9 @@ export const DeliveryProvider = ({ children }) => {
         const data = JSON.parse(event.data);
         if (data.type === 'order_assigned') {
           fetchCurrentOrder();
+        } else if (data.type === 'review_result') {
+          // Refresh notifications from DB when review result arrives
+          fetchNotifications();
         }
       } catch (err) {
         // silent
@@ -227,11 +295,16 @@ export const DeliveryProvider = ({ children }) => {
     tracking,
     earnings,
     loading,
+    notifications,
+    unreadCount,
     toggleOnlineStatus,
     fetchCurrentOrder,
     markPickedUp,
     markDelivered,
     fetchEarnings,
+    fetchNotifications,
+    markNotificationRead,
+    markAllNotificationsRead,
   };
 
   return <DeliveryContext.Provider value={value}>{children}</DeliveryContext.Provider>;

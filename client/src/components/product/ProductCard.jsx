@@ -1,7 +1,9 @@
+import { useNavigate } from 'react-router-dom';
 import { useCart } from '../../contexts/CartContext';
 import './ProductCard.css';
 
-const ProductCard = ({ product, onProductClick }) => {
+const ProductCard = ({ product }) => {
+  const navigate = useNavigate();
   const { addToCart, addToWishlist } = useCart();
 
   const handleAddToCart = async (e) => {
@@ -37,7 +39,7 @@ const ProductCard = ({ product, onProductClick }) => {
   };
 
   return (
-    <div className="product-card" onClick={() => onProductClick(product._id)}>
+    <div className="product-card" onClick={() => navigate(`/product/${product._id}`)}>
       <div className="product-card-image">
         {product.image ? (
           <img src={product.image} alt={product.name} />

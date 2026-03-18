@@ -1,6 +1,6 @@
 # Help Claude — Full Project Context
 
-> This file helps Claude remember everything across sessions. Last updated: 2026-03-13 (end of day 2).
+> This file helps Claude remember everything across sessions. Last updated: 2026-03-18 (day 5).
 
 ---
 
@@ -12,7 +12,7 @@ Full-stack ecommerce marketplace (Amazon-like) with 3 user roles: **Customer**, 
 
 **Approach:** "Furniture inspection" — test every phase thoroughly on localhost before moving to next phase. User approves each phase plan before building.
 
-**Project is divided into 6 phases. Phases 1-5 are COMPLETE. Phase 6 (Admin Portal) is NEXT.**
+**All 6 phases COMPLETE. Post-phase enhancements ongoing (ProductDetail redesign, reviews, notifications, recently viewed).**
 
 ---
 
@@ -45,7 +45,10 @@ ecommerce_structure-main/ecommerce_structure-main/
 │       │   ├── Address.js           # User addresses
 │       │   ├── DeliveryBoy.js       # Delivery boy profile (online, GPS, earnings)
 │       │   ├── DeliveryTracking.js  # Real-time delivery tracking
-│       │   └── ChargeConfig.js     # Configurable charges + audit log
+│       │   ├── ChargeConfig.js      # Configurable charges + audit log
+│       │   ├── Review.js            # Product reviews (rating, title, comment)
+│       │   ├── RecentlyViewed.js    # Recently viewed products tracking
+│       │   └── Notification.js      # User notifications
 │       ├── controllers/
 │       │   ├── auth.controller.js   # signup, login, logout, refresh, forgot-password
 │       │   ├── product.controller.js# CRUD + search + filters
@@ -57,7 +60,10 @@ ecommerce_structure-main/ecommerce_structure-main/
 │       │   ├── profile.controller.js# Profile CRUD + addresses + change password
 │       │   ├── delivery.controller.js# Toggle online, current order, pickup, deliver, location
 │       │   ├── deliveryHistory.controller.js # History + earnings
-│       │   └── admin.controller.js    # Dashboard, orders, users, delivery, charges
+│       │   ├── admin.controller.js    # Dashboard, orders, users, delivery, charges
+│       │   ├── review.controller.js  # Create + get reviews (purchase-gated)
+│       │   ├── recentlyViewed.controller.js # Track + get recently viewed
+│       │   └── notification.controller.js   # User notifications
 │       ├── routes/
 │       │   ├── auth.routes.js
 │       │   ├── product.routes.js
@@ -69,7 +75,10 @@ ecommerce_structure-main/ecommerce_structure-main/
 │       │   ├── payment.routes.js
 │       │   ├── profile.routes.js
 │       │   ├── delivery.routes.js
-│       │   └── admin.routes.js        # Admin endpoints (requireRole admin)
+│       │   ├── admin.routes.js        # Admin endpoints (requireRole admin)
+│       │   ├── review.routes.js      # POST/GET /products/:id/reviews
+│       │   ├── recentlyViewed.routes.js # Recently viewed routes
+│       │   └── notification.routes.js   # Notification routes
 │       ├── services/
 │       │   └── orderAssignment.js   # Nearest delivery boy algorithm (Haversine)
 │       └── websocket/
@@ -109,7 +118,9 @@ ecommerce_structure-main/ecommerce_structure-main/
 │           │   ├── Checkout.jsx + Checkout.css
 │           │   ├── MyOrders.jsx + MyOrders.css
 │           │   ├── MyProfile.jsx + MyProfile.css
-│           │   └── OrderTracking.jsx + OrderTracking.css  (Leaflet map)
+│           │   ├── OrderTracking.jsx + OrderTracking.css  (Leaflet map)
+│           │   ├── ProductDetail.jsx + ProductDetail.css  (Airy Glass design)
+│           │   └── RewardProgram.jsx + RewardProgram.css  (Loyalty rewards)
 │           ├── delivery/
 │           │   ├── DeliveryDashboard.jsx + DeliveryDashboard.css
 │           │   └── DeliveryHistory.jsx + DeliveryHistory.css
@@ -425,9 +436,67 @@ assigned → picking_up → picked_up → on_the_way → delivered
 
 ---
 
-## All Phases COMPLETE — Security Audit Pending
+## All Phases COMPLETE — Post-Phase Enhancements
 
-All 6 phases are built and tested. Next step is security hardening before deployment.
+All 6 phases are built and tested. Post-phase work includes ProductDetail redesign, reviews, notifications, recently viewed.
+
+---
+
+## Post-Phase: ProductDetail Redesign (2026-03-18)
+
+### Design: "Airy Glass" (Glassmorphism + Airy Whitespace)
+- **Philosophy:** Mix of Apple/Nike airy whitespace + frosted glass (glassmorphism)
+- **Brand Colors:** Orange `#ff6b00` + Blue `#1565c0` gradient as accent throughout
+- **Cards:** Full-width, no border-radius, gradient top borders (`border-image: linear-gradient(135deg, #ff6b00, #1565c0) 1`)
+- **Glass effect:** `background: rgba(255,255,255,0.6)`, `backdrop-filter: blur(24px)`
+- **Background:** Gradient blobs (orange + blue, low opacity ~0.12-0.10) floating behind content with `filter: blur(100px)`
+- **Spacing:** Generous — 48px container padding, 72px hero gap, 52px card padding
+- **Animations:** Subtle hover lifts (translateY), scale effects, smooth accordion transitions
+
+### Page Sections
+1. **Hero Section** — Frosted glass card with product image (sticky on scroll) + info (name, description, price with strikethrough + discount tag, stock status, quantity stepper, Add to Cart gradient button, "View Offers" link)
+2. **Offers Popup** — Modal with frosted overlay (`backdrop-filter: blur(4px)`), offer cards with orange left-border accent. Replaces inline offers slider.
+3. **Product Details** — Large image + accordion dropdowns from `product.details[]` array. Admin adds N items, page adjusts. Each accordion has chevron (▸/▾), smooth max-height transition.
+4. **Reviews Section** — Average rating display, star filter pills, sort pills, review cards, "Write a Review" button with purchase-gate error message
+5. **Reward Program Bar** — Kept as-is (gradient, already premium)
+6. **Recently Viewed** — Same frosted glass card wrapper, reuses ProductCard components
+
+### Product Model `details` Field
+```javascript
+// In Product.js schema
+details: {
+  type: [{ title: { type: String, required: true }, content: { type: String, required: true } }],
+  default: [],
+}
+```
+- Admin can add unlimited dropdown/accordion items via AdminProducts edit modal
+- Each item has a title (accordion header) and content (accordion body)
+- Frontend reads `product.details[]` and renders as expandable accordions
+
+### Admin Products — Details UI
+- Edit modal has "Product Details (Dropdowns)" section
+- Each detail entry: title input + content textarea + Remove button
+- "+ Add Dropdown" dashed button to add new entries
+- Bulk add modal also supports details
+- Success alert on product create/update
+
+### Review System
+- **Model:** `Review.js` — productId, userId, rating (1-5), title, comment, timestamps
+- **Controller:** `review.controller.js`
+  - `createReview` — POST, requires auth, purchase-gated (checks Order with status 'delivered')
+  - `getReviews` — GET, supports star filter, sort (best/worst/relevant), pagination, aggregated stats
+- **Routes:** POST/GET `/api/v1/products/:id/reviews`
+- **Mongoose 7 fix:** `new require('mongoose').Types.ObjectId(productId)` — requires `new` keyword
+
+### New API Routes Added
+- POST/GET `/api/v1/products/:id/reviews` — review CRUD (auth required for POST)
+- Recently viewed routes (recentlyViewed.routes.js)
+- Notification routes (notification.routes.js)
+- POST `/api/v1/products/bulk-json` — JSON bulk upload for admin
+
+### New Frontend Routes
+- `/product/:id` — ProductDetail page (Airy Glass design)
+- `/rewards` — RewardProgram page
 
 ---
 
@@ -492,6 +561,12 @@ All 6 phases are built and tested. Next step is security hardening before deploy
 - POST `/` — create (admin, requires name + price + categoryId)
 - PUT `/:id` — update (admin)
 - DELETE `/:id` — delete (admin)
+- POST `/bulk` — bulk create products in one category (admin)
+- POST `/bulk-json` — bulk create products across multiple categories from JSON (admin)
+
+### Reviews (`/api/v1/products/:id/reviews`)
+- POST `/` — create/update review (auth, purchase-gated)
+- GET `/` — get reviews with star filter, sort, pagination + stats
 
 ### Search (`/api/v1/search`)
 - GET `/` — search products
@@ -586,6 +661,9 @@ All 6 phases are built and tested. Next step is security hardening before deploy
 | `/admin/users` | Admin User Management | Yes (admin role) |
 | `/admin/delivery` | Admin Delivery Boy Monitoring | Yes (admin role) |
 | `/admin/charges` | Admin Charge Management + Audit Log | Yes (admin role) |
+| `/product/:id` | Product Detail (Airy Glass) | No |
+| `/rewards` | Reward Program | No |
+| `/category/:slug` | Category Page | No |
 | `/dashboard` | Role-based redirect | Yes |
 
 ---
@@ -600,6 +678,10 @@ All 6 phases are built and tested. Next step is security hardening before deploy
 6. **Leaflet over Google Maps** — free, no API key needed, open-source
 7. **Multer for file uploads** — profile pictures, 2MB limit, jpg/png only
 8. **Order assignment is async** — checkout responds immediately, assignment happens in background
+9. **"Airy Glass" design for ProductDetail** — glassmorphism + airy whitespace, full-width cards with gradient top borders, no border-radius on sections
+10. **Product details as dynamic accordions** — admin adds N title/content pairs, frontend renders as expandable accordion items
+11. **Purchase-gated reviews** — only customers who received the product (order status 'delivered') can write reviews
+12. **Offers as popup modal** — removed inline offers slider, replaced with frosted glass popup triggered by "View Offers" link
 
 ---
 
@@ -673,6 +755,9 @@ npm run dev
 7. Cart checkout button was a stub → fixed to navigate to `/checkout`
 8. Profile picture not showing → added `/uploads` proxy in vite.config.js
 9. docker-compose not found → user was in wrong directory (outer vs inner folder)
+10. Review 500 error → Mongoose 7 requires `new` for `Types.ObjectId()` — fixed in review.controller.js
+11. Product details not saving from admin → `updateProduct`, `createProduct`, `createBulkProducts` controllers didn't handle `details` field — added to destructuring and assignment
+12. Admin "don't have access" on product update → user needs admin role, login via `/login/admin`
 
 ---
 
@@ -697,4 +782,19 @@ npm run dev
 - Fixed product CRUD (missing routes, categoryId, slug), order charges field paths, cancel-only-before-pickup
 - Full security audit completed — 16 items implemented, 15 items pending
 - All 6 phases COMPLETE
-- Next: Security hardening (critical + high items), then deployment to Render + Vercel + MongoDB Atlas
+
+**Day 4 (2026-03-17):**
+- JSON bulk upload for admin products (createBulkJsonProducts endpoint)
+- Rate limit fix
+- cleanup-users admin endpoint
+- Deployment setup (Render backend, Vercel frontend, MongoDB Atlas)
+
+**Day 5 (2026-03-18):**
+- ProductDetail page full redesign — "Airy Glass" design (glassmorphism + airy whitespace)
+- Review system (model, controller, routes) — purchase-gated reviews
+- Recently Viewed tracking (model, controller, routes)
+- Notification system (model, controller, routes)
+- Reward Program page
+- Admin product details dropdowns feature (dynamic accordion items)
+- Fixed review controller 500 error (Mongoose 7 ObjectId requires `new`)
+- Fixed product controllers to handle `details` field

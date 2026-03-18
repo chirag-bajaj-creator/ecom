@@ -22,6 +22,8 @@ import AdminUsers from './pages/admin/AdminUsers';
 import AdminDelivery from './pages/admin/AdminDelivery';
 import AdminCharges from './pages/admin/AdminCharges';
 import CategoryPage from './pages/customer/CategoryPage';
+import ProductDetail from './pages/customer/ProductDetail';
+import RewardProgram from './pages/customer/RewardProgram';
 
 function App() {
   const { user } = useAuth();
@@ -37,6 +39,8 @@ function App() {
       <Route path="/reset-password" element={<ResetPassword />} />
       <Route path="/search" element={<SearchResults />} />
       <Route path="/category/:slug" element={<CategoryPage />} />
+      <Route path="/product/:id" element={<ProductDetail />} />
+      <Route path="/rewards" element={<RewardProgram />} />
       <Route path="/add-to-cart" element={<Cart />} />
       <Route path="/wishlist" element={<Wishlist />} />
       <Route path="/checkout" element={<Checkout />} />

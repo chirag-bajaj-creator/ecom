@@ -20,6 +20,9 @@ const paymentRoutes = require('./routes/payment.routes');
 const profileRoutes = require('./routes/profile.routes');
 const deliveryRoutes = require('./routes/delivery.routes');
 const adminRoutes = require('./routes/admin.routes');
+const notificationRoutes = require('./routes/notification.routes');
+const reviewRoutes = require('./routes/review.routes');
+const recentlyViewedRoutes = require('./routes/recentlyViewed.routes');
 const path = require('path');
 
 const app = express();
@@ -91,6 +94,9 @@ app.use('/api/v1/payments', paymentRoutes);
 app.use('/api/v1/profile', profileRoutes);
 app.use('/api/v1/delivery', deliveryRoutes);
 app.use('/api/v1/admin', adminRoutes);
+app.use('/api/v1/notifications', notificationRoutes);
+app.use('/api/v1', reviewRoutes);
+app.use('/api/v1', recentlyViewedRoutes);
 
 // Serve uploaded files
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));

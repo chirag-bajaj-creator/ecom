@@ -12,6 +12,7 @@ const Address = require('../models/Address');
 const RefreshToken = require('../models/RefreshToken');
 const SearchHistory = require('../models/SearchHistory');
 const { broadcastCatalogUpdate } = require('../websocket/deliverySocket');
+const Notification = require('../models/Notification');
 
 // GET /api/v1/admin/dashboard
 const getDashboardStats = async (req, res) => {
@@ -303,6 +304,7 @@ const cleanupUsers = async (req, res) => {
       deliveryBoyResult,
       tokenResult,
       searchResult,
+      notificationResult,
     ] = await Promise.all([
       User.deleteMany({ role: { $ne: 'admin' } }),
       Order.deleteMany({}),
@@ -314,6 +316,7 @@ const cleanupUsers = async (req, res) => {
       DeliveryBoy.deleteMany({}),
       RefreshToken.deleteMany({}),
       SearchHistory.deleteMany({}),
+      Notification.deleteMany({}),
     ]);
 
     res.json({
@@ -329,6 +332,7 @@ const cleanupUsers = async (req, res) => {
         deliveryBoys: deliveryBoyResult.deletedCount,
         tokens: tokenResult.deletedCount,
         searchHistory: searchResult.deletedCount,
+        notifications: notificationResult.deletedCount,
       },
     });
   } catch (error) {
@@ -428,19 +432,33 @@ const reviewDelivery = async (req, res) => {
       await tracking.save();
     }
 
-    // Notify delivery boy via WebSocket
-    const { getWss } = require('../websocket/deliverySocket');
-    const wss = getWss();
-    if (wss) {
-      const deliveryBoy = await DeliveryBoy.findById(tracking.deliveryBoyId);
-      if (deliveryBoy) {
+    // Save persistent notification + notify via WebSocket
+    const deliveryBoy = await DeliveryBoy.findById(tracking.deliveryBoyId);
+    if (deliveryBoy) {
+      const notifType = action === 'approve' ? 'delivery_approved' : 'delivery_rejected';
+      const notifTitle = action === 'approve' ? 'Delivery Approved' : 'Delivery Rejected';
+      const notifMessage = action === 'approve'
+        ? 'Your delivery has been approved. Earnings credited.'
+        : 'Delivery images did not match. Earning not credited for this order.';
+
+      // Save to DB so delivery boy sees it even if offline
+      await Notification.create({
+        userId: deliveryBoy.userId,
+        type: notifType,
+        title: notifTitle,
+        message: notifMessage,
+        orderId: tracking.orderId,
+      });
+
+      // Also push via WebSocket if online
+      const { getWss } = require('../websocket/deliverySocket');
+      const wss = getWss();
+      if (wss) {
         const msg = JSON.stringify({
           type: 'review_result',
           orderId: tracking.orderId.toString(),
           status: tracking.adminReviewStatus,
-          message: action === 'approve'
-            ? 'Your delivery has been approved. Earnings credited.'
-            : 'Delivery images did not match. Earning not credited for this order.',
+          message: notifMessage,
         });
         wss.clients.forEach((client) => {
           if (client.readyState === 1 && client.deliveryBoyUserId === deliveryBoy.userId.toString()) {

@@ -3,7 +3,7 @@ import api from '../../api/axios';
 import AdminSidebar from '../../components/layout/AdminSidebar';
 import './AdminProducts.css';
 
-const emptyProduct = () => ({ name: '', description: '', price: '', stock: '', image: '' });
+const emptyProduct = () => ({ name: '', description: '', price: '', stock: '', image: '', details: [] });
 
 const AdminProducts = () => {
   const [products, setProducts] = useState([]);
@@ -20,7 +20,8 @@ const AdminProducts = () => {
     price: '',
     stock: '',
     image: '',
-    categoryName: ''
+    categoryName: '',
+    details: []
   });
   const [bulkCategory, setBulkCategory] = useState('');
   const [bulkCount, setBulkCount] = useState('');
@@ -197,7 +198,8 @@ const AdminProducts = () => {
       price: product.price,
       stock: product.stock,
       image: product.image || '',
-      categoryName: product.categoryId?.name || ''
+      categoryName: product.categoryId?.name || '',
+      details: product.details || []
     });
     setShowModal(true);
   };
@@ -211,13 +213,16 @@ const AdminProducts = () => {
         price: Number(form.price),
         stock: Number(form.stock),
         image: form.image,
-        categoryName: form.categoryName
+        categoryName: form.categoryName,
+        details: form.details.filter(d => d.title.trim() && d.content.trim())
       };
 
       if (editingProduct) {
         await api.put(`/products/${editingProduct._id}`, payload);
+        alert('Product details updated successfully');
       } else {
         await api.post('/products', payload);
+        alert('Product added successfully');
       }
       setShowModal(false);
       fetchProducts();
@@ -392,6 +397,53 @@ const AdminProducts = () => {
                   <label>Category</label>
                   <input type="text" value={form.categoryName} onChange={e => setForm({ ...form, categoryName: e.target.value })} required />
                 </div>
+
+                {/* Product Details Dropdowns — admin adds as many as needed */}
+                <div className="modal-field">
+                  <label>Product Details (Dropdowns)</label>
+                  <p className="details-hint">Add dropdown sections that customers can expand on the product page.</p>
+                  {form.details.map((detail, i) => (
+                    <div key={i} className="detail-entry">
+                      <input
+                        type="text"
+                        placeholder="Dropdown title (e.g. Dimensions, Material, Care Instructions)"
+                        value={detail.title}
+                        onChange={e => {
+                          const updated = [...form.details];
+                          updated[i] = { ...updated[i], title: e.target.value };
+                          setForm({ ...form, details: updated });
+                        }}
+                      />
+                      <textarea
+                        placeholder="Content shown when expanded"
+                        value={detail.content}
+                        onChange={e => {
+                          const updated = [...form.details];
+                          updated[i] = { ...updated[i], content: e.target.value };
+                          setForm({ ...form, details: updated });
+                        }}
+                        rows={2}
+                      />
+                      <button
+                        type="button"
+                        className="detail-remove-btn"
+                        onClick={() => {
+                          setForm({ ...form, details: form.details.filter((_, j) => j !== i) });
+                        }}
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  ))}
+                  <button
+                    type="button"
+                    className="detail-add-btn"
+                    onClick={() => setForm({ ...form, details: [...form.details, { title: '', content: '' }] })}
+                  >
+                    + Add Dropdown
+                  </button>
+                </div>
+
                 <div className="modal-actions">
                   <button type="button" className="modal-cancel-btn" onClick={() => setShowModal(false)}>
                     Cancel
@@ -494,6 +546,50 @@ const AdminProducts = () => {
                             value={p.image}
                             onChange={e => updateBulkProduct(i, 'image', e.target.value)}
                           />
+                        </div>
+                        <div className="modal-field">
+                          <label>Product Details (Dropdowns)</label>
+                          {(p.details || []).map((detail, di) => (
+                            <div key={di} className="detail-entry">
+                              <input
+                                type="text"
+                                placeholder="Dropdown title"
+                                value={detail.title}
+                                onChange={e => {
+                                  const updated = [...(p.details || [])];
+                                  updated[di] = { ...updated[di], title: e.target.value };
+                                  updateBulkProduct(i, 'details', updated);
+                                }}
+                              />
+                              <textarea
+                                placeholder="Content"
+                                value={detail.content}
+                                onChange={e => {
+                                  const updated = [...(p.details || [])];
+                                  updated[di] = { ...updated[di], content: e.target.value };
+                                  updateBulkProduct(i, 'details', updated);
+                                }}
+                                rows={2}
+                              />
+                              <button
+                                type="button"
+                                className="detail-remove-btn"
+                                onClick={() => {
+                                  const updated = (p.details || []).filter((_, j) => j !== di);
+                                  updateBulkProduct(i, 'details', updated);
+                                }}
+                              >
+                                Remove
+                              </button>
+                            </div>
+                          ))}
+                          <button
+                            type="button"
+                            className="detail-add-btn"
+                            onClick={() => updateBulkProduct(i, 'details', [...(p.details || []), { title: '', content: '' }])}
+                          >
+                            + Add Dropdown
+                          </button>
                         </div>
                       </div>
                     ))}

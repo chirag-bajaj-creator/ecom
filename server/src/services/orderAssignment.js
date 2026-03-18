@@ -70,12 +70,10 @@ const assignOrder = async (orderId) => {
     const order = await Order.findById(orderId);
     if (!order) return null;
 
-    // Find all online delivery boys with no active order
+    // Find all online delivery boys with no active order (with or without GPS)
     const availableBoys = await DeliveryBoy.find({
       isOnline: true,
       currentOrderId: null,
-      currentLat: { $ne: null },
-      currentLng: { $ne: null },
     }).populate("userId", "name phone");
 
     if (availableBoys.length === 0) {
@@ -83,37 +81,56 @@ const assignOrder = async (orderId) => {
       return null;
     }
 
-    // Geocode the customer's delivery address
-    let deliveryCoords = await geocodeAddress(order.deliveryAddress);
-    if (!deliveryCoords) {
-      console.log(`Could not geocode delivery address for order ${orderId}, using first available boy`);
-      // Fallback: just pick the first available delivery boy
-      deliveryCoords = { lat: availableBoys[0].currentLat, lng: availableBoys[0].currentLng };
+    // Split into boys with GPS and without
+    const boysWithGPS = availableBoys.filter((b) => b.currentLat != null && b.currentLng != null);
+    const boysWithoutGPS = availableBoys.filter((b) => b.currentLat == null || b.currentLng == null);
+
+    let nearest;
+    let deliveryCoords;
+
+    if (boysWithGPS.length > 0) {
+      // Geocode the customer's delivery address
+      deliveryCoords = await geocodeAddress(order.deliveryAddress);
+      if (!deliveryCoords) {
+        console.log(`Could not geocode delivery address for order ${orderId}, using first available boy`);
+        deliveryCoords = { lat: boysWithGPS[0].currentLat, lng: boysWithGPS[0].currentLng };
+      }
+
+      // Sort by distance to delivery address (nearest first)
+      const sorted = boysWithGPS
+        .map((boy) => ({
+          boy,
+          distance: getDistance(boy.currentLat, boy.currentLng, deliveryCoords.lat, deliveryCoords.lng),
+        }))
+        .sort((a, b) => a.distance - b.distance);
+
+      nearest = sorted[0].boy;
+    } else {
+      // No boys have GPS yet — pick first available (no distance sorting)
+      nearest = boysWithoutGPS[0];
+      deliveryCoords = await geocodeAddress(order.deliveryAddress);
+      console.log(`No delivery boys with GPS for order ${orderId}, assigning to first available: ${nearest.userId.name}`);
     }
-
-    // Sort by distance to delivery address (nearest first)
-    const sorted = availableBoys
-      .map((boy) => ({
-        boy,
-        distance: getDistance(boy.currentLat, boy.currentLng, deliveryCoords.lat, deliveryCoords.lng),
-      }))
-      .sort((a, b) => a.distance - b.distance);
-
-    const nearest = sorted[0].boy;
 
     // Assign order to nearest delivery boy
     nearest.currentOrderId = orderId;
     await nearest.save();
 
-    // Get real driving ETA from OSRM
-    let estimatedMinutes = await getDrivingETA(
-      nearest.currentLat, nearest.currentLng,
-      deliveryCoords.lat, deliveryCoords.lng
-    );
+    // Get ETA (default 30 mins if no GPS)
+    const nearestHasGPS = nearest.currentLat != null && nearest.currentLng != null;
+    let estimatedMinutes = 30;
 
-    // Fallback to Haversine-based estimate if OSRM fails
-    if (!estimatedMinutes) {
-      estimatedMinutes = Math.max(15, Math.round(sorted[0].distance * 3));
+    if (nearestHasGPS && deliveryCoords) {
+      estimatedMinutes = await getDrivingETA(
+        nearest.currentLat, nearest.currentLng,
+        deliveryCoords.lat, deliveryCoords.lng
+      );
+
+      // Fallback to Haversine-based estimate if OSRM fails
+      if (!estimatedMinutes) {
+        const dist = getDistance(nearest.currentLat, nearest.currentLng, deliveryCoords.lat, deliveryCoords.lng);
+        estimatedMinutes = Math.max(15, Math.round(dist * 3));
+      }
     }
 
     // Cap at reasonable max (120 mins)
@@ -177,7 +194,6 @@ const assignPendingOrders = async (deliveryBoyId) => {
   try {
     const deliveryBoy = await DeliveryBoy.findById(deliveryBoyId).populate("userId", "name phone");
     if (!deliveryBoy || !deliveryBoy.isOnline || deliveryBoy.currentOrderId) return null;
-    if (deliveryBoy.currentLat == null || deliveryBoy.currentLng == null) return null;
 
     // Find oldest unassigned order
     const pendingOrder = await Order.findOne({
@@ -189,7 +205,8 @@ const assignPendingOrders = async (deliveryBoyId) => {
 
     // Geocode the delivery address
     let deliveryCoords = await geocodeAddress(pendingOrder.deliveryAddress);
-    if (!deliveryCoords) {
+    const hasGPS = deliveryBoy.currentLat != null && deliveryBoy.currentLng != null;
+    if (!deliveryCoords && hasGPS) {
       deliveryCoords = { lat: deliveryBoy.currentLat, lng: deliveryBoy.currentLng };
     }
 
@@ -197,15 +214,18 @@ const assignPendingOrders = async (deliveryBoyId) => {
     deliveryBoy.currentOrderId = pendingOrder._id;
     await deliveryBoy.save();
 
-    // Get ETA
-    let estimatedMinutes = await getDrivingETA(
-      deliveryBoy.currentLat, deliveryBoy.currentLng,
-      deliveryCoords.lat, deliveryCoords.lng
-    );
+    // Get ETA (default 30 mins if no GPS available)
+    let estimatedMinutes = 30;
+    if (hasGPS && deliveryCoords) {
+      estimatedMinutes = await getDrivingETA(
+        deliveryBoy.currentLat, deliveryBoy.currentLng,
+        deliveryCoords.lat, deliveryCoords.lng
+      );
 
-    if (!estimatedMinutes) {
-      const distance = getDistance(deliveryBoy.currentLat, deliveryBoy.currentLng, deliveryCoords.lat, deliveryCoords.lng);
-      estimatedMinutes = Math.max(15, Math.round(distance * 3));
+      if (!estimatedMinutes) {
+        const distance = getDistance(deliveryBoy.currentLat, deliveryBoy.currentLng, deliveryCoords.lat, deliveryCoords.lng);
+        estimatedMinutes = Math.max(15, Math.round(distance * 3));
+      }
     }
 
     estimatedMinutes = Math.min(estimatedMinutes, 120);

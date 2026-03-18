@@ -196,6 +196,7 @@ const createBulkProducts = async (req, res, next) => {
       stock: p.stock ? Number(p.stock) : 0,
       image: p.image || null,
       categoryId: category._id,
+      details: p.details || [],
     }));
 
     const created = await Product.insertMany(productDocs);
@@ -213,7 +214,7 @@ const createBulkProducts = async (req, res, next) => {
 // POST /api/v1/products (admin)
 const createProduct = async (req, res, next) => {
   try {
-    const { name, description, price, stock, image, categoryName } = req.body;
+    const { name, description, price, stock, image, categoryName, details } = req.body;
 
     if (!name || price === undefined || price === null || !categoryName) {
       return res.status(400).json({
@@ -237,7 +238,8 @@ const createProduct = async (req, res, next) => {
       price: Number(price),
       stock: stock ? Number(stock) : 0,
       image: image || null,
-      categoryId: category._id
+      categoryId: category._id,
+      details: details || []
     });
 
     broadcastCatalogUpdate();
@@ -250,7 +252,7 @@ const createProduct = async (req, res, next) => {
 // PUT /api/v1/products/:id (admin)
 const updateProduct = async (req, res, next) => {
   try {
-    const { name, description, price, stock, image, categoryName } = req.body;
+    const { name, description, price, stock, image, categoryName, details } = req.body;
 
     const product = await Product.findById(req.params.id);
     if (!product) {
@@ -274,11 +276,12 @@ const updateProduct = async (req, res, next) => {
     if (price !== undefined) product.price = price;
     if (stock !== undefined) product.stock = stock;
     if (image !== undefined) product.image = image;
+    if (details !== undefined) product.details = details;
 
     await product.save();
     broadcastCatalogUpdate();
 
-    res.json({ success: true, data: { product } });
+    res.json({ success: true, data: { product }, message: 'Product details updated successfully' });
   } catch (error) {
     next(error);
   }

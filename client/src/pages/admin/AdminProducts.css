@@ -451,3 +451,68 @@
   padding: 4px 8px;
   color: #333;
 }
+
+/* Product Details Dropdown Entries */
+.details-hint {
+  font-size: 12px;
+  color: #888;
+  margin-bottom: 10px;
+}
+
+.detail-entry {
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 10px;
+  background: #fafafa;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.detail-entry input,
+.detail-entry textarea {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 13px;
+  box-sizing: border-box;
+}
+
+.detail-entry textarea {
+  resize: vertical;
+}
+
+.detail-remove-btn {
+  align-self: flex-end;
+  padding: 4px 12px;
+  background: #ff4444;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.detail-remove-btn:hover {
+  background: #cc0000;
+}
+
+.detail-add-btn {
+  padding: 8px 16px;
+  background: transparent;
+  border: 2px dashed #1565c0;
+  color: #1565c0;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-top: 4px;
+}
+
+.detail-add-btn:hover {
+  background: #e3f2fd;
+}

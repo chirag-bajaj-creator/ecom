@@ -5,7 +5,6 @@ import Navbar from '../../components/layout/Navbar';
 import Footer from '../../components/layout/Footer';
 import ProductCard from '../../components/product/ProductCard';
 import SkeletonCard from '../../components/product/SkeletonCard';
-import ProductModal from '../../components/product/ProductModal';
 import './Home.css';
 
 const SearchResults = () => {
@@ -15,7 +14,6 @@ const SearchResults = () => {
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [pagination, setPagination] = useState(null);
-  const [selectedProductId, setSelectedProductId] = useState(null);
 
   useEffect(() => {
     setPage(1);
@@ -63,7 +61,6 @@ const SearchResults = () => {
                   <ProductCard
                     key={product._id}
                     product={product}
-                    onProductClick={setSelectedProductId}
                   />
                 ))}
               </div>
@@ -89,13 +86,6 @@ const SearchResults = () => {
           )}
         </div>
       </main>
-
-      {selectedProductId && (
-        <ProductModal
-          productId={selectedProductId}
-          onClose={() => setSelectedProductId(null)}
-        />
-      )}
 
       <Footer />
     </div>

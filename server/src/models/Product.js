@@ -31,6 +31,33 @@ const productSchema = new mongoose.Schema(
       ref: 'Category',
       required: [true, 'Category is required'],
     },
+    originalPrice: {
+      type: Number,
+      min: 0,
+      default: null,
+    },
+    images: {
+      type: [String],
+      default: [],
+    },
+    detailImage: {
+      type: String,
+      default: null,
+    },
+    specs: {
+      type: Map,
+      of: String,
+      default: {},
+    },
+    details: {
+      type: [
+        {
+          title: { type: String, required: true },
+          content: { type: String, required: true },
+        },
+      ],
+      default: [],
+    },
     stock: {
       type: Number,
       required: true,

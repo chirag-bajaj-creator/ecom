@@ -10,7 +10,9 @@
   },
   "dependencies": {
     "axios": "^1.6.5",
+    "framer-motion": "^11.18.0",
     "leaflet": "^1.9.4",
+    "motion-dom": "^12.38.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-leaflet": "^4.2.1",

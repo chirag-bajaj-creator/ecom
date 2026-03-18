@@ -1,7 +1,7 @@
 const cloudinary = require("cloudinary").v2;
 const sharp = require("sharp");
 
-const VERIFICATION_THRESHOLD = 70; // % similarity to auto-verify
+const VERIFICATION_THRESHOLD = 90; // % similarity to auto-verify
 const HASH_SIZE = 16; // 16x16 = 256-bit perceptual hash
 
 // Configure Cloudinary lazily (called before first upload)

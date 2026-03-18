@@ -5,7 +5,6 @@ import Navbar from '../../components/layout/Navbar';
 import Footer from '../../components/layout/Footer';
 import ProductCard from '../../components/product/ProductCard';
 import SkeletonCard from '../../components/product/SkeletonCard';
-import ProductModal from '../../components/product/ProductModal';
 import useCatalogUpdates from '../../hooks/useCatalogUpdates';
 import './CategoryPage.css';
 
@@ -16,7 +15,6 @@ const CategoryPage = () => {
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [selectedProductId, setSelectedProductId] = useState(null);
 
   useEffect(() => {
     setPage(1);
@@ -74,7 +72,6 @@ const CategoryPage = () => {
                 <ProductCard
                   key={product._id}
                   product={product}
-                  onProductClick={setSelectedProductId}
                 />
               ))}
             </div>
@@ -91,13 +88,6 @@ const CategoryPage = () => {
           )}
         </div>
       </main>
-
-      {selectedProductId && (
-        <ProductModal
-          productId={selectedProductId}
-          onClose={() => setSelectedProductId(null)}
-        />
-      )}
 
       <Footer />
     </div>

@@ -1,10 +1,9 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import api from '../../api/axios';
 import Navbar from '../../components/layout/Navbar';
 import Footer from '../../components/layout/Footer';
 import ProductCard from '../../components/product/ProductCard';
 import SkeletonCard from '../../components/product/SkeletonCard';
-import ProductModal from '../../components/product/ProductModal';
 import useCatalogUpdates from '../../hooks/useCatalogUpdates';
 import AddressBar from '../../components/address/AddressBar';
 import './Home.css';
@@ -13,7 +12,19 @@ const Home = () => {
   const [categories, setCategories] = useState([]);
   const [productsByCategory, setProductsByCategory] = useState({});
   const [loading, setLoading] = useState(true);
-  const [selectedProductId, setSelectedProductId] = useState(null);
+  const [showWand, setShowWand] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setShowWand(window.scrollY > 300);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
   const fetchData = useCallback(async () => {
       try {
         const catRes = await api.get('/categories');
@@ -78,7 +89,6 @@ const Home = () => {
                       <ProductCard
                         key={product._id}
                         product={product}
-                        onProductClick={setSelectedProductId}
                       />
                     ))}
                   </div>
@@ -91,14 +101,13 @@ const Home = () => {
         </div>
       </main>
 
-      {selectedProductId && (
-        <ProductModal
-          productId={selectedProductId}
-          onClose={() => setSelectedProductId(null)}
-        />
-      )}
-
       <Footer />
+
+      {showWand && (
+        <button className="magic-wand-btn" onClick={scrollToTop} aria-label="Scroll to top">
+          <span className="wand-text">TOP</span>
+        </button>
+      )}
     </div>
   );
 };
