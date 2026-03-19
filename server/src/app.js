@@ -3,7 +3,7 @@ const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
 const compression = require('compression');
-const rateLimit = require('express-rate-limit');
+
 const mongoSanitize = require('express-mongo-sanitize');
 const xssSanitize = require('./middleware/sanitize');
 const hpp = require('hpp');
@@ -48,24 +48,6 @@ app.use(cors({
   credentials: true,
 }));
 
-// General rate limiter (skip in test mode, skip for admin & delivery routes)
-if (process.env.NODE_ENV !== 'test') {
-  const generalLimiter = rateLimit({
-    windowMs: 1 * 60 * 1000, // 1 minute
-    max: 300,
-    skip: (req) => {
-      return req.path.startsWith('/api/v1/admin') || req.path.startsWith('/api/v1/delivery');
-    },
-    message: {
-      success: false,
-      error: {
-        code: 'RATE_LIMIT_EXCEEDED',
-        message: 'Too many requests, please try again later.',
-      },
-    },
-  });
-  app.use(generalLimiter);
-}
 
 // Body parsing & logging
 app.use(express.json({ limit: '10mb' }));
