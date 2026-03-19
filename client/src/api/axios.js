@@ -7,12 +7,16 @@ const api = axios.create({
   },
 });
 
-// Request interceptor — attach access token
+// Request interceptor — attach access token & fix Content-Type for FormData
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('accessToken');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
+    }
+    // When sending FormData, delete Content-Type so axios/browser auto-sets it with boundary
+    if (config.data instanceof FormData) {
+      delete config.headers['Content-Type'];
     }
     return config;
   },
