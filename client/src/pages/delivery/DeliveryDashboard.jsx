@@ -254,7 +254,6 @@ const DeliveryDashboard = () => {
           <input
             type="file"
             accept="image/*"
-            capture="environment"
             ref={fileInputRef}
             onChange={handlePhotoSelected}
             style={{ display: 'none' }}

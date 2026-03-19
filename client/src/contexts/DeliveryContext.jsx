@@ -98,52 +98,11 @@ export const DeliveryProvider = ({ children }) => {
     }
   };
 
-  // Compress image before upload (mobile cameras take 8-15MB+ photos)
-  const compressImage = (file, maxWidth = 1200, quality = 0.7) => {
-    return new Promise((resolve) => {
-      // If file is already small enough, skip compression
-      if (file.size <= 2 * 1024 * 1024) {
-        return resolve(file);
-      }
-
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const img = new Image();
-        img.onload = () => {
-          const canvas = document.createElement('canvas');
-          let { width, height } = img;
-
-          if (width > maxWidth) {
-            height = (height * maxWidth) / width;
-            width = maxWidth;
-          }
-
-          canvas.width = width;
-          canvas.height = height;
-          const ctx = canvas.getContext('2d');
-          ctx.drawImage(img, 0, 0, width, height);
-
-          canvas.toBlob(
-            (blob) => {
-              resolve(new File([blob], file.name, { type: 'image/jpeg' }));
-            },
-            'image/jpeg',
-            quality
-          );
-        };
-        img.src = e.target.result;
-      };
-      reader.readAsDataURL(file);
-    });
-  };
-
   const markPickedUp = async (orderId, photoFile) => {
     try {
-      const compressed = await compressImage(photoFile);
       const formData = new FormData();
       formData.append('orderId', orderId);
-      formData.append('photo', compressed);
-      // Do NOT set Content-Type manually — axios auto-sets it with the correct boundary
+      formData.append('photo', photoFile, photoFile.name || 'photo.jpg');
       const res = await api.post('/delivery/pickup', formData);
       await fetchCurrentOrder();
       return res.data;
@@ -154,11 +113,9 @@ export const DeliveryProvider = ({ children }) => {
 
   const markDelivered = async (orderId, photoFile) => {
     try {
-      const compressed = await compressImage(photoFile);
       const formData = new FormData();
       formData.append('orderId', orderId);
-      formData.append('photo', compressed);
-      // Do NOT set Content-Type manually — axios auto-sets it with the correct boundary
+      formData.append('photo', photoFile, photoFile.name || 'photo.jpg');
       const res = await api.post('/delivery/deliver', formData);
       setCurrentOrder(null);
       setTracking(null);
