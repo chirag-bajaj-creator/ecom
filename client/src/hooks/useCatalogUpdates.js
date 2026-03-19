@@ -17,6 +17,7 @@ const useCatalogUpdates = (onUpdate) => {
       const apiUrl = import.meta.env.VITE_API_URL || '';
       let wsBase;
       if (apiUrl) {
+        // Derive WebSocket URL from the API URL (strip /api/v1, swap http→ws)
         wsBase = apiUrl.replace(/\/api\/v1$/, '').replace(/^http/, 'ws');
       } else {
         const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
@@ -53,7 +54,7 @@ const useCatalogUpdates = (onUpdate) => {
     return () => {
       isMounted = false;
       clearTimeout(reconnectTimer.current);
-      if (wsRef.current) {
+      if (wsRef.current && wsRef.current.readyState !== WebSocket.CLOSED) {
         wsRef.current.close();
       }
     };

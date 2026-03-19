@@ -1,15 +1,26 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import './Auth.css';
 
-const Login = ({ isAdmin = false }) => {
+const Login = ({ isAdmin = false, isDelivery = false }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const { login } = useAuth();
+  const { login, user, isAuthenticated } = useAuth();
   const navigate = useNavigate();
+
+  // Redirect already-authenticated admin/delivery users to their dashboard
+  useEffect(() => {
+    if (isAuthenticated && user) {
+      if (user.role === 'admin') {
+        navigate('/admin/dashboard', { replace: true });
+      } else if (user.role === 'delivery') {
+        navigate('/delivery/dashboard', { replace: true });
+      }
+    }
+  }, [isAuthenticated, user, navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -20,18 +31,23 @@ const Login = ({ isAdmin = false }) => {
       const result = await login(email, password);
       const role = result.data.user.role;
 
-      // RBAC: admin login page should only allow admin role
+      // RBAC: restrict role-specific login pages
       if (isAdmin && role !== 'admin') {
         setError('This login is for admin users only.');
         setLoading(false);
         return;
       }
+      if (isDelivery && role !== 'delivery') {
+        setError('This login is for delivery partners only.');
+        setLoading(false);
+        return;
+      }
 
-      // Redirect based on role
+      // Redirect based on role (replace: true removes login from browser history)
       if (role === 'admin') {
-        navigate('/admin/dashboard');
+        navigate('/admin/dashboard', { replace: true });
       } else if (role === 'delivery') {
-        navigate('/delivery/dashboard');
+        navigate('/delivery/dashboard', { replace: true });
       } else {
         navigate('/');
       }
@@ -45,7 +61,7 @@ const Login = ({ isAdmin = false }) => {
   return (
     <div className="auth-overlay">
       <div className="auth-popup">
-        <h2>{isAdmin ? 'Admin Login' : 'Login'}</h2>
+        <h2>{isAdmin ? 'Admin Login' : isDelivery ? 'Delivery Login' : 'Login'}</h2>
 
         {error && <div className="auth-error">{error}</div>}
 
@@ -81,12 +97,16 @@ const Login = ({ isAdmin = false }) => {
           </button>
         </form>
 
-        <p className="auth-switch">
-          New to the website?{' '}
-          <Link to="/signup">Signup</Link>
-        </p>
+        {!isAdmin && !isDelivery && (
+          <p className="auth-switch">
+            New to the website?{' '}
+            <Link to="/signup">Signup</Link>
+          </p>
+        )}
 
-        <Link to="/" className="auth-close">✕</Link>
+        {!isAdmin && !isDelivery && (
+          <Link to="/" className="auth-close">✕</Link>
+        )}
       </div>
     </div>
   );

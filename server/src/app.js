@@ -21,8 +21,6 @@ const profileRoutes = require('./routes/profile.routes');
 const deliveryRoutes = require('./routes/delivery.routes');
 const adminRoutes = require('./routes/admin.routes');
 const notificationRoutes = require('./routes/notification.routes');
-const reviewRoutes = require('./routes/review.routes');
-const recentlyViewedRoutes = require('./routes/recentlyViewed.routes');
 const path = require('path');
 
 const app = express();
@@ -50,11 +48,14 @@ app.use(cors({
   credentials: true,
 }));
 
-// General rate limiter (skip in test mode)
+// General rate limiter (skip in test mode, skip for admin & delivery routes)
 if (process.env.NODE_ENV !== 'test') {
   const generalLimiter = rateLimit({
     windowMs: 1 * 60 * 1000, // 1 minute
     max: 300,
+    skip: (req) => {
+      return req.path.startsWith('/api/v1/admin') || req.path.startsWith('/api/v1/delivery');
+    },
     message: {
       success: false,
       error: {
@@ -95,8 +96,6 @@ app.use('/api/v1/profile', profileRoutes);
 app.use('/api/v1/delivery', deliveryRoutes);
 app.use('/api/v1/admin', adminRoutes);
 app.use('/api/v1/notifications', notificationRoutes);
-app.use('/api/v1', reviewRoutes);
-app.use('/api/v1', recentlyViewedRoutes);
 
 // Serve uploaded files
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
