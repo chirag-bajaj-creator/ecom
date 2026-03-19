@@ -170,7 +170,6 @@ const updateLocation = async (req, res, next) => {
 
 // POST /api/v1/delivery/pickup (multipart: photo + orderId)
 const confirmPickup = async (req, res, next) => {
-  console.log("CLOUDINARY:", process.env.CLOUDINARY_CLOUD_NAME, process.env.CLOUDINARY_API_KEY ? "KEY_SET" : "KEY_MISSING", process.env.CLOUDINARY_API_SECRET ? "SECRET_SET" : "SECRET_MISSING");
   try {
     const { orderId } = req.body;
     const deliveryBoy = await ensureDeliveryBoy(req.user._id);

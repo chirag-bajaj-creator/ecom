@@ -25,29 +25,38 @@ import CategoryPage from './pages/customer/CategoryPage';
 import ProductDetail from './pages/customer/ProductDetail';
 import RewardProgram from './pages/customer/RewardProgram';
 
+// Redirect admin/delivery away from customer pages to their dashboard
+const CustomerOnly = ({ children, user }) => {
+  if (user?.role === 'admin') return <Navigate to="/admin/dashboard" replace />;
+  if (user?.role === 'delivery') return <Navigate to="/delivery/dashboard" replace />;
+  return children;
+};
+
 function App() {
   const { user } = useAuth();
 
   return (
     <Routes>
-      {/* Public routes */}
-      <Route path="/" element={<Home />} />
+      {/* Public routes — admin/delivery get bounced to their dashboard */}
+      <Route path="/" element={
+        <CustomerOnly user={user}><Home /></CustomerOnly>
+      } />
       <Route path="/login" element={<Login />} />
       <Route path="/login/admin" element={<Login isAdmin />} />
       <Route path="/login/delivery" element={<Login isDelivery />} />
       <Route path="/signup" element={<Signup />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/reset-password" element={<ResetPassword />} />
-      <Route path="/search" element={<SearchResults />} />
-      <Route path="/category/:slug" element={<CategoryPage />} />
-      <Route path="/product/:id" element={<ProductDetail />} />
-      <Route path="/rewards" element={<RewardProgram />} />
-      <Route path="/add-to-cart" element={<Cart />} />
-      <Route path="/wishlist" element={<Wishlist />} />
-      <Route path="/checkout" element={<Checkout />} />
-      <Route path="/my-orders" element={<MyOrders />} />
-      <Route path="/my-profile" element={<MyProfile />} />
-      <Route path="/orders/:orderId/tracking" element={<OrderTracking />} />
+      <Route path="/search" element={<CustomerOnly user={user}><SearchResults /></CustomerOnly>} />
+      <Route path="/category/:slug" element={<CustomerOnly user={user}><CategoryPage /></CustomerOnly>} />
+      <Route path="/product/:id" element={<CustomerOnly user={user}><ProductDetail /></CustomerOnly>} />
+      <Route path="/rewards" element={<CustomerOnly user={user}><RewardProgram /></CustomerOnly>} />
+      <Route path="/add-to-cart" element={<CustomerOnly user={user}><Cart /></CustomerOnly>} />
+      <Route path="/wishlist" element={<CustomerOnly user={user}><Wishlist /></CustomerOnly>} />
+      <Route path="/checkout" element={<CustomerOnly user={user}><Checkout /></CustomerOnly>} />
+      <Route path="/my-orders" element={<CustomerOnly user={user}><MyOrders /></CustomerOnly>} />
+      <Route path="/my-profile" element={<CustomerOnly user={user}><MyProfile /></CustomerOnly>} />
+      <Route path="/orders/:orderId/tracking" element={<CustomerOnly user={user}><OrderTracking /></CustomerOnly>} />
 
       {/* Redirect based on role after login */}
       <Route
@@ -133,8 +142,12 @@ function App() {
         }
       />
 
-      {/* Catch all */}
-      <Route path="*" element={<Navigate to="/" replace />} />
+      {/* Catch all — admin/delivery go to their dashboard, others go home */}
+      <Route path="*" element={
+        user?.role === 'admin' ? <Navigate to="/admin/dashboard" replace /> :
+        user?.role === 'delivery' ? <Navigate to="/delivery/dashboard" replace /> :
+        <Navigate to="/" replace />
+      } />
     </Routes>
   );
 }
