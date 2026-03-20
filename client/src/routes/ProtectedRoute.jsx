@@ -17,6 +17,9 @@ const ProtectedRoute = ({ children, roles }) => {
     if (location.pathname.startsWith('/delivery')) {
       return <Navigate to="/login/delivery" replace />;
     }
+    if (location.pathname.startsWith('/seller')) {
+      return <Navigate to="/login/seller" replace />;
+    }
     return <Navigate to="/login" replace />;
   }
 
@@ -27,6 +30,9 @@ const ProtectedRoute = ({ children, roles }) => {
     }
     if (roles.includes('delivery')) {
       return <Navigate to="/login/delivery" replace />;
+    }
+    if (roles.includes('seller')) {
+      return <Navigate to="/login/seller" replace />;
     }
     return <Navigate to="/login" replace />;
   }

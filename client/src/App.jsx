@@ -21,6 +21,8 @@ import AdminOrders from './pages/admin/AdminOrders';
 import AdminUsers from './pages/admin/AdminUsers';
 import AdminDelivery from './pages/admin/AdminDelivery';
 import AdminCharges from './pages/admin/AdminCharges';
+import SellerProducts from './pages/seller/SellerProducts';
+import SellerDeliveryStatus from './pages/seller/SellerDeliveryStatus';
 import CategoryPage from './pages/customer/CategoryPage';
 import ProductDetail from './pages/customer/ProductDetail';
 import RewardProgram from './pages/customer/RewardProgram';
@@ -29,6 +31,7 @@ import RewardProgram from './pages/customer/RewardProgram';
 const CustomerOnly = ({ children, user }) => {
   if (user?.role === 'admin') return <Navigate to="/admin/dashboard" replace />;
   if (user?.role === 'delivery') return <Navigate to="/delivery/dashboard" replace />;
+  if (user?.role === 'seller') return <Navigate to="/seller/products" replace />;
   return children;
 };
 
@@ -44,6 +47,7 @@ function App() {
       <Route path="/login" element={<Login />} />
       <Route path="/login/admin" element={<Login isAdmin />} />
       <Route path="/login/delivery" element={<Login isDelivery />} />
+      <Route path="/login/seller" element={<Login isSeller />} />
       <Route path="/signup" element={<Signup />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/reset-password" element={<ResetPassword />} />
@@ -67,6 +71,8 @@ function App() {
               <Navigate to="/admin/dashboard" replace />
             ) : user?.role === 'delivery' ? (
               <Navigate to="/delivery/dashboard" replace />
+            ) : user?.role === 'seller' ? (
+              <Navigate to="/seller/products" replace />
             ) : (
               <Navigate to="/" replace />
             )}
@@ -88,6 +94,24 @@ function App() {
         element={
           <ProtectedRoute roles={['delivery']}>
             <DeliveryHistory />
+          </ProtectedRoute>
+        }
+      />
+
+      {/* Seller routes */}
+      <Route
+        path="/seller/products"
+        element={
+          <ProtectedRoute roles={['seller']}>
+            <SellerProducts />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/seller/delivery-status"
+        element={
+          <ProtectedRoute roles={['seller']}>
+            <SellerDeliveryStatus />
           </ProtectedRoute>
         }
       />
@@ -146,6 +170,7 @@ function App() {
       <Route path="*" element={
         user?.role === 'admin' ? <Navigate to="/admin/dashboard" replace /> :
         user?.role === 'delivery' ? <Navigate to="/delivery/dashboard" replace /> :
+        user?.role === 'seller' ? <Navigate to="/seller/products" replace /> :
         <Navigate to="/" replace />
       } />
     </Routes>

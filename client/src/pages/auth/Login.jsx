@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import './Auth.css';
 
-const Login = ({ isAdmin = false, isDelivery = false }) => {
+const Login = ({ isAdmin = false, isDelivery = false, isSeller = false }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -18,6 +18,8 @@ const Login = ({ isAdmin = false, isDelivery = false }) => {
         navigate('/admin/dashboard', { replace: true });
       } else if (user.role === 'delivery') {
         navigate('/delivery/dashboard', { replace: true });
+      } else if (user.role === 'seller') {
+        navigate('/seller/products', { replace: true });
       }
     }
   }, [isAuthenticated, user, navigate]);
@@ -42,12 +44,19 @@ const Login = ({ isAdmin = false, isDelivery = false }) => {
         setLoading(false);
         return;
       }
+      if (isSeller && role !== 'seller') {
+        setError('This login is for sellers only.');
+        setLoading(false);
+        return;
+      }
 
       // Redirect based on role (replace: true removes login from browser history)
       if (role === 'admin') {
         navigate('/admin/dashboard', { replace: true });
       } else if (role === 'delivery') {
         navigate('/delivery/dashboard', { replace: true });
+      } else if (role === 'seller') {
+        navigate('/seller/products', { replace: true });
       } else {
         navigate('/');
       }
@@ -61,7 +70,7 @@ const Login = ({ isAdmin = false, isDelivery = false }) => {
   return (
     <div className="auth-overlay">
       <div className="auth-popup">
-        <h2>{isAdmin ? 'Admin Login' : isDelivery ? 'Delivery Login' : 'Login'}</h2>
+        <h2>{isAdmin ? 'Admin Login' : isDelivery ? 'Delivery Login' : isSeller ? 'Seller Login' : 'Login'}</h2>
 
         {error && <div className="auth-error">{error}</div>}
 
@@ -97,14 +106,21 @@ const Login = ({ isAdmin = false, isDelivery = false }) => {
           </button>
         </form>
 
-        {!isAdmin && !isDelivery && (
+        {!isAdmin && !isDelivery && !isSeller && (
           <p className="auth-switch">
             New to the website?{' '}
             <Link to="/signup">Signup</Link>
           </p>
         )}
 
-        {!isAdmin && !isDelivery && (
+        {isSeller && (
+          <p className="auth-switch">
+            Want to become a seller?{' '}
+            <Link to="/signup">Sign up as Seller</Link>
+          </p>
+        )}
+
+        {!isAdmin && !isDelivery && !isSeller && (
           <Link to="/" className="auth-close">✕</Link>
         )}
       </div>

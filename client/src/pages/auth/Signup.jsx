@@ -123,6 +123,7 @@ const Signup = () => {
             <label>Register as</label>
             <select name="role" value={formData.role} onChange={handleChange}>
               <option value="user">Customer</option>
+              <option value="seller">Seller</option>
               <option value="delivery">Delivery Partner</option>
               <option value="admin">Admin</option>
             </select>

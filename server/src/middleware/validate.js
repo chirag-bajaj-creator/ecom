@@ -24,7 +24,7 @@ const validateSignup = (req, res, next) => {
     errors.push('Password is required');
   }
 
-  const validRoles = ['user', 'delivery', 'admin'];
+  const validRoles = ['user', 'delivery', 'admin', 'seller'];
   if (!role || !validRoles.includes(role)) {
     errors.push('Role must be one of: user, delivery, admin');
   }

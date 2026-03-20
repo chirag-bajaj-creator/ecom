@@ -20,6 +20,7 @@ const paymentRoutes = require('./routes/payment.routes');
 const profileRoutes = require('./routes/profile.routes');
 const deliveryRoutes = require('./routes/delivery.routes');
 const adminRoutes = require('./routes/admin.routes');
+const sellerRoutes = require('./routes/seller.routes');
 const notificationRoutes = require('./routes/notification.routes');
 const path = require('path');
 
@@ -77,6 +78,7 @@ app.use('/api/v1/payments', paymentRoutes);
 app.use('/api/v1/profile', profileRoutes);
 app.use('/api/v1/delivery', deliveryRoutes);
 app.use('/api/v1/admin', adminRoutes);
+app.use('/api/v1/seller', sellerRoutes);
 app.use('/api/v1/notifications', notificationRoutes);
 
 // Serve uploaded files

@@ -8,6 +8,8 @@ const env = {
   JWT_REFRESH_EXPIRY: '7d',
   ADMIN_INVITE_CODE: process.env.ADMIN_INVITE_CODE || 'ADMIN-INVITE-2024',
   FRONTEND_URL: process.env.FRONTEND_URL || 'http://localhost:5173',
+  ADMIN_CONTACT_EMAIL: process.env.ADMIN_CONTACT_EMAIL || 'admin@ecommerce.com',
+  ADMIN_CONTACT_PHONE: process.env.ADMIN_CONTACT_PHONE || '9999999999',
 };
 
 module.exports = env;
