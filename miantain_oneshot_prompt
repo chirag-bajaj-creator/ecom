@@ -1,0 +1,35 @@
+1) There should be an option to upload an image not pick image from gallery  of the phone in the Confirm Pickup section.
+
+2.
+
+There should be an API integration or validation method to ensure that only valid addresses are accepted on the website.
+
+3.
+
+The website should not get stuck on the Delivery Login or Admin Login pages.
+
+When the delivery user or admin logs out, they should be redirected to the user page.
+
+However, if they are already logged in, they should not be redirected to the user page.
+
+They should be redirected to the user page only when they are not logged in.
+
+4.
+
+Cookies should be integrated into the website to maintain user sessions.
+
+After refreshing the website, users should not be asked to log in again.
+
+The login page should appear only if the session keys/cookies are deleted or expired.
+
+5.
+
+The Confirm Delivery button should be linked to the live location of the delivery agent.
+
+The delivery should not be marked as confirmed immediately just by clicking the button.
+
+The delivery agent must first upload an image as proof of delivery.
+
+After the image is uploaded, the system should verify in real time whether the delivery agent has actually reached the correct delivery location.
+
+This is necessary because fake delivery confirmations can happen, which can negatively affect the user experience.

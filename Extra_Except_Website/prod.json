@@ -1,668 +1,556 @@
 [
   {
-    "category": "Electronics",
+    "category": "Beauty & Personal Care",
     "products": 15,
     "productsList": [
       {
-        "name": "Wireless Bluetooth Earbuds",
-        "description": "Compact TWS earbuds with noise isolation and charging case.",
-        "price": 2499,
-        
-        "stock": 45,
-        "imageUrl": "https://www.pexels.com/search/wireless%20earbuds/"
-      },
-      {
-        "name": "Smartphone 6.5 inch",
-        "description": "Mid-range smartphone with AMOLED display and 5000mAh battery.",
-        "price": 15999,
-        "stock": 25,
-        "imageUrl": "https://www.pexels.com/photo/smartphone-on-desk-16564512/"
-      },
-      {
-        "name": "Laptop 15.6 inch",
-        "description": "Performance laptop with SSD storage and 16GB RAM.",
-        "price": 58999,
-        "stock": 12,
-        "imageUrl": "https://www.pexels.com/search/laptop%20desk/"
-      },
-      {
-        "name": "Smartwatch Pro",
-        "description": "Fitness smartwatch with heart-rate and SpO2 tracking.",
-        "price": 4999,
-        "stock": 30,
-        "imageUrl": "https://www.pexels.com/search/smart%20watch/"
-      },
-      {
-        "name": "Portable Bluetooth Speaker",
-        "description": "Water-resistant speaker with deep bass and 12-hour playback.",
-        "price": 3499,
-        "stock": 28,
-        "imageUrl": "https://www.pexels.com/search/bluetooth%20speaker/"
-      },
-      {
-        "name": "Gaming Mouse RGB",
-        "description": "Ergonomic gaming mouse with adjustable DPI.",
-        "price": 1499,
-        "stock": 60,
-        "imageUrl": "https://www.pexels.com/search/computer%20mouse/"
-      },
-      {
-        "name": "Mechanical Keyboard",
-        "description": "Backlit mechanical keyboard with blue switches.",
-        "price": 2999,
-        "stock": 35,
-        "imageUrl": "https://www.pexels.com/search/mechanical%20keyboard/"
-      },
-      {
-        "name": "27 inch Monitor",
-        "description": "Full HD IPS monitor with thin bezels.",
-        "price": 12499,
-        "stock": 18,
-        "imageUrl": "https://www.pexels.com/search/monitor%20desk%20setup/"
-      },
-      {
-        "name": "Power Bank 20000mAh",
-        "description": "Fast-charging power bank with dual USB output.",
-        "price": 1999,
-        "stock": 50,
-        "imageUrl": "https://www.pexels.com/search/power%20bank/"
-      },
-      {
-        "name": "USB-C Fast Charger",
-        "description": "65W fast charger for phones, tablets, and laptops.",
-        "price": 1299,
-        "stock": 70,
-        "imageUrl": "https://www.pexels.com/search/phone%20charger/"
-      },
-      {
-        "name": "Action Camera 4K",
-        "description": "Ultra HD action camera with waterproof case.",
-        "price": 8999,
-        "stock": 15,
-        "imageUrl": "https://www.pexels.com/search/action%20camera/"
-      },
-      {
-        "name": "Wireless Router AX1800",
-        "description": "Dual-band Wi-Fi 6 router for high-speed internet.",
-        "price": 5499,
-        "stock": 20,
-        "imageUrl": "https://www.pexels.com/search/wifi%20router/"
-      },
-      {
-        "name": "Tablet 10.1 inch",
-        "description": "Entertainment tablet with stereo speakers and long battery life.",
-        "price": 13999,
-        "stock": 16,
-        "imageUrl": "https://www.pexels.com/search/tablet%20device/"
-      },
-      {
-        "name": "External SSD 1TB",
-        "description": "Portable high-speed SSD for storage and backups.",
-        "price": 7499,
-        "stock": 22,
-        "imageUrl": "https://www.pexels.com/search/external%20ssd/"
-      },
-      {
-        "name": "Webcam Full HD",
-        "description": "1080p webcam with built-in microphone.",
-        "price": 2199,
-        "stock": 40,
-        "imageUrl": "https://www.pexels.com/search/webcam/"
-      }
-    ]
-  },
-  {
-    "category": "Clothing",
-    "products": 15,
-    "productsList": [
-      {
-        "name": "Men's Casual T-Shirt",
-        "description": "Soft cotton t-shirt for daily wear.",
-        "price": 599,
-        "stock": 100,
-        "imageUrl": "https://www.pexels.com/search/men%20casual%20t-shirt/"
-      },
-      {
-        "name": "Women's Oversized Hoodie",
-        "description": "Warm fleece hoodie with relaxed fit.",
-        "price": 1299,
-        "stock": 65,
-        "imageUrl": "https://www.pexels.com/search/women%20oversized%20hoodie/"
-      },
-      {
-        "name": "Slim Fit Jeans",
-        "description": "Stretchable denim jeans with modern fit.",
-        "price": 1499,
+        "name": "Face Wash Gel",
+        "description": "Refreshing gel face wash for daily cleansing.",
+        "price": 299,
         "stock": 80,
-        "imageUrl": "https://www.pexels.com/search/slim%20fit%20jeans/"
+        "imageUrl": "https://www.pexels.com/search/face%20wash/"
       },
       {
-        "name": "Formal Shirt",
-        "description": "Wrinkle-resistant office wear shirt.",
-        "price": 1199,
-        "stock": 70,
-        "imageUrl": "https://www.pexels.com/search/formal%20shirt/"
-      },
-      {
-        "name": "Women's Kurti",
-        "description": "Printed ethnic kurti for festive and casual use.",
-        "price": 899,
-        "stock": 75,
-        "imageUrl": "https://www.pexels.com/search/women%20kurti/"
-      },
-      {
-        "name": "Track Pants",
-        "description": "Breathable athletic track pants.",
-        "price": 999,
-        "stock": 60,
-        "imageUrl": "https://www.pexels.com/search/track%20pants/"
-      },
-      {
-        "name": "Denim Jacket",
-        "description": "Classic blue denim jacket.",
-        "price": 1999,
-        "stock": 40,
-        "imageUrl": "https://www.pexels.com/search/denim%20jacket/"
-      },
-      {
-        "name": "Polo T-Shirt",
-        "description": "Collared cotton polo for semi-formal style.",
-        "price": 799,
-        "stock": 85,
-        "imageUrl": "https://www.pexels.com/search/polo%20t-shirt/"
-      },
-      {
-        "name": "Cotton Shorts",
-        "description": "Comfortable shorts for summer wear.",
-        "price": 699,
-        "stock": 90,
-        "imageUrl": "https://www.pexels.com/search/cotton%20shorts/"
-      },
-      {
-        "name": "Women's Leggings",
-        "description": "Stretchable leggings with slim fit.",
-        "price": 499,
-        "stock": 110,
-        "imageUrl": "https://www.pexels.com/search/women%20leggings/"
-      },
-      {
-        "name": "Winter Sweater",
-        "description": "Knitted sweater for cold weather.",
-        "price": 1599,
-        "stock": 50,
-        "imageUrl": "https://www.pexels.com/search/winter%20sweater/"
-      },
-      {
-        "name": "Cargo Pants",
-        "description": "Utility-style pants with multiple pockets.",
-        "price": 1399,
-        "stock": 55,
-        "imageUrl": "https://www.pexels.com/search/cargo%20pants/"
-      },
-      {
-        "name": "Women's Saree",
-        "description": "Elegant printed saree for occasions.",
-        "price": 2499,
-        "stock": 35,
-        "imageUrl": "https://www.pexels.com/search/women%20saree/"
-      },
-      {
-        "name": "Casual Shirt",
-        "description": "Checkered casual shirt for outings.",
-        "price": 999,
-        "stock": 65,
-        "imageUrl": "https://www.pexels.com/search/casual%20shirt/"
-      },
-      {
-        "name": "Sports Jersey",
-        "description": "Lightweight performance sports jersey.",
-        "price": 899,
-        "stock": 75,
-        "imageUrl": "https://www.pexels.com/search/sports%20jersey/"
-      }
-    ]
-  },
-  {
-    "category": "Footwear",
-    "products": 15,
-    "productsList": [
-      {
-        "name": "Running Shoes",
-        "description": "Lightweight shoes with cushioned sole.",
-        "price": 2499,
-        "stock": 55,
-        "imageUrl": "https://www.pexels.com/search/running%20shoes/"
-      },
-      {
-        "name": "Casual Sneakers",
-        "description": "Stylish everyday sneakers.",
-        "price": 2199,
-        "stock": 60,
-        "imageUrl": "https://www.pexels.com/search/casual%20sneakers/"
-      },
-      {
-        "name": "Formal Leather Shoes",
-        "description": "Premium office wear shoes.",
-        "price": 3299,
-        "stock": 35,
-        "imageUrl": "https://www.pexels.com/search/formal%20leather%20shoes/"
-      },
-      {
-        "name": "Women's Heels",
-        "description": "Elegant block heels for parties.",
-        "price": 1899,
-        "stock": 30,
-        "imageUrl": "https://www.pexels.com/search/women%20heels/"
-      },
-      {
-        "name": "Sports Sandals",
-        "description": "Durable outdoor sandals.",
-        "price": 1299,
-        "stock": 45,
-        "imageUrl": "https://www.pexels.com/search/sports%20sandals/"
-      },
-      {
-        "name": "Flip Flops",
-        "description": "Comfortable rubber flip flops.",
-        "price": 399,
-        "stock": 100,
-        "imageUrl": "https://www.pexels.com/search/flip%20flops/"
-      },
-      {
-        "name": "Ankle Boots",
-        "description": "Stylish boots for winter fashion.",
-        "price": 2899,
-        "stock": 25,
-        "imageUrl": "https://www.pexels.com/search/ankle%20boots/"
-      },
-      {
-        "name": "Loafers",
-        "description": "Slip-on loafers for smart casual look.",
-        "price": 1999,
-        "stock": 40,
-        "imageUrl": "https://www.pexels.com/search/loafers%20shoes/"
-      },
-      {
-        "name": "Canvas Shoes",
-        "description": "Breathable and trendy canvas shoes.",
-        "price": 1499,
-        "stock": 50,
-        "imageUrl": "https://www.pexels.com/search/canvas%20shoes/"
-      },
-      {
-        "name": "School Shoes",
-        "description": "Black durable school shoes.",
-        "price": 999,
-        "stock": 65,
-        "imageUrl": "https://www.pexels.com/search/black%20school%20shoes/"
-      },
-      {
-        "name": "Trekking Shoes",
-        "description": "Rugged shoes for hiking trails.",
-        "price": 3999,
-        "stock": 20,
-        "imageUrl": "https://www.pexels.com/search/trekking%20shoes/"
-      },
-      {
-        "name": "Women's Flats",
-        "description": "Comfortable flats for daily wear.",
-        "price": 899,
-        "stock": 70,
-        "imageUrl": "https://www.pexels.com/search/women%20flats/"
-      },
-      {
-        "name": "Slippers",
-        "description": "Indoor comfort slippers.",
-        "price": 499,
-        "stock": 85,
-        "imageUrl": "https://www.pexels.com/search/slippers/"
-      },
-      {
-        "name": "Football Studs",
-        "description": "Stud shoes for football training.",
-        "price": 2799,
-        "stock": 22,
-        "imageUrl": "https://www.pexels.com/search/football%20boots/"
-      },
-      {
-        "name": "Basketball Shoes",
-        "description": "High-ankle shoes with grip sole.",
-        "price": 4599,
-        "stock": 18,
-        "imageUrl": "https://www.pexels.com/search/basketball%20shoes/"
-      }
-    ]
-  },
-  {
-    "category": "Home Appliances",
-    "products": 15,
-    "productsList": [
-      {
-        "name": "Mixer Grinder 750W",
-        "description": "Powerful mixer grinder with 3 jars.",
-        "price": 3499,
-        "stock": 35,
-        "imageUrl": "https://www.pexels.com/search/blender%20kitchen%20appliance/"
-      },
-      {
-        "name": "Air Fryer 4L",
-        "description": "Healthy cooking air fryer with digital controls.",
-        "price": 5499,
-        "stock": 20,
-        "imageUrl": "https://www.pexels.com/search/air%20fryer/"
-      },
-      {
-        "name": "Microwave Oven 20L",
-        "description": "Compact microwave for reheating and grilling.",
-        "price": 6999,
-        "stock": 15,
-        "imageUrl": "https://www.pexels.com/search/microwave%20oven/"
-      },
-      {
-        "name": "Electric Kettle 1.5L",
-        "description": "Fast-boil stainless steel kettle.",
-        "price": 1499,
-        "stock": 50,
-        "imageUrl": "https://www.pexels.com/search/electric%20kettle/"
-      },
-      {
-        "name": "Vacuum Cleaner",
-        "description": "Bagless vacuum cleaner with strong suction.",
-        "price": 7999,
-        "stock": 10,
-        "imageUrl": "https://www.pexels.com/search/vacuum%20cleaner/"
-      },
-      {
-        "name": "Ceiling Fan",
-        "description": "Energy-efficient ceiling fan for bedrooms.",
-        "price": 2299,
-        "stock": 40,
-        "imageUrl": "https://www.pexels.com/search/ceiling%20fan/"
-      },
-      {
-        "name": "Induction Cooktop",
-        "description": "Touch control induction stove.",
-        "price": 2999,
-        "stock": 30,
-        "imageUrl": "https://www.pexels.com/search/induction%20cooktop/"
-      },
-      {
-        "name": "Rice Cooker",
-        "description": "Automatic rice cooker with keep-warm mode.",
-        "price": 2499,
-        "stock": 25,
-        "imageUrl": "https://www.pexels.com/search/rice%20cooker/"
-      },
-      {
-        "name": "Room Heater",
-        "description": "Portable room heater with safety mesh.",
-        "price": 1899,
-        "stock": 28,
-        "imageUrl": "https://www.pexels.com/search/room%20heater/"
-      },
-      {
-        "name": "Water Purifier",
-        "description": "RO+UV water purifier for clean drinking water.",
-        "price": 10499,
-        "stock": 12,
-        "imageUrl": "https://www.pexels.com/search/water%20purifier/"
-      },
-      {
-        "name": "Toaster 2 Slice",
-        "description": "Compact bread toaster with browning control.",
-        "price": 1299,
-        "stock": 45,
-        "imageUrl": "https://www.pexels.com/search/toaster/"
-      },
-      {
-        "name": "Steam Iron",
-        "description": "Non-stick steam iron for wrinkle-free clothes.",
-        "price": 1699,
-        "stock": 35,
-        "imageUrl": "https://www.pexels.com/search/steam%20iron/"
-      },
-      {
-        "name": "Dish Rack Dryer",
-        "description": "Kitchen dish drying appliance.",
-        "price": 2599,
-        "stock": 18,
-        "imageUrl": "https://www.pexels.com/search/dish%20drying%20rack/"
-      },
-      {
-        "name": "Hand Blender",
-        "description": "Portable blender for smoothies and soups.",
-        "price": 999,
-        "stock": 55,
-        "imageUrl": "https://www.pexels.com/search/hand%20blender/"
-      },
-      {
-        "name": "Juicer Machine",
-        "description": "Fruit juicer with pulp separator.",
-        "price": 3199,
-        "stock": 22,
-        "imageUrl": "https://www.pexels.com/search/juicer%20machine/"
-      }
-    ]
-  },
-  {
-    "category": "Furniture",
-    "products": 15,
-    "productsList": [
-      {
-        "name": "Wooden Study Table",
-        "description": "Spacious study table with drawer.",
-        "price": 5499,
-        "stock": 20,
-        "imageUrl": "https://www.pexels.com/search/wooden%20study%20table/"
-      },
-      {
-        "name": "Office Chair",
-        "description": "Ergonomic chair with lumbar support.",
-        "price": 6999,
-        "stock": 18,
-        "imageUrl": "https://www.pexels.com/search/office%20chair/"
-      },
-      {
-        "name": "Bookshelf",
-        "description": "5-tier engineered wood bookshelf.",
-        "price": 4499,
-        "stock": 15,
-        "imageUrl": "https://www.pexels.com/search/bookshelf/"
-      },
-      {
-        "name": "Single Bed Frame",
-        "description": "Strong wooden bed frame for one person.",
-        "price": 11999,
-        "stock": 8,
-        "imageUrl": "https://www.pexels.com/search/single%20bed%20frame/"
-      },
-      {
-        "name": "Double Bed Frame",
-        "description": "Queen-size bed frame with headboard.",
-        "price": 18999,
-        "stock": 6,
-        "imageUrl": "https://www.pexels.com/search/double%20bed%20frame/"
-      },
-      {
-        "name": "Coffee Table",
-        "description": "Modern coffee table for living room.",
-        "price": 3999,
-        "stock": 14,
-        "imageUrl": "https://www.pexels.com/search/coffee%20table/"
-      },
-      {
-        "name": "Dining Table Set",
-        "description": "4-seater dining table set.",
-        "price": 15999,
-        "stock": 5,
-        "imageUrl": "https://www.pexels.com/search/dining%20table%20set/"
-      },
-      {
-        "name": "TV Unit",
-        "description": "Stylish TV cabinet with storage shelves.",
-        "price": 7499,
-        "stock": 10,
-        "imageUrl": "https://www.pexels.com/search/tv%20unit%20furniture/"
-      },
-      {
-        "name": "Wardrobe",
-        "description": "2-door wardrobe with hanging section.",
-        "price": 13999,
-        "stock": 7,
-        "imageUrl": "https://www.pexels.com/search/wardrobe%20furniture/"
-      },
-      {
-        "name": "Sofa 3 Seater",
-        "description": "Comfortable fabric sofa with cushions.",
-        "price": 22999,
-        "stock": 4,
-        "imageUrl": "https://www.pexels.com/search/3%20seater%20sofa/"
-      },
-      {
-        "name": "Bean Bag",
-        "description": "Soft and casual seating bean bag.",
-        "price": 2499,
-        "stock": 22,
-        "imageUrl": "https://www.pexels.com/search/bean%20bag%20chair/"
-      },
-      {
-        "name": "Shoe Rack",
-        "description": "Compact shoe rack for entryway.",
-        "price": 1999,
-        "stock": 25,
-        "imageUrl": "https://www.pexels.com/search/shoe%20rack/"
-      },
-      {
-        "name": "Bedside Table",
-        "description": "Nightstand with drawer and shelf.",
-        "price": 2999,
-        "stock": 16,
-        "imageUrl": "https://www.pexels.com/search/bedside%20table/"
-      },
-      {
-        "name": "Computer Desk",
-        "description": "Minimalist desk for workstations.",
-        "price": 6499,
-        "stock": 12,
-        "imageUrl": "https://www.pexels.com/search/computer%20desk/"
-      },
-      {
-        "name": "Recliner Chair",
-        "description": "Comfort recliner for relaxing.",
-        "price": 14999,
-        "stock": 5,
-        "imageUrl": "https://www.pexels.com/search/recliner%20chair/"
-      }
-    ]
-  },
-  {
-    "category": "Books",
-    "products": 15,
-    "productsList": [
-      {
-        "name": "Data Structures in C++",
-        "description": "Academic guide for engineering students.",
-        "price": 799,
-        "stock": 40,
-        "imageUrl": "https://www.pexels.com/search/computer%20science%20book/"
-      },
-      {
-        "name": "Operating Systems Concepts",
-        "description": "Comprehensive OS theory book.",
-        "price": 999,
-        "stock": 30,
-        "imageUrl": "https://www.pexels.com/search/programming%20book/"
-      },
-      {
-        "name": "DBMS Fundamentals",
-        "description": "Database concepts and SQL basics.",
-        "price": 699,
-        "stock": 35,
-        "imageUrl": "https://www.pexels.com/search/database%20book/"
-      },
-      {
-        "name": "Computer Networks",
-        "description": "Networking fundamentals for students.",
-        "price": 899,
-        "stock": 28,
-        "imageUrl": "https://www.pexels.com/search/networking%20book/"
-      },
-      {
-        "name": "Java Programming",
-        "description": "Beginner to advanced Java concepts.",
-        "price": 749,
-        "stock": 50,
-        "imageUrl": "https://www.pexels.com/search/java%20programming%20book/"
-      },
-      {
-        "name": "Python for Beginners",
-        "description": "Easy learning guide with exercises.",
+        "name": "Vitamin C Serum",
+        "description": "Brightening serum for glowing skin.",
         "price": 599,
+        "stock": 45,
+        "imageUrl": "https://www.pexels.com/search/serum%20bottle/"
+      },
+      {
+        "name": "Sunscreen SPF 50",
+        "description": "Broad-spectrum sunscreen for UV protection.",
+        "price": 499,
+        "stock": 70,
+        "imageUrl": "https://www.pexels.com/search/sunscreen/"
+      },
+      {
+        "name": "Moisturizing Lotion",
+        "description": "Hydrating body lotion for soft skin.",
+        "price": 399,
         "stock": 60,
-        "imageUrl": "https://www.pexels.com/search/python%20book/"
+        "imageUrl": "https://www.pexels.com/search/body%20lotion/"
       },
       {
-        "name": "Clean Code",
-        "description": "Software craftsmanship and coding best practices.",
-        "price": 1199,
-        "stock": 22,
-        "imageUrl": "https://www.pexels.com/search/coding%20book/"
+        "name": "Shampoo Anti-Dandruff",
+        "description": "Scalp care shampoo for dandruff control.",
+        "price": 349,
+        "stock": 75,
+        "imageUrl": "https://www.pexels.com/search/shampoo/"
       },
       {
-        "name": "Algorithms Unlocked",
-        "description": "Introduction to algorithms.",
+        "name": "Hair Conditioner",
+        "description": "Smoothening conditioner for soft hair.",
+        "price": 329,
+        "stock": 65,
+        "imageUrl": "https://www.pexels.com/search/hair%20conditioner/"
+      },
+      {
+        "name": "Hair Dryer",
+        "description": "Compact hair dryer with heat settings.",
+        "price": 1499,
+        "stock": 25,
+        "imageUrl": "https://www.pexels.com/search/hair%20dryer/"
+      },
+      {
+        "name": "Trimmer Kit",
+        "description": "Rechargeable grooming trimmer with attachments.",
+        "price": 1999,
+        "stock": 30,
+        "imageUrl": "https://www.pexels.com/search/trimmer/"
+      },
+      {
+        "name": "Perfume Spray",
+        "description": "Long-lasting fragrance for daily use.",
         "price": 899,
-        "stock": 18,
-        "imageUrl": "https://www.pexels.com/search/algorithm%20book/"
+        "stock": 40,
+        "imageUrl": "https://www.pexels.com/search/perfume%20bottle/"
       },
       {
-        "name": "Artificial Intelligence Basics",
-        "description": "AI concepts for beginners.",
-        "price": 1099,
-        "stock": 20,
-        "imageUrl": "https://www.pexels.com/search/artificial%20intelligence%20book/"
+        "name": "Lip Balm",
+        "description": "Moisturizing lip balm for dry lips.",
+        "price": 149,
+        "stock": 120,
+        "imageUrl": "https://www.pexels.com/search/lip%20balm/"
       },
       {
-        "name": "Machine Learning Essentials",
-        "description": "ML models and applications.",
+        "name": "Face Mask Pack",
+        "description": "Hydrating sheet masks for skin nourishment.",
+        "price": 399,
+        "stock": 55,
+        "imageUrl": "https://www.pexels.com/search/face%20mask%20pack/"
+      },
+      {
+        "name": "Body Wash",
+        "description": "Gentle body wash with fresh fragrance.",
+        "price": 299,
+        "stock": 85,
+        "imageUrl": "https://www.pexels.com/search/body%20wash/"
+      },
+      {
+        "name": "Electric Toothbrush",
+        "description": "Battery-powered toothbrush for effective cleaning.",
         "price": 1299,
-        "stock": 15,
-        "imageUrl": "https://www.pexels.com/search/machine%20learning%20book/"
+        "stock": 35,
+        "imageUrl": "https://www.pexels.com/search/electric%20toothbrush/"
       },
       {
-        "name": "Digital Logic Design",
-        "description": "Foundations of digital electronics.",
-        "price": 799,
-        "stock": 26,
-        "imageUrl": "https://www.pexels.com/search/electronics%20book/"
+        "name": "Nail Care Set",
+        "description": "Complete manicure and pedicure grooming set.",
+        "price": 699,
+        "stock": 28,
+        "imageUrl": "https://www.pexels.com/search/nail%20care%20kit/"
       },
       {
-        "name": "Compiler Design",
-        "description": "Parsing, lexical analysis, and translation.",
-        "price": 949,
-        "stock": 14,
-        "imageUrl": "https://www.pexels.com/search/software%20engineering%20book/"
-      },
+        "name": "Aloe Vera Gel",
+        "description": "Multipurpose soothing gel for skin and hair.",
+        "price": 249,
+        "stock": 90,
+        "imageUrl": "https://www.pexels.com/search/aloe%20vera%20gel/"
+      }
+    ]
+  },
+  {
+    "category": "Sports & Fitness",
+    "products": 15,
+    "productsList": [
       {
-        "name": "Software Engineering",
-        "description": "SDLC, design patterns, and testing.",
+        "name": "Yoga Mat",
+        "description": "Non-slip yoga mat for workouts and stretching.",
         "price": 899,
-        "stock": 32,
-        "imageUrl": "https://www.pexels.com/search/software%20engineering%20book/"
+        "stock": 50,
+        "imageUrl": "https://www.pexels.com/search/yoga%20mat/"
       },
       {
-        "name": "Cloud Computing Guide",
-        "description": "Intro to AWS, Azure, and deployment.",
-        "price": 1099,
-        "stock": 17,
-        "imageUrl": "https://www.pexels.com/search/cloud%20computing%20book/"
+        "name": "Dumbbell Set 10kg",
+        "description": "Adjustable dumbbell set for home workouts.",
+        "price": 2499,
+        "stock": 20,
+        "imageUrl": "https://www.pexels.com/search/dumbbells/"
       },
       {
-        "name": "Cybersecurity Basics",
-        "description": "Security principles and best practices.",
+        "name": "Resistance Bands",
+        "description": "Elastic training bands for strength exercises.",
+        "price": 699,
+        "stock": 65,
+        "imageUrl": "https://www.pexels.com/search/resistance%20bands/"
+      },
+      {
+        "name": "Skipping Rope",
+        "description": "Lightweight speed rope for cardio workouts.",
+        "price": 299,
+        "stock": 80,
+        "imageUrl": "https://www.pexels.com/search/skipping%20rope/"
+      },
+      {
+        "name": "Football",
+        "description": "Durable training football for outdoor games.",
+        "price": 799,
+        "stock": 45,
+        "imageUrl": "https://www.pexels.com/search/football%20ball/"
+      },
+      {
+        "name": "Cricket Bat",
+        "description": "Wooden cricket bat for practice matches.",
+        "price": 1899,
+        "stock": 22,
+        "imageUrl": "https://www.pexels.com/search/cricket%20bat/"
+      },
+      {
+        "name": "Cricket Ball Set",
+        "description": "Leather cricket balls for net practice.",
+        "price": 599,
+        "stock": 35,
+        "imageUrl": "https://www.pexels.com/search/cricket%20ball/"
+      },
+      {
+        "name": "Badminton Racket",
+        "description": "Lightweight racket for beginners and intermediates.",
+        "price": 1299,
+        "stock": 30,
+        "imageUrl": "https://www.pexels.com/search/badminton%20racket/"
+      },
+      {
+        "name": "Tennis Ball Pack",
+        "description": "Pack of durable tennis balls for training.",
+        "price": 499,
+        "stock": 55,
+        "imageUrl": "https://www.pexels.com/search/tennis%20balls/"
+      },
+      {
+        "name": "Gym Gloves",
+        "description": "Padded gloves for weightlifting grip support.",
+        "price": 599,
+        "stock": 70,
+        "imageUrl": "https://www.pexels.com/search/gym%20gloves/"
+      },
+      {
+        "name": "Foam Roller",
+        "description": "Muscle recovery roller for stretching and massage.",
         "price": 999,
+        "stock": 25,
+        "imageUrl": "https://www.pexels.com/search/foam%20roller/"
+      },
+      {
+        "name": "Protein Shaker Bottle",
+        "description": "Leakproof shaker bottle for gym supplements.",
+        "price": 349,
+        "stock": 95,
+        "imageUrl": "https://www.pexels.com/search/shaker%20bottle/"
+      },
+      {
+        "name": "Exercise Bench",
+        "description": "Foldable workout bench for home gym routines.",
+        "price": 4999,
+        "stock": 12,
+        "imageUrl": "https://www.pexels.com/search/exercise%20bench/"
+      },
+      {
+        "name": "Cycling Helmet",
+        "description": "Protective helmet for outdoor cycling safety.",
+        "price": 1599,
+        "stock": 18,
+        "imageUrl": "https://www.pexels.com/search/cycling%20helmet/"
+      },
+      {
+        "name": "Fitness Tracker Band",
+        "description": "Activity tracker with step and calorie monitoring.",
+        "price": 2199,
+        "stock": 26,
+        "imageUrl": "https://www.pexels.com/search/fitness%20tracker/"
+      }
+    ]
+  },
+  {
+    "category": "Toys & Games",
+    "products": 15,
+    "productsList": [
+      {
+        "name": "Remote Control Car",
+        "description": "Rechargeable RC car with fast speed control.",
+        "price": 1499,
+        "stock": 35,
+        "imageUrl": "https://www.pexels.com/search/remote%20control%20car/"
+      },
+      {
+        "name": "Building Blocks Set",
+        "description": "Creative block set for kids learning and fun.",
+        "price": 999,
+        "stock": 50,
+        "imageUrl": "https://www.pexels.com/search/building%20blocks/"
+      },
+      {
+        "name": "Puzzle Board Game",
+        "description": "Family puzzle game for entertainment and learning.",
+        "price": 799,
+        "stock": 40,
+        "imageUrl": "https://www.pexels.com/search/board%20game/"
+      },
+      {
+        "name": "Stuffed Teddy Bear",
+        "description": "Soft plush teddy for kids and gifting.",
+        "price": 699,
+        "stock": 60,
+        "imageUrl": "https://www.pexels.com/search/teddy%20bear/"
+      },
+      {
+        "name": "Toy Train Set",
+        "description": "Battery-operated train set with track pieces.",
+        "price": 1899,
+        "stock": 20,
+        "imageUrl": "https://www.pexels.com/search/toy%20train/"
+      },
+      {
+        "name": "Doll House Set",
+        "description": "Miniature doll house playset with accessories.",
+        "price": 2499,
+        "stock": 18,
+        "imageUrl": "https://www.pexels.com/search/doll%20house/"
+      },
+      {
+        "name": "Educational Flash Cards",
+        "description": "Learning cards for alphabets, numbers, and shapes.",
+        "price": 399,
+        "stock": 75,
+        "imageUrl": "https://www.pexels.com/search/flash%20cards/"
+      },
+      {
+        "name": "Toy Kitchen Set",
+        "description": "Pretend play kitchen set for children.",
+        "price": 1799,
+        "stock": 22,
+        "imageUrl": "https://www.pexels.com/search/toy%20kitchen/"
+      },
+      {
+        "name": "Action Figure Hero",
+        "description": "Collectible action figure with movable joints.",
+        "price": 899,
+        "stock": 45,
+        "imageUrl": "https://www.pexels.com/search/action%20figure/"
+      },
+      {
+        "name": "Ludo Board",
+        "description": "Classic indoor board game for family fun.",
+        "price": 299,
+        "stock": 100,
+        "imageUrl": "https://www.pexels.com/search/ludo%20board/"
+      },
+      {
+        "name": "Chess Set",
+        "description": "Wooden chess board set for strategy lovers.",
+        "price": 799,
+        "stock": 38,
+        "imageUrl": "https://www.pexels.com/search/chess%20set/"
+      },
+      {
+        "name": "Kids Drawing Kit",
+        "description": "Color pencils, crayons, and sketch tools for kids.",
+        "price": 649,
+        "stock": 55,
+        "imageUrl": "https://www.pexels.com/search/drawing%20kit/"
+      },
+      {
+        "name": "Toy Gun Blaster",
+        "description": "Foam dart blaster toy for safe play.",
+        "price": 1199,
+        "stock": 30,
+        "imageUrl": "https://www.pexels.com/search/toy%20blaster/"
+      },
+      {
+        "name": "Mini Basketball Hoop",
+        "description": "Indoor basketball hoop set for kids.",
+        "price": 1399,
         "stock": 24,
-        "imageUrl": "https://www.pexels.com/search/cybersecurity%20book/"
+        "imageUrl": "https://www.pexels.com/search/kids%20basketball%20hoop/"
+      },
+      {
+        "name": "Magic Cube Puzzle",
+        "description": "Colorful cube puzzle for brain training.",
+        "price": 349,
+        "stock": 85,
+        "imageUrl": "https://www.pexels.com/search/rubik%20cube/"
+      }
+    ]
+  },
+  {
+    "category": "Groceries",
+    "products": 15,
+    "productsList": [
+      {
+        "name": "Basmati Rice 5kg",
+        "description": "Premium long-grain basmati rice for daily cooking.",
+        "price": 699,
+        "stock": 60,
+        "imageUrl": "https://www.pexels.com/search/rice%20bag/"
+      },
+      {
+        "name": "Wheat Flour 10kg",
+        "description": "Fine whole wheat flour for chapati and baking.",
+        "price": 499,
+        "stock": 55,
+        "imageUrl": "https://www.pexels.com/search/wheat%20flour/"
+      },
+      {
+        "name": "Cooking Oil 1L",
+        "description": "Refined cooking oil suitable for daily meals.",
+        "price": 179,
+        "stock": 100,
+        "imageUrl": "https://www.pexels.com/search/cooking%20oil/"
+      },
+      {
+        "name": "Sugar 1kg",
+        "description": "Refined white sugar for tea and desserts.",
+        "price": 59,
+        "stock": 120,
+        "imageUrl": "https://www.pexels.com/search/sugar%20pack/"
+      },
+      {
+        "name": "Salt 1kg",
+        "description": "Iodized salt for healthy daily consumption.",
+        "price": 25,
+        "stock": 150,
+        "imageUrl": "https://www.pexels.com/search/salt%20pack/"
+      },
+      {
+        "name": "Turmeric Powder",
+        "description": "Pure turmeric spice powder for Indian cooking.",
+        "price": 89,
+        "stock": 90,
+        "imageUrl": "https://www.pexels.com/search/turmeric%20powder/"
+      },
+      {
+        "name": "Red Chilli Powder",
+        "description": "Spicy red chilli powder for curries and snacks.",
+        "price": 99,
+        "stock": 85,
+        "imageUrl": "https://www.pexels.com/search/chilli%20powder/"
+      },
+      {
+        "name": "Tea Powder 500g",
+        "description": "Strong flavored tea leaves for refreshing tea.",
+        "price": 249,
+        "stock": 70,
+        "imageUrl": "https://www.pexels.com/search/tea%20leaves/"
+      },
+      {
+        "name": "Coffee Powder 200g",
+        "description": "Instant coffee powder for quick beverages.",
+        "price": 299,
+        "stock": 65,
+        "imageUrl": "https://www.pexels.com/search/coffee%20powder/"
+      },
+      {
+        "name": "Biscuits Pack",
+        "description": "Crunchy tea-time biscuits for snacks.",
+        "price": 49,
+        "stock": 140,
+        "imageUrl": "https://www.pexels.com/search/biscuits/"
+      },
+      {
+        "name": "Pasta 500g",
+        "description": "Durum wheat pasta for quick meals.",
+        "price": 129,
+        "stock": 75,
+        "imageUrl": "https://www.pexels.com/search/pasta%20pack/"
+      },
+      {
+        "name": "Tomato Ketchup",
+        "description": "Tangy ketchup for snacks and meals.",
+        "price": 119,
+        "stock": 80,
+        "imageUrl": "https://www.pexels.com/search/ketchup%20bottle/"
+      },
+      {
+        "name": "Peanut Butter Jar",
+        "description": "Creamy peanut butter for breakfast spreads.",
+        "price": 249,
+        "stock": 50,
+        "imageUrl": "https://www.pexels.com/search/peanut%20butter/"
+      },
+      {
+        "name": "Corn Flakes",
+        "description": "Crispy breakfast cereal for healthy mornings.",
+        "price": 199,
+        "stock": 58,
+        "imageUrl": "https://www.pexels.com/search/cornflakes/"
+      },
+      {
+        "name": "Instant Noodles Pack",
+        "description": "Quick-cook noodles for snacks and meals.",
+        "price": 89,
+        "stock": 130,
+        "imageUrl": "https://www.pexels.com/search/instant%20noodles/"
+      }
+    ]
+  },
+  {
+    "category": "Stationery",
+    "products": 15,
+    "productsList": [
+      {
+        "name": "Notebook A4",
+        "description": "Ruled A4 notebook for school and office use.",
+        "price": 99,
+        "stock": 120,
+        "imageUrl": "https://www.pexels.com/search/notebook/"
+      },
+      {
+        "name": "Ball Pen Pack",
+        "description": "Smooth writing ball pens pack of 10.",
+        "price": 149,
+        "stock": 150,
+        "imageUrl": "https://www.pexels.com/search/ball%20pen/"
+      },
+      {
+        "name": "Pencil Box Set",
+        "description": "Pencil set with eraser and sharpener.",
+        "price": 79,
+        "stock": 100,
+        "imageUrl": "https://www.pexels.com/search/pencils/"
+      },
+      {
+        "name": "Highlighter Set",
+        "description": "Colorful highlighters for notes and marking.",
+        "price": 199,
+        "stock": 60,
+        "imageUrl": "https://www.pexels.com/search/highlighter%20pens/"
+      },
+      {
+        "name": "Sticky Notes Pack",
+        "description": "Self-adhesive notes for reminders and planning.",
+        "price": 129,
+        "stock": 80,
+        "imageUrl": "https://www.pexels.com/search/sticky%20notes/"
+      },
+      {
+        "name": "Geometry Box",
+        "description": "Complete math instrument box for students.",
+        "price": 249,
+        "stock": 55,
+        "imageUrl": "https://www.pexels.com/search/geometry%20box/"
+      },
+      {
+        "name": "Sketch Pen Set",
+        "description": "Vibrant sketch pens for art and school projects.",
+        "price": 299,
+        "stock": 45,
+        "imageUrl": "https://www.pexels.com/search/sketch%20pens/"
+      },
+      {
+        "name": "Whiteboard Marker Pack",
+        "description": "Low-odor markers for whiteboards and presentations.",
+        "price": 179,
+        "stock": 70,
+        "imageUrl": "https://www.pexels.com/search/whiteboard%20marker/"
+      },
+      {
+        "name": "File Folder Set",
+        "description": "Document folders for organized paper storage.",
+        "price": 249,
+        "stock": 50,
+        "imageUrl": "https://www.pexels.com/search/file%20folder/"
+      },
+      {
+        "name": "Stapler Machine",
+        "description": "Durable stapler for office and school tasks.",
+        "price": 199,
+        "stock": 35,
+        "imageUrl": "https://www.pexels.com/search/stapler/"
+      },
+      {
+        "name": "Paper Clips Box",
+        "description": "Metal paper clips for document binding.",
+        "price": 59,
+        "stock": 90,
+        "imageUrl": "https://www.pexels.com/search/paper%20clips/"
+      },
+      {
+        "name": "Desk Organizer",
+        "description": "Multi-compartment desk stand for stationery items.",
+        "price": 399,
+        "stock": 25,
+        "imageUrl": "https://www.pexels.com/search/desk%20organizer/"
+      },
+      {
+        "name": "Glue Stick Pack",
+        "description": "Easy-to-use glue sticks for crafts and schoolwork.",
+        "price": 99,
+        "stock": 85,
+        "imageUrl": "https://www.pexels.com/search/glue%20stick/"
+      },
+      {
+        "name": "Acrylic Color Set",
+        "description": "Artist acrylic paints for creative projects.",
+        "price": 499,
+        "stock": 30,
+        "imageUrl": "https://www.pexels.com/search/acrylic%20paint/"
+      },
+      {
+        "name": "Drawing Book",
+        "description": "Thick paper sketchbook for art and design practice.",
+        "price": 199,
+        "stock": 65,
+        "imageUrl": "https://www.pexels.com/search/sketchbook/"
       }
     ]
   }
