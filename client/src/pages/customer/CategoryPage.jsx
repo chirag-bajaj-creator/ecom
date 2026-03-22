@@ -60,7 +60,7 @@ const CategoryPage = () => {
             </p>
           </section>
 
-          {loading ? (
+          {/* {loading ? (
             <div className="product-row">
               {Array.from({ length: 8 }).map((_, i) => (
                 <SkeletonCard key={i} />
@@ -77,7 +77,7 @@ const CategoryPage = () => {
             </div>
           ) : (
             <p className="empty-message">No products in this category yet.</p>
-          )}
+          )} */}
 
           {totalPages > 1 && (
             <div className="pagination">
