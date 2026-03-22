@@ -80,21 +80,17 @@ const Home = () => {
               ))}
             </section>
           ) : (
-            categories.map((cat) => (
+            categories.filter(cat => productsByCategory[cat._id]?.length > 0).map((cat) => (
               <section key={cat._id} className="category-section">
                 <h2 className="section-title">{cat.name}</h2>
-                {productsByCategory[cat._id]?.length > 0 ? (
-                  <div className="product-row">
-                    {productsByCategory[cat._id].map((product) => (
-                      <ProductCard
-                        key={product._id}
-                        product={product}
-                      />
-                    ))}
-                  </div>
-                ) : (
-                  <p className="empty-message">No products in this category yet.</p>
-                )}
+                <div className="product-row">
+                  {productsByCategory[cat._id].map((product) => (
+                    <ProductCard
+                      key={product._id}
+                      product={product}
+                    />
+                  ))}
+                </div>
               </section>
             ))
           )}
