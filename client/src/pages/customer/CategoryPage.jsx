@@ -60,25 +60,6 @@ const CategoryPage = () => {
             </p>
           </section>
 
-          {/* {loading ? (
-            <div className="product-row">
-              {Array.from({ length: 8 }).map((_, i) => (
-                <SkeletonCard key={i} />
-              ))}
-            </div>
-          ) : products.length > 0 ? (
-            <div className="product-row">
-              {products.map((product) => (
-                <ProductCard
-                  key={product._id}
-                  product={product}
-                />
-              ))}
-            </div>
-          ) : (
-            <p className="empty-message">No products in this category yet.</p>
-          )} */}
-
           {totalPages > 1 && (
             <div className="pagination">
               <button disabled={page <= 1} onClick={() => setPage(p => p - 1)}>Previous</button>
