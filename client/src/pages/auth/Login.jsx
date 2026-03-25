@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import './Auth.css';
 
-const Login = ({ isAdmin = false, isDelivery = false, isSeller = false }) => {
+const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -11,7 +11,7 @@ const Login = ({ isAdmin = false, isDelivery = false, isSeller = false }) => {
   const { login, user, isAuthenticated } = useAuth();
   const navigate = useNavigate();
 
-  // Redirect already-authenticated admin/delivery users to their dashboard
+  // Redirect already-authenticated users to their dashboard
   useEffect(() => {
     if (isAuthenticated && user) {
       if (user.role === 'admin') {
@@ -33,24 +33,7 @@ const Login = ({ isAdmin = false, isDelivery = false, isSeller = false }) => {
       const result = await login(email, password);
       const role = result.data.user.role;
 
-      // RBAC: restrict role-specific login pages
-      if (isAdmin && role !== 'admin') {
-        setError('This login is for admin users only.');
-        setLoading(false);
-        return;
-      }
-      if (isDelivery && role !== 'delivery') {
-        setError('This login is for delivery partners only.');
-        setLoading(false);
-        return;
-      }
-      if (isSeller && role !== 'seller') {
-        setError('This login is for sellers only.');
-        setLoading(false);
-        return;
-      }
-
-      // Redirect based on role (replace: true removes login from browser history)
+      // Redirect based on role
       if (role === 'admin') {
         navigate('/admin/dashboard', { replace: true });
       } else if (role === 'delivery') {
@@ -70,7 +53,7 @@ const Login = ({ isAdmin = false, isDelivery = false, isSeller = false }) => {
   return (
     <div className="auth-overlay">
       <div className="auth-popup">
-        <h2>{isAdmin ? 'Admin Login' : isDelivery ? 'Delivery Login' : isSeller ? 'Seller Login' : 'Login'}</h2>
+        <h2>Login</h2>
 
         {error && <div className="auth-error">{error}</div>}
 
@@ -106,23 +89,12 @@ const Login = ({ isAdmin = false, isDelivery = false, isSeller = false }) => {
           </button>
         </form>
 
-        {!isAdmin && !isDelivery && !isSeller && (
-          <p className="auth-switch">
-            New to the website?{' '}
-            <Link to="/signup">Signup</Link>
-          </p>
-        )}
+        <p className="auth-switch">
+          New to the website?{' '}
+          <Link to="/signup">Signup</Link>
+        </p>
 
-        {isSeller && (
-          <p className="auth-switch">
-            Want to become a seller?{' '}
-            <Link to="/signup">Sign up as Seller</Link>
-          </p>
-        )}
-
-        {!isAdmin && !isDelivery && !isSeller && (
-          <Link to="/" className="auth-close">✕</Link>
-        )}
+        <Link to="/" className="auth-close">✕</Link>
       </div>
     </div>
   );

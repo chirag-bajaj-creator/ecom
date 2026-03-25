@@ -94,7 +94,7 @@ const DeliveryDashboard = () => {
       await toggleOnlineStatus(false);
     }
     await logout();
-    setTimeout(() => navigate('/login', { replace: true }), 100);
+    setTimeout(() => navigate('/goodbye', { replace: true }), 100);
   };
 
   if (loading) {

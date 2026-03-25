@@ -5,6 +5,7 @@ import Login from './pages/auth/Login';
 import Signup from './pages/auth/Signup';
 import ForgotPassword from './pages/auth/ForgotPassword';
 import ResetPassword from './pages/auth/ResetPassword';
+import LogoutPage from './pages/auth/LogoutPage';
 import Home from './pages/customer/Home';
 import SearchResults from './pages/customer/SearchResults';
 import Cart from './pages/customer/Cart';
@@ -45,9 +46,7 @@ function App() {
         <CustomerOnly user={user}><Home /></CustomerOnly>
       } />
       <Route path="/login" element={<Login />} />
-      <Route path="/login/admin" element={<Login isAdmin />} />
-      <Route path="/login/delivery" element={<Login isDelivery />} />
-      <Route path="/login/seller" element={<Login isSeller />} />
+      <Route path="/goodbye" element={<LogoutPage />} />
       <Route path="/signup" element={<Signup />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/reset-password" element={<ResetPassword />} />

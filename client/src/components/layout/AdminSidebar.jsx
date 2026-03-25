@@ -8,7 +8,7 @@ const AdminSidebar = () => {
 
   const handleLogout = () => {
     logout();
-    setTimeout(() => navigate('/login', { replace: true }), 100);
+    setTimeout(() => navigate('/goodbye', { replace: true }), 100);
   };
 
   const links = [

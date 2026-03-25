@@ -12,7 +12,7 @@ const SellerSidebar = () => {
 
   const handleLogout = async () => {
     await logout();
-    setTimeout(() => navigate('/login', { replace: true }), 100); // Small delay and replace history
+    setTimeout(() => navigate('/goodbye', { replace: true }), 100);
   };
 
   const handleContactAdmin = async () => {
