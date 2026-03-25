@@ -139,6 +139,7 @@ const createSellerBulkJsonProducts = async (req, res, next) => {
         image: p.imageUrl || p.image || null,
         categoryId: category._id,
         sellerId: req.user._id,
+        subCategory: p.subCategory || '',
       }));
 
       const created = await Product.insertMany(productDocs);

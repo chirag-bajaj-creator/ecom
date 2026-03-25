@@ -690,3 +690,31 @@
   border-radius: 3px;
   transition: width 0.3s ease;
 }
+
+/* Subcategory blocks */
+.subcategory-block {
+  background: #f9f9f9;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.subcategory-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.subcategory-header h4 {
+  margin: 0;
+  color: #1a1a2e;
+  font-size: 15px;
+}
+
+.subcategory-products {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid #e0e0e0;
+}

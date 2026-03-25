@@ -69,6 +69,11 @@ const productSchema = new mongoose.Schema(
       default: '',
       trim: true,
     },
+    subCategory: {
+      type: String,
+      default: '',
+      trim: true,
+    },
     sizes: {
       type: [
         {

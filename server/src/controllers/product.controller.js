@@ -199,6 +199,7 @@ const createBulkProducts = async (req, res, next) => {
       categoryId: category._id,
       details: p.details || [],
       modelName: p.modelName || '',
+      subCategory: p.subCategory || '',
       sizes: p.sizes || [],
     }));
 
@@ -368,6 +369,7 @@ const createBulkJsonProducts = async (req, res, next) => {
         stock: p.stock ? Number(p.stock) : 0,
         image: p.imageUrl || p.image || null,
         categoryId: category._id,
+        subCategory: p.subCategory || '',
       }));
 
       const created = await Product.insertMany(productDocs);

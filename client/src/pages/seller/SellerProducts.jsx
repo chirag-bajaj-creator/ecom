@@ -7,7 +7,7 @@ import '../admin/AdminProducts.css';
 
 const SIZE_UNITS = ['ML', 'L', 'g', 'KG', 'oz', 'lb', 'pieces', 'pack', 'cm', 'inch', 'mm', 'm'];
 
-const emptyProduct = () => ({ name: '', description: '', price: '', stock: '', image: '', details: [], modelName: '', sizes: [] });
+const emptyProduct = (overrides = {}) => ({ name: '', description: '', price: '', stock: '', image: '', details: [], modelName: '', sizes: [], subCategory: '', ...overrides });
 
 const SellerProducts = () => {
   const [products, setProducts] = useState([]);
@@ -30,20 +30,16 @@ const SellerProducts = () => {
   });
   const [showSizeHint, setShowSizeHint] = useState(false);
   const [bulkCategory, setBulkCategory] = useState('');
-  const [bulkCount, setBulkCount] = useState('');
   const [bulkProducts, setBulkProducts] = useState([]);
-  const [bulkGenerated, setBulkGenerated] = useState(false);
   const [bulkSubmitting, setBulkSubmitting] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
+  const [wizardPhase, setWizardPhase] = useState('category');
+  const [subcategories, setSubcategories] = useState([{ name: '', count: '', products: [] }]);
   const [showJsonModal, setShowJsonModal] = useState(false);
   const [jsonFile, setJsonFile] = useState(null);
   const [jsonPreview, setJsonPreview] = useState(null);
   const [jsonError, setJsonError] = useState('');
   const [jsonSubmitting, setJsonSubmitting] = useState(false);
-  const [showImageModal, setShowImageModal] = useState(false);
-  const [imageFiles, setImageFiles] = useState([]);
-  const [imageSubmitting, setImageSubmitting] = useState(false);
-  const [imageResult, setImageResult] = useState(null);
 
   useEffect(() => {
     fetchProducts();
@@ -65,43 +61,77 @@ const SellerProducts = () => {
 
   const openAddModal = () => {
     setBulkCategory('');
-    setBulkCount('');
     setBulkProducts([]);
-    setBulkGenerated(false);
     setCurrentStep(0);
+    setWizardPhase('category');
+    setSubcategories([{ name: '', count: '', products: [] }]);
     setShowBulkModal(true);
   };
 
-  const handleCountChange = (val) => {
-    setBulkCount(val);
-    const count = parseInt(val);
-    if (!count || count < 1 || count > 50) {
-      setBulkProducts([]);
+  const handleCategoryNext = () => {
+    if (!bulkCategory.trim()) {
+      alert('Please select a category');
       return;
     }
-    setBulkProducts(prev => {
-      const newArr = Array.from({ length: count }, (_, i) => prev[i] || emptyProduct());
-      return newArr;
-    });
+    setWizardPhase('subcategories');
   };
 
-  const handleGenerateFields = () => {
-    if (!bulkCategory.trim()) {
-      alert('Enter category name');
-      return;
-    }
-    if (bulkProducts.length === 0) {
-      alert('Enter number of products');
-      return;
-    }
-    for (let i = 0; i < bulkProducts.length; i++) {
-      if (!bulkProducts[i].name) {
-        alert(`Product #${i + 1}: Name is required`);
+  const addSubcategory = () => {
+    setSubcategories(prev => [...prev, { name: '', count: '', products: [] }]);
+  };
+
+  const removeSubcategory = (index) => {
+    setSubcategories(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const updateSubcategoryName = (index, val) => {
+    setSubcategories(prev => prev.map((s, i) => i === index ? { ...s, name: val } : s));
+  };
+
+  const handleSubcategoryCountChange = (subIndex, val) => {
+    const count = parseInt(val);
+    setSubcategories(prev => prev.map((s, i) => {
+      if (i !== subIndex) return s;
+      const newProducts = Array.from({ length: count > 0 && count <= 50 ? count : 0 }, (_, j) => s.products[j] || { name: '', modelName: '' });
+      return { ...s, count: val, products: newProducts };
+    }));
+  };
+
+  const updateSubcategoryProduct = (subIndex, prodIndex, field, val) => {
+    setSubcategories(prev => prev.map((s, i) => {
+      if (i !== subIndex) return s;
+      const newProducts = s.products.map((p, j) => j === prodIndex ? { ...p, [field]: val } : p);
+      return { ...s, products: newProducts };
+    }));
+  };
+
+  const handleProceedToDetails = () => {
+    for (let i = 0; i < subcategories.length; i++) {
+      const sub = subcategories[i];
+      if (!sub.name.trim()) {
+        alert(`Subcategory #${i + 1}: Name is required`);
         return;
       }
+      if (sub.products.length === 0) {
+        alert(`Subcategory "${sub.name}": Enter number of products`);
+        return;
+      }
+      for (let j = 0; j < sub.products.length; j++) {
+        if (!sub.products[j].name.trim()) {
+          alert(`Subcategory "${sub.name}", Product #${j + 1}: Name is required`);
+          return;
+        }
+      }
     }
-    setBulkGenerated(true);
+    const allProducts = [];
+    subcategories.forEach(sub => {
+      sub.products.forEach(p => {
+        allProducts.push(emptyProduct({ name: p.name, modelName: p.modelName, subCategory: sub.name }));
+      });
+    });
+    setBulkProducts(allProducts);
     setCurrentStep(0);
+    setWizardPhase('details');
   };
 
   const handleNextStep = () => {
@@ -138,7 +168,8 @@ const SellerProducts = () => {
           description: p.description,
           price: Number(p.price),
           stock: p.stock ? Number(p.stock) : 0,
-          imageUrl: p.image
+          imageUrl: p.image,
+          subCategory: p.subCategory || ''
         }))
       }];
       await api.post('/seller/products/bulk-json', { categories });
@@ -224,37 +255,6 @@ const SellerProducts = () => {
     }
   };
 
-  const openImageModal = () => {
-    setImageFiles([]);
-    setImageResult(null);
-    setShowImageModal(true);
-  };
-
-  const handleImageFilesChange = (e) => {
-    const files = Array.from(e.target.files);
-    setImageFiles(files);
-    setImageResult(null);
-  };
-
-  const handleImageSubmit = async () => {
-    if (imageFiles.length === 0) {
-      alert('Please select image files');
-      return;
-    }
-    setImageSubmitting(true);
-    try {
-      const formData = new FormData();
-      imageFiles.forEach((file) => formData.append('images', file));
-      const { data } = await api.post('/seller/products/bulk-images', formData);
-      setImageResult(data.data);
-      fetchProducts();
-    } catch (error) {
-      console.error('Failed to match images:', error.response?.data);
-      alert(error.response?.data?.error?.message || 'Failed to upload images');
-    } finally {
-      setImageSubmitting(false);
-    }
-  };
 
   const openEditModal = (product) => {
     setEditingProduct(product);
@@ -346,7 +346,7 @@ const SellerProducts = () => {
           <div className="admin-header-actions">
             <button className="admin-add-btn" onClick={openAddModal}>+ Add Products</button>
             <button className="admin-add-btn json-upload-btn" onClick={openJsonModal}>Add by JSON</button>
-            <button className="admin-add-btn image-upload-btn" onClick={openImageModal}>Bulk Images</button>
+
             <button className="admin-add-btn bulk-delete-btn" onClick={handleDeleteAll}>Delete All</button>
           </div>
         </div>
@@ -616,7 +616,7 @@ const SellerProducts = () => {
             <div className="admin-modal bulk-modal" onClick={e => e.stopPropagation()}>
               <h2>Add Products</h2>
 
-              {!bulkGenerated ? (
+              {wizardPhase === 'category' ? (
                 <div className="bulk-setup">
                   <div className="modal-field">
                     <label>Category Name</label>
@@ -625,52 +625,90 @@ const SellerProducts = () => {
                       onChange={(val) => setBulkCategory(val)}
                     />
                   </div>
-                  <div className="modal-field">
-                    <label>Number of Products</label>
-                    <input
-                      type="number"
-                      value={bulkCount}
-                      onChange={e => handleCountChange(e.target.value)}
-                      min="1"
-                      max="50"
-                      placeholder="How many products under this category?"
-                    />
-                  </div>
-
-                  {/* Name + Model Name fields appear automatically */}
-                  {bulkProducts.length > 0 && (
-                    <div className="bulk-products-list">
-                      {bulkProducts.map((p, i) => (
-                        <div key={i} className="bulk-product-block">
-                          <h4>Product #{i + 1}</h4>
-                          <div className="modal-field">
-                            <label>Product Name</label>
-                            <ProductNameSelect
-                              value={p.name}
-                              onChange={(val) => updateBulkProduct(i, 'name', val)}
-                              required
-                            />
-                          </div>
-                          <div className="modal-field">
-                            <label>Model Name</label>
-                            <input
-                              type="text"
-                              value={p.modelName || ''}
-                              onChange={e => updateBulkProduct(i, 'modelName', e.target.value)}
-                              placeholder="e.g. Samsung MW73AD..."
-                            />
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-
                   <div className="modal-actions">
                     <button type="button" className="modal-cancel-btn" onClick={() => setShowBulkModal(false)}>
                       Cancel
                     </button>
-                    <button type="button" className="modal-save-btn" onClick={handleGenerateFields} disabled={bulkProducts.length === 0}>
-                      Generate Fields
+                    <button type="button" className="modal-save-btn" onClick={handleCategoryNext}>
+                      Next
+                    </button>
+                  </div>
+                </div>
+              ) : wizardPhase === 'subcategories' ? (
+                <div className="bulk-setup">
+                  <div className="bulk-category-header">
+                    Category: <strong>{bulkCategory}</strong>
+                  </div>
+                  {subcategories.map((sub, si) => (
+                    <div key={si} className="subcategory-block">
+                      <div className="subcategory-header">
+                        <h4>Subcategory #{si + 1}</h4>
+                        {subcategories.length > 1 && (
+                          <button type="button" className="detail-remove-btn" onClick={() => removeSubcategory(si)}>
+                            Remove
+                          </button>
+                        )}
+                      </div>
+                      <div className="modal-field">
+                        <label>Sub Category Name</label>
+                        <input
+                          type="text"
+                          value={sub.name}
+                          onChange={e => updateSubcategoryName(si, e.target.value)}
+                          placeholder="e.g. Refrigerator"
+                        />
+                      </div>
+                      <div className="modal-field">
+                        <label>Number of Products</label>
+                        <input
+                          type="number"
+                          value={sub.count}
+                          onChange={e => handleSubcategoryCountChange(si, e.target.value)}
+                          min="1"
+                          max="50"
+                          placeholder="How many products?"
+                        />
+                      </div>
+                      {sub.products.length > 0 && (
+                        <div className="subcategory-products">
+                          {sub.products.map((p, pi) => (
+                            <div key={pi} className="bulk-product-block">
+                              <h4>Product #{pi + 1}</h4>
+                              <div className="modal-field">
+                                <label>Product Name</label>
+                                <ProductNameSelect
+                                  value={p.name}
+                                  onChange={(val) => updateSubcategoryProduct(si, pi, 'name', val)}
+                                  required
+                                />
+                              </div>
+                              <div className="modal-field">
+                                <label>Model Name</label>
+                                <input
+                                  type="text"
+                                  value={p.modelName || ''}
+                                  onChange={e => updateSubcategoryProduct(si, pi, 'modelName', e.target.value)}
+                                  placeholder="e.g. Samsung MW73AD..."
+                                />
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                  <button type="button" className="detail-add-btn" onClick={addSubcategory} style={{ marginBottom: '16px' }}>
+                    + Add Another Subcategory
+                  </button>
+                  <div className="modal-actions">
+                    <button type="button" className="modal-cancel-btn" onClick={() => setShowBulkModal(false)}>
+                      Cancel
+                    </button>
+                    <button type="button" className="modal-back-btn" onClick={() => setWizardPhase('category')}>
+                      Back
+                    </button>
+                    <button type="button" className="modal-save-btn" onClick={handleProceedToDetails}>
+                      Proceed to Product Details
                     </button>
                   </div>
                 </div>
@@ -678,6 +716,7 @@ const SellerProducts = () => {
                 <form onSubmit={handleBulkSubmit}>
                   <div className="bulk-category-header">
                     Category: <strong>{bulkCategory}</strong> — {bulkProducts.length} product(s)
+                    {bulkProducts[currentStep]?.subCategory && <> | Subcategory: <strong>{bulkProducts[currentStep].subCategory}</strong></>}
                   </div>
                   <div className="wizard-progress">
                     <span>Product {currentStep + 1} of {bulkProducts.length} — {bulkProducts[currentStep].name}</span>
@@ -837,7 +876,7 @@ const SellerProducts = () => {
                       Cancel
                     </button>
                     {currentStep === 0 ? (
-                      <button type="button" className="modal-back-btn" onClick={() => setBulkGenerated(false)}>
+                      <button type="button" className="modal-back-btn" onClick={() => setWizardPhase('subcategories')}>
                         Back
                       </button>
                     ) : (
@@ -941,103 +980,6 @@ const SellerProducts = () => {
                 >
                   {jsonSubmitting ? 'Uploading...' : 'Upload All Products'}
                 </button>
-              </div>
-            </div>
-          </div>
-        )}
-        {/* Bulk image upload modal */}
-        {showImageModal && (
-          <div className="admin-modal-overlay" onClick={() => setShowImageModal(false)}>
-            <div className="admin-modal bulk-modal" onClick={e => e.stopPropagation()}>
-              <h2>Bulk Image Upload</h2>
-
-              <div className="json-format-hint">
-                <strong>How it works:</strong>
-                <p style={{ margin: '4px 0 0', lineHeight: 1.5 }}>
-                  Name your image files the same as your product names.<br />
-                  Example: Product "Black T-Shirt" → file "Black T-Shirt.jpg"<br />
-                  For multiple images: "Black T-Shirt_1.jpg", "Black T-Shirt_2.jpg"
-                </p>
-              </div>
-
-              <div className="modal-field">
-                <label>Select Images</label>
-                <input
-                  type="file"
-                  accept="image/*"
-                  multiple
-                  onChange={handleImageFilesChange}
-                  className="json-file-input"
-                />
-              </div>
-
-              {imageFiles.length > 0 && !imageResult && (
-                <div className="image-preview-list">
-                  <p style={{ fontSize: 13, color: '#555', margin: '0 0 8px' }}>
-                    {imageFiles.length} image(s) selected:
-                  </p>
-                  <div className="image-file-grid">
-                    {imageFiles.map((file, i) => (
-                      <div key={i} className="image-file-item">
-                        <img
-                          src={URL.createObjectURL(file)}
-                          alt={file.name}
-                          className="image-file-thumb"
-                        />
-                        <span className="image-file-name">{file.name}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {imageResult && (
-                <div className="image-match-result">
-                  <h3>Match Results</h3>
-                  <div className="image-match-stats">
-                    <div className="match-stat match-stat-success">
-                      <span className="match-stat-num">{imageResult.summary.matched}</span>
-                      <span className="match-stat-label">Matched</span>
-                    </div>
-                    <div className="match-stat match-stat-warn">
-                      <span className="match-stat-num">{imageResult.summary.unmatchedProducts.length}</span>
-                      <span className="match-stat-label">Products without images</span>
-                    </div>
-                    <div className="match-stat match-stat-error">
-                      <span className="match-stat-num">{imageResult.summary.unmatchedImages.length}</span>
-                      <span className="match-stat-label">Unmatched images</span>
-                    </div>
-                  </div>
-
-                  {imageResult.summary.unmatchedProducts.length > 0 && (
-                    <div className="unmatched-section">
-                      <p style={{ fontSize: 13, fontWeight: 600, color: '#e65100', margin: '12px 0 6px' }}>
-                        Products not matched:
-                      </p>
-                      <ul className="unmatched-list">
-                        {imageResult.summary.unmatchedProducts.map((name, i) => (
-                          <li key={i}>{name}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
-                </div>
-              )}
-
-              <div className="modal-actions">
-                <button type="button" className="modal-cancel-btn" onClick={() => setShowImageModal(false)}>
-                  {imageResult ? 'Close' : 'Cancel'}
-                </button>
-                {!imageResult && (
-                  <button
-                    type="button"
-                    className="modal-save-btn"
-                    disabled={imageFiles.length === 0 || imageSubmitting}
-                    onClick={handleImageSubmit}
-                  >
-                    {imageSubmitting ? 'Uploading & Matching...' : `Upload & Match ${imageFiles.length} Image(s)`}
-                  </button>
-                )}
               </div>
             </div>
           </div>
