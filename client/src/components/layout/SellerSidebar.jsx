@@ -10,9 +10,9 @@ const SellerSidebar = () => {
   const [showContact, setShowContact] = useState(false);
   const [contactInfo, setContactInfo] = useState(null);
 
-  const handleLogout = () => {
-    logout();
-    navigate('/login/seller');
+  const handleLogout = async () => {
+    await logout();
+    setTimeout(() => navigate('/login', { replace: true }), 100); // Small delay and replace history
   };
 
   const handleContactAdmin = async () => {

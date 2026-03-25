@@ -1,9 +1,13 @@
 import { useState, useEffect } from 'react';
 import api from '../../api/axios';
 import AdminSidebar from '../../components/layout/AdminSidebar';
+import CategorySelect from '../../components/common/CategorySelect';
+import ProductNameSelect from '../../components/common/ProductNameSelect';
 import './AdminProducts.css';
 
-const emptyProduct = () => ({ name: '', description: '', price: '', stock: '', image: '', details: [] });
+const SIZE_UNITS = ['ML', 'L', 'g', 'KG', 'oz', 'lb', 'pieces', 'pack', 'cm', 'inch', 'mm', 'm'];
+
+const emptyProduct = () => ({ name: '', description: '', price: '', stock: '', image: '', details: [], modelName: '', sizes: [] });
 
 const AdminProducts = () => {
   const [products, setProducts] = useState([]);
@@ -21,13 +25,17 @@ const AdminProducts = () => {
     stock: '',
     image: '',
     categoryName: '',
-    details: []
+    details: [],
+    modelName: '',
+    sizes: []
   });
+  const [showSizeHint, setShowSizeHint] = useState(false);
   const [bulkCategory, setBulkCategory] = useState('');
   const [bulkCount, setBulkCount] = useState('');
   const [bulkProducts, setBulkProducts] = useState([]);
   const [bulkGenerated, setBulkGenerated] = useState(false);
   const [bulkSubmitting, setBulkSubmitting] = useState(false);
+  const [currentStep, setCurrentStep] = useState(0);
   const [showJsonModal, setShowJsonModal] = useState(false);
   const [jsonFile, setJsonFile] = useState(null);
   const [jsonPreview, setJsonPreview] = useState(null);
@@ -67,21 +75,54 @@ const AdminProducts = () => {
     setBulkCount('');
     setBulkProducts([]);
     setBulkGenerated(false);
+    setCurrentStep(0);
     setShowBulkModal(true);
   };
 
+  // When count changes, resize the bulkProducts array to show name/model fields
+  const handleCountChange = (val) => {
+    setBulkCount(val);
+    const count = parseInt(val);
+    if (!count || count < 1 || count > 50) {
+      setBulkProducts([]);
+      return;
+    }
+    setBulkProducts(prev => {
+      const newArr = Array.from({ length: count }, (_, i) => prev[i] || emptyProduct());
+      return newArr;
+    });
+  };
+
   const handleGenerateFields = () => {
-    const count = parseInt(bulkCount);
-    if (!bulkCategory.trim() || !count || count < 1) {
-      alert('Enter category name and number of products');
+    if (!bulkCategory.trim()) {
+      alert('Enter category name');
       return;
     }
-    if (count > 50) {
-      alert('Maximum 50 products per batch');
+    if (bulkProducts.length === 0) {
+      alert('Enter number of products');
       return;
     }
-    setBulkProducts(Array.from({ length: count }, () => emptyProduct()));
+    for (let i = 0; i < bulkProducts.length; i++) {
+      if (!bulkProducts[i].name) {
+        alert(`Product #${i + 1}: Name is required`);
+        return;
+      }
+    }
     setBulkGenerated(true);
+    setCurrentStep(0);
+  };
+
+  const handleNextStep = () => {
+    const p = bulkProducts[currentStep];
+    if (!p.price) {
+      alert(`Product #${currentStep + 1}: Price is required`);
+      return;
+    }
+    setCurrentStep(prev => prev + 1);
+  };
+
+  const handlePrevStep = () => {
+    setCurrentStep(prev => prev - 1);
   };
 
   const updateBulkProduct = (index, field, value) => {
@@ -103,7 +144,9 @@ const AdminProducts = () => {
         products: bulkProducts.map(p => ({
           ...p,
           price: Number(p.price),
-          stock: p.stock ? Number(p.stock) : 0
+          stock: p.stock ? Number(p.stock) : 0,
+          modelName: p.modelName || '',
+          sizes: (p.sizes || []).filter(s => s.value && s.unit && s.price)
         }))
       });
       setShowBulkModal(false);
@@ -199,7 +242,9 @@ const AdminProducts = () => {
       stock: product.stock,
       image: product.image || '',
       categoryName: product.categoryId?.name || '',
-      details: product.details || []
+      details: product.details || [],
+      modelName: product.modelName || '',
+      sizes: product.sizes || []
     });
     setShowModal(true);
   };
@@ -214,7 +259,9 @@ const AdminProducts = () => {
         stock: Number(form.stock),
         image: form.image,
         categoryName: form.categoryName,
-        details: form.details.filter(d => d.title.trim() && d.content.trim())
+        details: form.details.filter(d => d.title.trim() && d.content.trim()),
+        modelName: form.modelName,
+        sizes: form.sizes.filter(s => s.value && s.unit && s.price)
       };
 
       if (editingProduct) {
@@ -347,11 +394,19 @@ const AdminProducts = () => {
               <form onSubmit={handleSubmit}>
                 <div className="modal-field">
                   <label>Name</label>
+                  <ProductNameSelect
+                    value={form.name}
+                    onChange={(val) => setForm({ ...form, name: val })}
+                    required
+                  />
+                </div>
+                <div className="modal-field">
+                  <label>Model Name</label>
                   <input
                     type="text"
-                    value={form.name}
-                    onChange={e => setForm({ ...form, name: e.target.value })}
-                    required
+                    value={form.modelName}
+                    onChange={e => setForm({ ...form, modelName: e.target.value })}
+                    placeholder="e.g. Samsung MW73AD, Nike Air Max 90..."
                   />
                 </div>
                 <div className="modal-field">
@@ -395,7 +450,81 @@ const AdminProducts = () => {
                 </div>
                 <div className="modal-field">
                   <label>Category</label>
-                  <input type="text" value={form.categoryName} onChange={e => setForm({ ...form, categoryName: e.target.value })} required />
+                  <CategorySelect
+                    value={form.categoryName}
+                    onChange={(val) => setForm({ ...form, categoryName: val })}
+                    required
+                  />
+                </div>
+
+                {/* Sizes — optional */}
+                <div className="modal-field">
+                  <label>Sizes / Variants (Optional)</label>
+                  {form.sizes.map((size, i) => (
+                    <div key={i} className="size-entry">
+                      <input
+                        type="number"
+                        placeholder="Value (e.g. 500)"
+                        value={size.value}
+                        onChange={e => {
+                          const updated = [...form.sizes];
+                          updated[i] = { ...updated[i], value: e.target.value };
+                          setForm({ ...form, sizes: updated });
+                        }}
+                        min="0"
+                        className="size-value-input"
+                      />
+                      <select
+                        value={size.unit}
+                        onChange={e => {
+                          const updated = [...form.sizes];
+                          updated[i] = { ...updated[i], unit: e.target.value };
+                          setForm({ ...form, sizes: updated });
+                        }}
+                        className="size-unit-select"
+                      >
+                        <option value="">Unit</option>
+                        {SIZE_UNITS.map(u => <option key={u} value={u}>{u}</option>)}
+                      </select>
+                      <input
+                        type="number"
+                        placeholder="Price (₹)"
+                        value={size.price}
+                        onChange={e => {
+                          const updated = [...form.sizes];
+                          updated[i] = { ...updated[i], price: e.target.value };
+                          setForm({ ...form, sizes: updated });
+                        }}
+                        min="0"
+                        className="size-price-input"
+                      />
+                      <button
+                        type="button"
+                        className="detail-remove-btn"
+                        onClick={() => setForm({ ...form, sizes: form.sizes.filter((_, j) => j !== i) })}
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  ))}
+                  <button
+                    type="button"
+                    className="detail-add-btn"
+                    onClick={() => {
+                      if (form.sizes.length === 0 && !showSizeHint) {
+                        setShowSizeHint(true);
+                        setTimeout(() => setShowSizeHint(false), 4000);
+                      }
+                      setForm({ ...form, sizes: [...form.sizes, { value: '', unit: '', price: '' }] });
+                    }}
+                  >
+                    + Add Size
+                  </button>
+                  {showSizeHint && (
+                    <div className="size-hint-popup">
+                      Sellers who add sizes have more chance of getting early customers!
+                    </div>
+                  )}
                 </div>
 
                 {/* Product Details Dropdowns — admin adds as many as needed */}
@@ -465,11 +594,9 @@ const AdminProducts = () => {
                 <div className="bulk-setup">
                   <div className="modal-field">
                     <label>Category Name</label>
-                    <input
-                      type="text"
+                    <CategorySelect
                       value={bulkCategory}
-                      onChange={e => setBulkCategory(e.target.value)}
-                      placeholder="e.g. Electronics, Clothing..."
+                      onChange={(val) => setBulkCategory(val)}
                     />
                   </div>
                   <div className="modal-field">
@@ -477,17 +604,46 @@ const AdminProducts = () => {
                     <input
                       type="number"
                       value={bulkCount}
-                      onChange={e => setBulkCount(e.target.value)}
+                      onChange={e => handleCountChange(e.target.value)}
                       min="1"
                       max="50"
                       placeholder="How many products under this category?"
                     />
                   </div>
+
+                  {/* Name + Model Name fields appear automatically */}
+                  {bulkProducts.length > 0 && (
+                    <div className="bulk-products-list">
+                      {bulkProducts.map((p, i) => (
+                        <div key={i} className="bulk-product-block">
+                          <h4>Product #{i + 1}</h4>
+                          <div className="modal-field">
+                            <label>Product Name</label>
+                            <ProductNameSelect
+                              value={p.name}
+                              onChange={(val) => updateBulkProduct(i, 'name', val)}
+                              required
+                            />
+                          </div>
+                          <div className="modal-field">
+                            <label>Model Name</label>
+                            <input
+                              type="text"
+                              value={p.modelName || ''}
+                              onChange={e => updateBulkProduct(i, 'modelName', e.target.value)}
+                              placeholder="e.g. Samsung MW73AD..."
+                            />
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
                   <div className="modal-actions">
                     <button type="button" className="modal-cancel-btn" onClick={() => setShowBulkModal(false)}>
                       Cancel
                     </button>
-                    <button type="button" className="modal-save-btn" onClick={handleGenerateFields}>
+                    <button type="button" className="modal-save-btn" onClick={handleGenerateFields} disabled={bulkProducts.length === 0}>
                       Generate Fields
                     </button>
                   </div>
@@ -497,113 +653,181 @@ const AdminProducts = () => {
                   <div className="bulk-category-header">
                     Category: <strong>{bulkCategory}</strong> — {bulkProducts.length} product(s)
                   </div>
-                  <div className="bulk-products-list">
-                    {bulkProducts.map((p, i) => (
-                      <div key={i} className="bulk-product-block">
-                        <h4>Product #{i + 1}</h4>
-                        <div className="modal-field">
-                          <label>Name</label>
+                  <div className="wizard-progress">
+                    <span>Product {currentStep + 1} of {bulkProducts.length} — {bulkProducts[currentStep].name}</span>
+                    <div className="wizard-progress-bar">
+                      <div
+                        className="wizard-progress-fill"
+                        style={{ width: `${((currentStep + 1) / bulkProducts.length) * 100}%` }}
+                      />
+                    </div>
+                  </div>
+                  <div className="bulk-product-block">
+                    <h4>{bulkProducts[currentStep].name} {bulkProducts[currentStep].modelName && `— ${bulkProducts[currentStep].modelName}`}</h4>
+                    <div className="modal-field">
+                      <label>Description</label>
+                      <textarea
+                        value={bulkProducts[currentStep].description}
+                        onChange={e => updateBulkProduct(currentStep, 'description', e.target.value)}
+                        rows={2}
+                      />
+                    </div>
+                    <div className="modal-row">
+                      <div className="modal-field">
+                        <label>Price (₹)</label>
+                        <input
+                          type="number"
+                          value={bulkProducts[currentStep].price}
+                          onChange={e => updateBulkProduct(currentStep, 'price', e.target.value)}
+                          required
+                          min="0"
+                        />
+                      </div>
+                      <div className="modal-field">
+                        <label>Stock</label>
+                        <input
+                          type="number"
+                          value={bulkProducts[currentStep].stock}
+                          onChange={e => updateBulkProduct(currentStep, 'stock', e.target.value)}
+                          min="0"
+                        />
+                      </div>
+                    </div>
+                    <div className="modal-field">
+                      <label>Image URL</label>
+                      <input
+                        type="text"
+                        value={bulkProducts[currentStep].image}
+                        onChange={e => updateBulkProduct(currentStep, 'image', e.target.value)}
+                      />
+                    </div>
+                    <div className="modal-field">
+                      <label>Sizes / Variants (Optional)</label>
+                      {(bulkProducts[currentStep].sizes || []).map((size, si) => (
+                        <div key={si} className="size-entry">
                           <input
-                            type="text"
-                            value={p.name}
-                            onChange={e => updateBulkProduct(i, 'name', e.target.value)}
-                            required
+                            type="number"
+                            placeholder="Value"
+                            value={size.value}
+                            onChange={e => {
+                              const updated = [...(bulkProducts[currentStep].sizes || [])];
+                              updated[si] = { ...updated[si], value: e.target.value };
+                              updateBulkProduct(currentStep, 'sizes', updated);
+                            }}
+                            min="0"
+                            className="size-value-input"
                           />
-                        </div>
-                        <div className="modal-field">
-                          <label>Description</label>
-                          <textarea
-                            value={p.description}
-                            onChange={e => updateBulkProduct(i, 'description', e.target.value)}
-                            rows={2}
-                          />
-                        </div>
-                        <div className="modal-row">
-                          <div className="modal-field">
-                            <label>Price (₹)</label>
-                            <input
-                              type="number"
-                              value={p.price}
-                              onChange={e => updateBulkProduct(i, 'price', e.target.value)}
-                              required
-                              min="0"
-                            />
-                          </div>
-                          <div className="modal-field">
-                            <label>Stock</label>
-                            <input
-                              type="number"
-                              value={p.stock}
-                              onChange={e => updateBulkProduct(i, 'stock', e.target.value)}
-                              min="0"
-                            />
-                          </div>
-                        </div>
-                        <div className="modal-field">
-                          <label>Image URL</label>
+                          <select
+                            value={size.unit}
+                            onChange={e => {
+                              const updated = [...(bulkProducts[currentStep].sizes || [])];
+                              updated[si] = { ...updated[si], unit: e.target.value };
+                              updateBulkProduct(currentStep, 'sizes', updated);
+                            }}
+                            className="size-unit-select"
+                          >
+                            <option value="">Unit</option>
+                            {SIZE_UNITS.map(u => <option key={u} value={u}>{u}</option>)}
+                          </select>
                           <input
-                            type="text"
-                            value={p.image}
-                            onChange={e => updateBulkProduct(i, 'image', e.target.value)}
+                            type="number"
+                            placeholder="Price (₹)"
+                            value={size.price}
+                            onChange={e => {
+                              const updated = [...(bulkProducts[currentStep].sizes || [])];
+                              updated[si] = { ...updated[si], price: e.target.value };
+                              updateBulkProduct(currentStep, 'sizes', updated);
+                            }}
+                            min="0"
+                            className="size-price-input"
                           />
-                        </div>
-                        <div className="modal-field">
-                          <label>Product Details (Dropdowns)</label>
-                          {(p.details || []).map((detail, di) => (
-                            <div key={di} className="detail-entry">
-                              <input
-                                type="text"
-                                placeholder="Dropdown title"
-                                value={detail.title}
-                                onChange={e => {
-                                  const updated = [...(p.details || [])];
-                                  updated[di] = { ...updated[di], title: e.target.value };
-                                  updateBulkProduct(i, 'details', updated);
-                                }}
-                              />
-                              <textarea
-                                placeholder="Content"
-                                value={detail.content}
-                                onChange={e => {
-                                  const updated = [...(p.details || [])];
-                                  updated[di] = { ...updated[di], content: e.target.value };
-                                  updateBulkProduct(i, 'details', updated);
-                                }}
-                                rows={2}
-                              />
-                              <button
-                                type="button"
-                                className="detail-remove-btn"
-                                onClick={() => {
-                                  const updated = (p.details || []).filter((_, j) => j !== di);
-                                  updateBulkProduct(i, 'details', updated);
-                                }}
-                              >
-                                Remove
-                              </button>
-                            </div>
-                          ))}
                           <button
                             type="button"
-                            className="detail-add-btn"
-                            onClick={() => updateBulkProduct(i, 'details', [...(p.details || []), { title: '', content: '' }])}
+                            className="detail-remove-btn"
+                            onClick={() => {
+                              const updated = (bulkProducts[currentStep].sizes || []).filter((_, j) => j !== si);
+                              updateBulkProduct(currentStep, 'sizes', updated);
+                            }}
                           >
-                            + Add Dropdown
+                            Remove
                           </button>
                         </div>
-                      </div>
-                    ))}
+                      ))}
+                      <button
+                        type="button"
+                        className="detail-add-btn"
+                        onClick={() => updateBulkProduct(currentStep, 'sizes', [...(bulkProducts[currentStep].sizes || []), { value: '', unit: '', price: '' }])}
+                      >
+                        + Add Size
+                      </button>
+                    </div>
+                    <div className="modal-field">
+                      <label>Product Details (Dropdowns)</label>
+                      {(bulkProducts[currentStep].details || []).map((detail, di) => (
+                        <div key={di} className="detail-entry">
+                          <input
+                            type="text"
+                            placeholder="Dropdown title"
+                            value={detail.title}
+                            onChange={e => {
+                              const updated = [...(bulkProducts[currentStep].details || [])];
+                              updated[di] = { ...updated[di], title: e.target.value };
+                              updateBulkProduct(currentStep, 'details', updated);
+                            }}
+                          />
+                          <textarea
+                            placeholder="Content"
+                            value={detail.content}
+                            onChange={e => {
+                              const updated = [...(bulkProducts[currentStep].details || [])];
+                              updated[di] = { ...updated[di], content: e.target.value };
+                              updateBulkProduct(currentStep, 'details', updated);
+                            }}
+                            rows={2}
+                          />
+                          <button
+                            type="button"
+                            className="detail-remove-btn"
+                            onClick={() => {
+                              const updated = (bulkProducts[currentStep].details || []).filter((_, j) => j !== di);
+                              updateBulkProduct(currentStep, 'details', updated);
+                            }}
+                          >
+                            Remove
+                          </button>
+                        </div>
+                      ))}
+                      <button
+                        type="button"
+                        className="detail-add-btn"
+                        onClick={() => updateBulkProduct(currentStep, 'details', [...(bulkProducts[currentStep].details || []), { title: '', content: '' }])}
+                      >
+                        + Add Dropdown
+                      </button>
+                    </div>
                   </div>
                   <div className="modal-actions">
                     <button type="button" className="modal-cancel-btn" onClick={() => setShowBulkModal(false)}>
                       Cancel
                     </button>
-                    <button type="button" className="modal-back-btn" onClick={() => setBulkGenerated(false)}>
-                      Back
-                    </button>
-                    <button type="submit" className="modal-save-btn" disabled={bulkSubmitting}>
-                      {bulkSubmitting ? 'Creating...' : `Create All ${bulkProducts.length} Products`}
-                    </button>
+                    {currentStep === 0 ? (
+                      <button type="button" className="modal-back-btn" onClick={() => setBulkGenerated(false)}>
+                        Back
+                      </button>
+                    ) : (
+                      <button type="button" className="modal-back-btn" onClick={handlePrevStep}>
+                        Previous
+                      </button>
+                    )}
+                    {currentStep < bulkProducts.length - 1 ? (
+                      <button type="button" className="modal-save-btn" onClick={handleNextStep}>
+                        Next
+                      </button>
+                    ) : (
+                      <button type="submit" className="modal-save-btn" disabled={bulkSubmitting}>
+                        {bulkSubmitting ? 'Creating...' : `Submit All ${bulkProducts.length} Products`}
+                      </button>
+                    )}
                   </div>
                 </form>
               )}

@@ -8,105 +8,105 @@
         "description": "Refreshing gel face wash for daily cleansing.",
         "price": 299,
         "stock": 80,
-        "imageUrl": "https://www.pexels.com/search/face%20wash/"
+        "imageUrl": "https://picsum.photos/seed/face-wash-gel/400/400"
       },
       {
         "name": "Vitamin C Serum",
         "description": "Brightening serum for glowing skin.",
         "price": 599,
         "stock": 45,
-        "imageUrl": "https://www.pexels.com/search/serum%20bottle/"
+        "imageUrl": "https://picsum.photos/seed/vitamin-c-serum/400/400"
       },
       {
         "name": "Sunscreen SPF 50",
         "description": "Broad-spectrum sunscreen for UV protection.",
         "price": 499,
         "stock": 70,
-        "imageUrl": "https://www.pexels.com/search/sunscreen/"
+        "imageUrl": "https://picsum.photos/seed/sunscreen-spf-50/400/400"
       },
       {
         "name": "Moisturizing Lotion",
         "description": "Hydrating body lotion for soft skin.",
         "price": 399,
         "stock": 60,
-        "imageUrl": "https://www.pexels.com/search/body%20lotion/"
+        "imageUrl": "https://picsum.photos/seed/moisturizing-lotion/400/400"
       },
       {
         "name": "Shampoo Anti-Dandruff",
         "description": "Scalp care shampoo for dandruff control.",
         "price": 349,
         "stock": 75,
-        "imageUrl": "https://www.pexels.com/search/shampoo/"
+        "imageUrl": "https://picsum.photos/seed/shampoo-anti-dandruff/400/400"
       },
       {
         "name": "Hair Conditioner",
         "description": "Smoothening conditioner for soft hair.",
         "price": 329,
         "stock": 65,
-        "imageUrl": "https://www.pexels.com/search/hair%20conditioner/"
+        "imageUrl": "https://picsum.photos/seed/hair-conditioner/400/400"
       },
       {
         "name": "Hair Dryer",
         "description": "Compact hair dryer with heat settings.",
         "price": 1499,
         "stock": 25,
-        "imageUrl": "https://www.pexels.com/search/hair%20dryer/"
+        "imageUrl": "https://picsum.photos/seed/hair-dryer/400/400"
       },
       {
         "name": "Trimmer Kit",
         "description": "Rechargeable grooming trimmer with attachments.",
         "price": 1999,
         "stock": 30,
-        "imageUrl": "https://www.pexels.com/search/trimmer/"
+        "imageUrl": "https://picsum.photos/seed/trimmer-kit/400/400"
       },
       {
         "name": "Perfume Spray",
         "description": "Long-lasting fragrance for daily use.",
         "price": 899,
         "stock": 40,
-        "imageUrl": "https://www.pexels.com/search/perfume%20bottle/"
+        "imageUrl": "https://picsum.photos/seed/perfume-spray/400/400"
       },
       {
         "name": "Lip Balm",
         "description": "Moisturizing lip balm for dry lips.",
         "price": 149,
         "stock": 120,
-        "imageUrl": "https://www.pexels.com/search/lip%20balm/"
+        "imageUrl": "https://picsum.photos/seed/lip-balm/400/400"
       },
       {
         "name": "Face Mask Pack",
         "description": "Hydrating sheet masks for skin nourishment.",
         "price": 399,
         "stock": 55,
-        "imageUrl": "https://www.pexels.com/search/face%20mask%20pack/"
+        "imageUrl": "https://picsum.photos/seed/face-mask-pack/400/400"
       },
       {
         "name": "Body Wash",
         "description": "Gentle body wash with fresh fragrance.",
         "price": 299,
         "stock": 85,
-        "imageUrl": "https://www.pexels.com/search/body%20wash/"
+        "imageUrl": "https://picsum.photos/seed/body-wash/400/400"
       },
       {
         "name": "Electric Toothbrush",
         "description": "Battery-powered toothbrush for effective cleaning.",
         "price": 1299,
         "stock": 35,
-        "imageUrl": "https://www.pexels.com/search/electric%20toothbrush/"
+        "imageUrl": "https://picsum.photos/seed/electric-toothbrush/400/400"
       },
       {
         "name": "Nail Care Set",
         "description": "Complete manicure and pedicure grooming set.",
         "price": 699,
         "stock": 28,
-        "imageUrl": "https://www.pexels.com/search/nail%20care%20kit/"
+        "imageUrl": "https://picsum.photos/seed/nail-care-set/400/400"
       },
       {
         "name": "Aloe Vera Gel",
         "description": "Multipurpose soothing gel for skin and hair.",
         "price": 249,
         "stock": 90,
-        "imageUrl": "https://www.pexels.com/search/aloe%20vera%20gel/"
+        "imageUrl": "https://picsum.photos/seed/aloe-vera-gel/400/400"
       }
     ]
   },
@@ -119,105 +119,105 @@
         "description": "Non-slip yoga mat for workouts and stretching.",
         "price": 899,
         "stock": 50,
-        "imageUrl": "https://www.pexels.com/search/yoga%20mat/"
+        "imageUrl": "https://picsum.photos/seed/yoga-mat/400/400"
       },
       {
         "name": "Dumbbell Set 10kg",
         "description": "Adjustable dumbbell set for home workouts.",
         "price": 2499,
         "stock": 20,
-        "imageUrl": "https://www.pexels.com/search/dumbbells/"
+        "imageUrl": "https://picsum.photos/seed/dumbbell-set-10kg/400/400"
       },
       {
         "name": "Resistance Bands",
         "description": "Elastic training bands for strength exercises.",
         "price": 699,
         "stock": 65,
-        "imageUrl": "https://www.pexels.com/search/resistance%20bands/"
+        "imageUrl": "https://picsum.photos/seed/resistance-bands/400/400"
       },
       {
         "name": "Skipping Rope",
         "description": "Lightweight speed rope for cardio workouts.",
         "price": 299,
         "stock": 80,
-        "imageUrl": "https://www.pexels.com/search/skipping%20rope/"
+        "imageUrl": "https://picsum.photos/seed/skipping-rope/400/400"
       },
       {
         "name": "Football",
         "description": "Durable training football for outdoor games.",
         "price": 799,
         "stock": 45,
-        "imageUrl": "https://www.pexels.com/search/football%20ball/"
+        "imageUrl": "https://picsum.photos/seed/football/400/400"
       },
       {
         "name": "Cricket Bat",
         "description": "Wooden cricket bat for practice matches.",
         "price": 1899,
         "stock": 22,
-        "imageUrl": "https://www.pexels.com/search/cricket%20bat/"
+        "imageUrl": "https://picsum.photos/seed/cricket-bat/400/400"
       },
       {
         "name": "Cricket Ball Set",
         "description": "Leather cricket balls for net practice.",
         "price": 599,
         "stock": 35,
-        "imageUrl": "https://www.pexels.com/search/cricket%20ball/"
+        "imageUrl": "https://picsum.photos/seed/cricket-ball-set/400/400"
       },
       {
         "name": "Badminton Racket",
         "description": "Lightweight racket for beginners and intermediates.",
         "price": 1299,
         "stock": 30,
-        "imageUrl": "https://www.pexels.com/search/badminton%20racket/"
+        "imageUrl": "https://picsum.photos/seed/badminton-racket/400/400"
       },
       {
         "name": "Tennis Ball Pack",
         "description": "Pack of durable tennis balls for training.",
         "price": 499,
         "stock": 55,
-        "imageUrl": "https://www.pexels.com/search/tennis%20balls/"
+        "imageUrl": "https://picsum.photos/seed/tennis-ball-pack/400/400"
       },
       {
         "name": "Gym Gloves",
         "description": "Padded gloves for weightlifting grip support.",
         "price": 599,
         "stock": 70,
-        "imageUrl": "https://www.pexels.com/search/gym%20gloves/"
+        "imageUrl": "https://picsum.photos/seed/gym-gloves/400/400"
       },
       {
         "name": "Foam Roller",
         "description": "Muscle recovery roller for stretching and massage.",
         "price": 999,
         "stock": 25,
-        "imageUrl": "https://www.pexels.com/search/foam%20roller/"
+        "imageUrl": "https://picsum.photos/seed/foam-roller/400/400"
       },
       {
         "name": "Protein Shaker Bottle",
         "description": "Leakproof shaker bottle for gym supplements.",
         "price": 349,
         "stock": 95,
-        "imageUrl": "https://www.pexels.com/search/shaker%20bottle/"
+        "imageUrl": "https://picsum.photos/seed/protein-shaker-bottle/400/400"
       },
       {
         "name": "Exercise Bench",
         "description": "Foldable workout bench for home gym routines.",
         "price": 4999,
         "stock": 12,
-        "imageUrl": "https://www.pexels.com/search/exercise%20bench/"
+        "imageUrl": "https://picsum.photos/seed/exercise-bench/400/400"
       },
       {
         "name": "Cycling Helmet",
         "description": "Protective helmet for outdoor cycling safety.",
         "price": 1599,
         "stock": 18,
-        "imageUrl": "https://www.pexels.com/search/cycling%20helmet/"
+        "imageUrl": "https://picsum.photos/seed/cycling-helmet/400/400"
       },
       {
         "name": "Fitness Tracker Band",
         "description": "Activity tracker with step and calorie monitoring.",
         "price": 2199,
         "stock": 26,
-        "imageUrl": "https://www.pexels.com/search/fitness%20tracker/"
+        "imageUrl": "https://picsum.photos/seed/fitness-tracker-band/400/400"
       }
     ]
   },
@@ -230,105 +230,105 @@
         "description": "Rechargeable RC car with fast speed control.",
         "price": 1499,
         "stock": 35,
-        "imageUrl": "https://www.pexels.com/search/remote%20control%20car/"
+        "imageUrl": "https://picsum.photos/seed/remote-control-car/400/400"
       },
       {
         "name": "Building Blocks Set",
         "description": "Creative block set for kids learning and fun.",
         "price": 999,
         "stock": 50,
-        "imageUrl": "https://www.pexels.com/search/building%20blocks/"
+        "imageUrl": "https://picsum.photos/seed/building-blocks-set/400/400"
       },
       {
         "name": "Puzzle Board Game",
         "description": "Family puzzle game for entertainment and learning.",
         "price": 799,
         "stock": 40,
-        "imageUrl": "https://www.pexels.com/search/board%20game/"
+        "imageUrl": "https://picsum.photos/seed/puzzle-board-game/400/400"
       },
       {
         "name": "Stuffed Teddy Bear",
         "description": "Soft plush teddy for kids and gifting.",
         "price": 699,
         "stock": 60,
-        "imageUrl": "https://www.pexels.com/search/teddy%20bear/"
+        "imageUrl": "https://picsum.photos/seed/stuffed-teddy-bear/400/400"
       },
       {
         "name": "Toy Train Set",
         "description": "Battery-operated train set with track pieces.",
         "price": 1899,
         "stock": 20,
-        "imageUrl": "https://www.pexels.com/search/toy%20train/"
+        "imageUrl": "https://picsum.photos/seed/toy-train-set/400/400"
       },
       {
         "name": "Doll House Set",
         "description": "Miniature doll house playset with accessories.",
         "price": 2499,
         "stock": 18,
-        "imageUrl": "https://www.pexels.com/search/doll%20house/"
+        "imageUrl": "https://picsum.photos/seed/doll-house-set/400/400"
       },
       {
         "name": "Educational Flash Cards",
         "description": "Learning cards for alphabets, numbers, and shapes.",
         "price": 399,
         "stock": 75,
-        "imageUrl": "https://www.pexels.com/search/flash%20cards/"
+        "imageUrl": "https://picsum.photos/seed/educational-flash-cards/400/400"
       },
       {
         "name": "Toy Kitchen Set",
         "description": "Pretend play kitchen set for children.",
         "price": 1799,
         "stock": 22,
-        "imageUrl": "https://www.pexels.com/search/toy%20kitchen/"
+        "imageUrl": "https://picsum.photos/seed/toy-kitchen-set/400/400"
       },
       {
         "name": "Action Figure Hero",
         "description": "Collectible action figure with movable joints.",
         "price": 899,
         "stock": 45,
-        "imageUrl": "https://www.pexels.com/search/action%20figure/"
+        "imageUrl": "https://picsum.photos/seed/action-figure-hero/400/400"
       },
       {
         "name": "Ludo Board",
         "description": "Classic indoor board game for family fun.",
         "price": 299,
         "stock": 100,
-        "imageUrl": "https://www.pexels.com/search/ludo%20board/"
+        "imageUrl": "https://picsum.photos/seed/ludo-board/400/400"
       },
       {
         "name": "Chess Set",
         "description": "Wooden chess board set for strategy lovers.",
         "price": 799,
         "stock": 38,
-        "imageUrl": "https://www.pexels.com/search/chess%20set/"
+        "imageUrl": "https://picsum.photos/seed/chess-set/400/400"
       },
       {
         "name": "Kids Drawing Kit",
         "description": "Color pencils, crayons, and sketch tools for kids.",
         "price": 649,
         "stock": 55,
-        "imageUrl": "https://www.pexels.com/search/drawing%20kit/"
+        "imageUrl": "https://picsum.photos/seed/kids-drawing-kit/400/400"
       },
       {
         "name": "Toy Gun Blaster",
         "description": "Foam dart blaster toy for safe play.",
         "price": 1199,
         "stock": 30,
-        "imageUrl": "https://www.pexels.com/search/toy%20blaster/"
+        "imageUrl": "https://picsum.photos/seed/toy-gun-blaster/400/400"
       },
       {
         "name": "Mini Basketball Hoop",
         "description": "Indoor basketball hoop set for kids.",
         "price": 1399,
         "stock": 24,
-        "imageUrl": "https://www.pexels.com/search/kids%20basketball%20hoop/"
+        "imageUrl": "https://picsum.photos/seed/mini-basketball-hoop/400/400"
       },
       {
         "name": "Magic Cube Puzzle",
         "description": "Colorful cube puzzle for brain training.",
         "price": 349,
         "stock": 85,
-        "imageUrl": "https://www.pexels.com/search/rubik%20cube/"
+        "imageUrl": "https://picsum.photos/seed/magic-cube-puzzle/400/400"
       }
     ]
   },
@@ -341,105 +341,105 @@
         "description": "Premium long-grain basmati rice for daily cooking.",
         "price": 699,
         "stock": 60,
-        "imageUrl": "https://www.pexels.com/search/rice%20bag/"
+        "imageUrl": "https://picsum.photos/seed/basmati-rice-5kg/400/400"
       },
       {
         "name": "Wheat Flour 10kg",
         "description": "Fine whole wheat flour for chapati and baking.",
         "price": 499,
         "stock": 55,
-        "imageUrl": "https://www.pexels.com/search/wheat%20flour/"
+        "imageUrl": "https://picsum.photos/seed/wheat-flour-10kg/400/400"
       },
       {
         "name": "Cooking Oil 1L",
         "description": "Refined cooking oil suitable for daily meals.",
         "price": 179,
         "stock": 100,
-        "imageUrl": "https://www.pexels.com/search/cooking%20oil/"
+        "imageUrl": "https://picsum.photos/seed/cooking-oil-1l/400/400"
       },
       {
         "name": "Sugar 1kg",
         "description": "Refined white sugar for tea and desserts.",
         "price": 59,
         "stock": 120,
-        "imageUrl": "https://www.pexels.com/search/sugar%20pack/"
+        "imageUrl": "https://picsum.photos/seed/sugar-1kg/400/400"
       },
       {
         "name": "Salt 1kg",
         "description": "Iodized salt for healthy daily consumption.",
         "price": 25,
         "stock": 150,
-        "imageUrl": "https://www.pexels.com/search/salt%20pack/"
+        "imageUrl": "https://picsum.photos/seed/salt-1kg/400/400"
       },
       {
         "name": "Turmeric Powder",
         "description": "Pure turmeric spice powder for Indian cooking.",
         "price": 89,
         "stock": 90,
-        "imageUrl": "https://www.pexels.com/search/turmeric%20powder/"
+        "imageUrl": "https://picsum.photos/seed/turmeric-powder/400/400"
       },
       {
         "name": "Red Chilli Powder",
         "description": "Spicy red chilli powder for curries and snacks.",
         "price": 99,
         "stock": 85,
-        "imageUrl": "https://www.pexels.com/search/chilli%20powder/"
+        "imageUrl": "https://picsum.photos/seed/red-chilli-powder/400/400"
       },
       {
         "name": "Tea Powder 500g",
         "description": "Strong flavored tea leaves for refreshing tea.",
         "price": 249,
         "stock": 70,
-        "imageUrl": "https://www.pexels.com/search/tea%20leaves/"
+        "imageUrl": "https://picsum.photos/seed/tea-powder-500g/400/400"
       },
       {
         "name": "Coffee Powder 200g",
         "description": "Instant coffee powder for quick beverages.",
         "price": 299,
         "stock": 65,
-        "imageUrl": "https://www.pexels.com/search/coffee%20powder/"
+        "imageUrl": "https://picsum.photos/seed/coffee-powder-200g/400/400"
       },
       {
         "name": "Biscuits Pack",
         "description": "Crunchy tea-time biscuits for snacks.",
         "price": 49,
         "stock": 140,
-        "imageUrl": "https://www.pexels.com/search/biscuits/"
+        "imageUrl": "https://picsum.photos/seed/biscuits-pack/400/400"
       },
       {
         "name": "Pasta 500g",
         "description": "Durum wheat pasta for quick meals.",
         "price": 129,
         "stock": 75,
-        "imageUrl": "https://www.pexels.com/search/pasta%20pack/"
+        "imageUrl": "https://picsum.photos/seed/pasta-500g/400/400"
       },
       {
         "name": "Tomato Ketchup",
         "description": "Tangy ketchup for snacks and meals.",
         "price": 119,
         "stock": 80,
-        "imageUrl": "https://www.pexels.com/search/ketchup%20bottle/"
+        "imageUrl": "https://picsum.photos/seed/tomato-ketchup/400/400"
       },
       {
         "name": "Peanut Butter Jar",
         "description": "Creamy peanut butter for breakfast spreads.",
         "price": 249,
         "stock": 50,
-        "imageUrl": "https://www.pexels.com/search/peanut%20butter/"
+        "imageUrl": "https://picsum.photos/seed/peanut-butter-jar/400/400"
       },
       {
         "name": "Corn Flakes",
         "description": "Crispy breakfast cereal for healthy mornings.",
         "price": 199,
         "stock": 58,
-        "imageUrl": "https://www.pexels.com/search/cornflakes/"
+        "imageUrl": "https://picsum.photos/seed/corn-flakes/400/400"
       },
       {
         "name": "Instant Noodles Pack",
         "description": "Quick-cook noodles for snacks and meals.",
         "price": 89,
         "stock": 130,
-        "imageUrl": "https://www.pexels.com/search/instant%20noodles/"
+        "imageUrl": "https://picsum.photos/seed/instant-noodles-pack/400/400"
       }
     ]
   },
@@ -452,105 +452,105 @@
         "description": "Ruled A4 notebook for school and office use.",
         "price": 99,
         "stock": 120,
-        "imageUrl": "https://www.pexels.com/search/notebook/"
+        "imageUrl": "https://picsum.photos/seed/notebook-a4/400/400"
       },
       {
         "name": "Ball Pen Pack",
         "description": "Smooth writing ball pens pack of 10.",
         "price": 149,
         "stock": 150,
-        "imageUrl": "https://www.pexels.com/search/ball%20pen/"
+        "imageUrl": "https://picsum.photos/seed/ball-pen-pack/400/400"
       },
       {
         "name": "Pencil Box Set",
         "description": "Pencil set with eraser and sharpener.",
         "price": 79,
         "stock": 100,
-        "imageUrl": "https://www.pexels.com/search/pencils/"
+        "imageUrl": "https://picsum.photos/seed/pencil-box-set/400/400"
       },
       {
         "name": "Highlighter Set",
         "description": "Colorful highlighters for notes and marking.",
         "price": 199,
         "stock": 60,
-        "imageUrl": "https://www.pexels.com/search/highlighter%20pens/"
+        "imageUrl": "https://picsum.photos/seed/highlighter-set/400/400"
       },
       {
         "name": "Sticky Notes Pack",
         "description": "Self-adhesive notes for reminders and planning.",
         "price": 129,
         "stock": 80,
-        "imageUrl": "https://www.pexels.com/search/sticky%20notes/"
+        "imageUrl": "https://picsum.photos/seed/sticky-notes-pack/400/400"
       },
       {
         "name": "Geometry Box",
         "description": "Complete math instrument box for students.",
         "price": 249,
         "stock": 55,
-        "imageUrl": "https://www.pexels.com/search/geometry%20box/"
+        "imageUrl": "https://picsum.photos/seed/geometry-box/400/400"
       },
       {
         "name": "Sketch Pen Set",
         "description": "Vibrant sketch pens for art and school projects.",
         "price": 299,
         "stock": 45,
-        "imageUrl": "https://www.pexels.com/search/sketch%20pens/"
+        "imageUrl": "https://picsum.photos/seed/sketch-pen-set/400/400"
       },
       {
         "name": "Whiteboard Marker Pack",
         "description": "Low-odor markers for whiteboards and presentations.",
         "price": 179,
         "stock": 70,
-        "imageUrl": "https://www.pexels.com/search/whiteboard%20marker/"
+        "imageUrl": "https://picsum.photos/seed/whiteboard-marker-pack/400/400"
       },
       {
         "name": "File Folder Set",
         "description": "Document folders for organized paper storage.",
         "price": 249,
         "stock": 50,
-        "imageUrl": "https://www.pexels.com/search/file%20folder/"
+        "imageUrl": "https://picsum.photos/seed/file-folder-set/400/400"
       },
       {
         "name": "Stapler Machine",
         "description": "Durable stapler for office and school tasks.",
         "price": 199,
         "stock": 35,
-        "imageUrl": "https://www.pexels.com/search/stapler/"
+        "imageUrl": "https://picsum.photos/seed/stapler-machine/400/400"
       },
       {
         "name": "Paper Clips Box",
         "description": "Metal paper clips for document binding.",
         "price": 59,
         "stock": 90,
-        "imageUrl": "https://www.pexels.com/search/paper%20clips/"
+        "imageUrl": "https://picsum.photos/seed/paper-clips-box/400/400"
       },
       {
         "name": "Desk Organizer",
         "description": "Multi-compartment desk stand for stationery items.",
         "price": 399,
         "stock": 25,
-        "imageUrl": "https://www.pexels.com/search/desk%20organizer/"
+        "imageUrl": "https://picsum.photos/seed/desk-organizer/400/400"
       },
       {
         "name": "Glue Stick Pack",
         "description": "Easy-to-use glue sticks for crafts and schoolwork.",
         "price": 99,
         "stock": 85,
-        "imageUrl": "https://www.pexels.com/search/glue%20stick/"
+        "imageUrl": "https://picsum.photos/seed/glue-stick-pack/400/400"
       },
       {
         "name": "Acrylic Color Set",
         "description": "Artist acrylic paints for creative projects.",
         "price": 499,
         "stock": 30,
-        "imageUrl": "https://www.pexels.com/search/acrylic%20paint/"
+        "imageUrl": "https://picsum.photos/seed/acrylic-color-set/400/400"
       },
       {
         "name": "Drawing Book",
         "description": "Thick paper sketchbook for art and design practice.",
         "price": 199,
         "stock": 65,
-        "imageUrl": "https://www.pexels.com/search/sketchbook/"
+        "imageUrl": "https://picsum.photos/seed/drawing-book/400/400"
       }
     ]
   }

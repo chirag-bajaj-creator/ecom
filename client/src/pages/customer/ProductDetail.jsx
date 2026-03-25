@@ -19,6 +19,7 @@ const ProductDetail = () => {
   const [selectedImage, setSelectedImage] = useState(0);
   const [showPopup, setShowPopup] = useState(false);
   const [quantity, setQuantity] = useState(1);
+  const [selectedSize, setSelectedSize] = useState(null);
   const [reviews, setReviews] = useState([]);
   const [reviewStats, setReviewStats] = useState(null);
   const [starFilter, setStarFilter] = useState(null);
@@ -38,6 +39,7 @@ const ProductDetail = () => {
         setProduct(data.data.product);
         setSelectedImage(0);
         setQuantity(1);
+        setSelectedSize(null);
       } catch (err) {
         console.error('Failed to fetch product:', err);
       } finally {
@@ -85,7 +87,7 @@ const ProductDetail = () => {
       await addToCart(product._id, quantity, {
         _id: product._id,
         name: product.name,
-        price: product.price,
+        price: displayPrice,
         image: product.image,
         stock: product.stock,
       });
@@ -120,8 +122,9 @@ const ProductDetail = () => {
     });
   };
 
+  const displayPrice = selectedSize ? selectedSize.price : product?.price;
   const discountPercent = product?.originalPrice
-    ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)
+    ? Math.round(((product.originalPrice - displayPrice) / product.originalPrice) * 100)
     : 0;
 
   const specsEntries = product?.specs
@@ -213,7 +216,7 @@ const ProductDetail = () => {
 
             <div className="pd-price-divider" />
             <div className="pd-price">
-              <span className="pd-discount-price">₹{product.price}</span>
+              <span className="pd-discount-price">₹{displayPrice}</span>
               {product.originalPrice && (
                 <span className="pd-original-price">₹{product.originalPrice}</span>
               )}
@@ -240,6 +243,24 @@ const ProductDetail = () => {
             <button className="pd-view-offers" onClick={() => setShowOffersPopup(true)}>
               <span className="pd-offer-tag-icon">&#x1F3F7;&#xFE0F;</span> View Offers
             </button>
+
+            {product.sizes && product.sizes.length > 0 && (
+              <div className="pd-sizes">
+                <h3 className="pd-sizes-title">Available Sizes</h3>
+                <div className="pd-sizes-grid">
+                  {product.sizes.map((size, i) => (
+                    <div
+                      key={i}
+                      className={`pd-size-card ${selectedSize && selectedSize.value === size.value && selectedSize.unit === size.unit ? 'active' : ''}`}
+                      onClick={() => setSelectedSize(size)}
+                    >
+                      <span className="pd-size-value">{size.value} {size.unit}</span>
+                      <span className="pd-size-price">₹{size.price}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         </section>
 

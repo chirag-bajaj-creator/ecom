@@ -64,6 +64,21 @@ const productSchema = new mongoose.Schema(
       min: 0,
       default: 0,
     },
+    modelName: {
+      type: String,
+      default: '',
+      trim: true,
+    },
+    sizes: {
+      type: [
+        {
+          unit: { type: String, required: true },
+          value: { type: Number, required: true },
+          price: { type: Number, required: true, min: 0 },
+        },
+      ],
+      default: [],
+    },
     sellerId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',

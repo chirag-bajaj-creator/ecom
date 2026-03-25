@@ -3,6 +3,7 @@ const Category = require('../models/Category');
 const Order = require('../models/Order');
 const env = require('../config/env');
 const { broadcastCatalogUpdate } = require('../websocket/deliverySocket');
+const { matchImagesToProducts } = require('../utils/imageMapper');
 
 // GET /api/v1/seller/products
 const getSellerProducts = async (req, res, next) => {
@@ -43,7 +44,7 @@ const getSellerProducts = async (req, res, next) => {
 // POST /api/v1/seller/products
 const createSellerProduct = async (req, res, next) => {
   try {
-    const { name, description, price, stock, image, categoryName, details } = req.body;
+    const { name, description, price, stock, image, categoryName, details, modelName, sizes } = req.body;
 
     if (!name || price === undefined || price === null || !categoryName) {
       return res.status(400).json({
@@ -69,6 +70,8 @@ const createSellerProduct = async (req, res, next) => {
       image: image || null,
       categoryId: category._id,
       details: details || [],
+      modelName: modelName || '',
+      sizes: sizes || [],
       sellerId: req.user._id,
     });
 
@@ -156,7 +159,7 @@ const createSellerBulkJsonProducts = async (req, res, next) => {
 // PUT /api/v1/seller/products/:id
 const updateSellerProduct = async (req, res, next) => {
   try {
-    const { name, description, price, stock, image, categoryName, details } = req.body;
+    const { name, description, price, stock, image, categoryName, details, modelName, sizes } = req.body;
 
     const product = await Product.findOne({ _id: req.params.id, sellerId: req.user._id });
     if (!product) {
@@ -181,6 +184,8 @@ const updateSellerProduct = async (req, res, next) => {
     if (stock !== undefined) product.stock = stock;
     if (image !== undefined) product.image = image;
     if (details !== undefined) product.details = details;
+    if (modelName !== undefined) product.modelName = modelName;
+    if (sizes !== undefined) product.sizes = sizes;
 
     await product.save();
     broadcastCatalogUpdate();
@@ -257,6 +262,58 @@ const getAdminContact = async (req, res, next) => {
   }
 };
 
+// POST /api/v1/seller/products/bulk-images
+const sellerBulkMatchImages = async (req, res, next) => {
+  try {
+    const files = req.files;
+
+    if (!files || files.length === 0) {
+      return res.status(400).json({
+        success: false,
+        error: { code: 'NO_IMAGES', message: 'No image files uploaded' },
+      });
+    }
+
+    // Get only this seller's products
+    const products = await Product.find({ sellerId: req.user._id }).lean();
+
+    if (products.length === 0) {
+      return res.status(400).json({
+        success: false,
+        error: { code: 'NO_PRODUCTS', message: 'You have no products to match images against' },
+      });
+    }
+
+    const result = matchImagesToProducts(products, files);
+
+    const updatePromises = result.products
+      .filter((p) => p.image && p.images && p.images.length > 0)
+      .map((p) =>
+        Product.findOneAndUpdate(
+          { _id: p._id, sellerId: req.user._id },
+          { image: p.image, images: p.images },
+          { new: true }
+        )
+      );
+
+    await Promise.all(updatePromises);
+
+    if (updatePromises.length > 0) {
+      broadcastCatalogUpdate();
+    }
+
+    res.json({
+      success: true,
+      data: {
+        summary: result.summary,
+        updatedProducts: updatePromises.length,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   getSellerProducts,
   createSellerProduct,
@@ -266,4 +323,5 @@ module.exports = {
   deleteAllSellerProducts,
   getSellerOrders,
   getAdminContact,
+  sellerBulkMatchImages,
 };

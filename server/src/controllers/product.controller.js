@@ -1,6 +1,7 @@
 const Product = require('../models/Product');
 const Category = require('../models/Category');
 const { broadcastCatalogUpdate } = require('../websocket/deliverySocket');
+const { matchImagesToProducts } = require('../utils/imageMapper');
 
 // GET /api/v1/categories
 const getCategories = async (req, res, next) => {
@@ -197,6 +198,8 @@ const createBulkProducts = async (req, res, next) => {
       image: p.image || null,
       categoryId: category._id,
       details: p.details || [],
+      modelName: p.modelName || '',
+      sizes: p.sizes || [],
     }));
 
     const created = await Product.insertMany(productDocs);
@@ -214,7 +217,7 @@ const createBulkProducts = async (req, res, next) => {
 // POST /api/v1/products (admin)
 const createProduct = async (req, res, next) => {
   try {
-    const { name, description, price, stock, image, categoryName, details } = req.body;
+    const { name, description, price, stock, image, categoryName, details, modelName, sizes } = req.body;
 
     if (!name || price === undefined || price === null || !categoryName) {
       return res.status(400).json({
@@ -239,7 +242,9 @@ const createProduct = async (req, res, next) => {
       stock: stock ? Number(stock) : 0,
       image: image || null,
       categoryId: category._id,
-      details: details || []
+      details: details || [],
+      modelName: modelName || '',
+      sizes: sizes || [],
     });
 
     broadcastCatalogUpdate();
@@ -252,7 +257,7 @@ const createProduct = async (req, res, next) => {
 // PUT /api/v1/products/:id (admin)
 const updateProduct = async (req, res, next) => {
   try {
-    const { name, description, price, stock, image, categoryName, details } = req.body;
+    const { name, description, price, stock, image, categoryName, details, modelName, sizes } = req.body;
 
     const product = await Product.findById(req.params.id);
     if (!product) {
@@ -277,6 +282,8 @@ const updateProduct = async (req, res, next) => {
     if (stock !== undefined) product.stock = stock;
     if (image !== undefined) product.image = image;
     if (details !== undefined) product.details = details;
+    if (modelName !== undefined) product.modelName = modelName;
+    if (sizes !== undefined) product.sizes = sizes;
 
     await product.save();
     broadcastCatalogUpdate();
@@ -378,4 +385,55 @@ const createBulkJsonProducts = async (req, res, next) => {
   }
 };
 
-module.exports = { getCategories, getProducts, searchProducts, getSuggestions, getProductById, createProduct, createBulkProducts, createBulkJsonProducts, updateProduct, deleteProduct };
+// POST /api/v1/products/bulk-images (admin)
+// Upload images + match to existing products by filename = product name
+const bulkMatchImages = async (req, res, next) => {
+  try {
+    const files = req.files;
+
+    if (!files || files.length === 0) {
+      return res.status(400).json({
+        success: false,
+        error: { code: 'NO_IMAGES', message: 'No image files uploaded' },
+      });
+    }
+
+    // Get all products from DB
+    const products = await Product.find().lean();
+
+    if (products.length === 0) {
+      return res.status(400).json({
+        success: false,
+        error: { code: 'NO_PRODUCTS', message: 'No products found in database to match against' },
+      });
+    }
+
+    // Match images to products by name
+    const result = matchImagesToProducts(products, files);
+
+    // Update matched products in DB
+    const updatePromises = result.products
+      .filter((p) => p.image && p.images && p.images.length > 0)
+      .map((p) =>
+        Product.findByIdAndUpdate(p._id, { image: p.image, images: p.images }, { new: true })
+      );
+
+    await Promise.all(updatePromises);
+
+    if (updatePromises.length > 0) {
+      broadcastCatalogUpdate();
+    }
+
+    res.json({
+      success: true,
+      data: {
+        summary: result.summary,
+        updatedProducts: updatePromises.length,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+module.exports = { getCategories, getProducts, searchProducts, getSuggestions, getProductById, createProduct, createBulkProducts, createBulkJsonProducts, updateProduct, deleteProduct, bulkMatchImages };

@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const { authenticate, requireRole } = require("../middleware/auth");
 const { validateLocation } = require("../middleware/validate");
-const upload = require("../middleware/upload");
+const { upload } = require("../middleware/upload");
 const {
   toggleStatus,
   getCurrentOrder,
