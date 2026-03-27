@@ -59,7 +59,7 @@ const signup = async (req, res, next) => {
 // POST /api/v1/auth/login
 const login = async (req, res, next) => {
   try {
-    const { email, password } = req.body;
+    const { email, password, isAdmin } = req.body;
 
     const user = await User.findOne({ email });
     if (!user) {
@@ -79,6 +79,16 @@ const login = async (req, res, next) => {
         error: {
           code: 'INVALID_CREDENTIALS',
           message: 'Invalid email or password',
+        },
+      });
+    }
+
+    if (user.role === 'admin' && !isAdmin) {
+      return res.status(403).json({
+        success: false,
+        error: {
+          code: 'ADMIN_LOGIN_RESTRICTED',
+          message: 'Admin users must login through the admin login page',
         },
       });
     }

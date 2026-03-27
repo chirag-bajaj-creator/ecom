@@ -11,7 +11,6 @@ const Signup = () => {
     password: '',
     confirmPassword: '',
     role: 'user',
-    inviteCode: '',
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -40,7 +39,6 @@ const Signup = () => {
         phone: formData.phone,
         password: formData.password,
         role: formData.role,
-        inviteCode: formData.role === 'admin' ? formData.inviteCode : undefined,
       });
       navigate('/login');
     } catch (err) {
@@ -125,23 +123,8 @@ const Signup = () => {
               <option value="user">Customer</option>
               <option value="seller">Seller</option>
               <option value="delivery">Delivery Partner</option>
-              <option value="admin">Admin</option>
             </select>
           </div>
-
-          {formData.role === 'admin' && (
-            <div className="form-group">
-              <label>Admin Invite Code</label>
-              <input
-                type="text"
-                name="inviteCode"
-                value={formData.inviteCode}
-                onChange={handleChange}
-                placeholder="Enter invite code"
-                required
-              />
-            </div>
-          )}
 
           <button type="submit" className="auth-btn" disabled={loading}>
             {loading ? 'Creating account...' : 'Sign Up'}

@@ -275,8 +275,11 @@ const updateCharges = async (req, res) => {
 // DELETE /api/v1/admin/cleanup-products
 const cleanupProducts = async (req, res) => {
   try {
-    const productResult = await Product.deleteMany({});
-    const categoryResult = await Category.deleteMany({});
+    const productResult = await Product.deleteMany({ sellerId: null });
+
+    // Only delete categories that have no seller products using them
+    const categoriesWithSellerProducts = await Product.distinct('categoryId', { sellerId: { $ne: null } });
+    const categoryResult = await Category.deleteMany({ _id: { $nin: categoriesWithSellerProducts } });
 
     broadcastCatalogUpdate();
     res.json({

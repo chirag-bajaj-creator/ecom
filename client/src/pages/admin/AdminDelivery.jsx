@@ -205,7 +205,7 @@ const AdminDelivery = () => {
                       {boy.currentOrderId.status && (
                         <span className="active-order-status">{boy.currentOrderId.status}</span>
                       )}
-                      {boy.currentOrderId.grandTotal && (
+                      {boy.currentOrderId.charges?.grandTotal && (
                         <span>₹{boy.currentOrderId.charges.grandTotal.toLocaleString()}</span>
                       )}
                     </div>

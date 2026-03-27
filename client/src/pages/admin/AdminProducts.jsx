@@ -3,6 +3,8 @@ import api from '../../api/axios';
 import AdminSidebar from '../../components/layout/AdminSidebar';
 import CategorySelect from '../../components/common/CategorySelect';
 import ProductNameSelect from '../../components/common/ProductNameSelect';
+import VoiceProductInput from '../../components/admin/VoiceProductInput';
+import BulkVoiceProductInput from '../../components/admin/BulkVoiceProductInput';
 import './AdminProducts.css';
 
 const SIZE_UNITS = ['ML', 'L', 'g', 'KG', 'oz', 'lb', 'pieces', 'pack', 'cm', 'inch', 'mm', 'm'];
@@ -34,13 +36,15 @@ const AdminProducts = () => {
   const [bulkProducts, setBulkProducts] = useState([]);
   const [bulkSubmitting, setBulkSubmitting] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
-  const [wizardPhase, setWizardPhase] = useState('category'); // 'category' | 'subcategories' | 'details'
+  const [wizardPhase, setWizardPhase] = useState('category'); // 'category' | 'details'
   const [subcategories, setSubcategories] = useState([{ name: '', count: '', products: [] }]);
   const [showJsonModal, setShowJsonModal] = useState(false);
   const [jsonFile, setJsonFile] = useState(null);
   const [jsonPreview, setJsonPreview] = useState(null);
   const [jsonError, setJsonError] = useState('');
   const [jsonSubmitting, setJsonSubmitting] = useState(false);
+  const [showVoiceModal, setShowVoiceModal] = useState(false);
+  const [showBulkVoiceModal, setShowBulkVoiceModal] = useState(false);
 
   useEffect(() => {
     fetchProducts();
@@ -49,7 +53,7 @@ const AdminProducts = () => {
 
   const fetchProducts = async () => {
     try {
-      const { data } = await api.get(`/products?page=${page}&limit=10`);
+      const { data } = await api.get(`/products?page=${page}&limit=10&adminOnly=true`);
       const productData = data.data?.products || data.products || data;
       const pages = data.data?.pagination?.pages || data.totalPages || 1;
       setProducts(Array.isArray(productData) ? productData : []);
@@ -77,14 +81,6 @@ const AdminProducts = () => {
     setWizardPhase('category');
     setSubcategories([{ name: '', count: '', products: [] }]);
     setShowBulkModal(true);
-  };
-
-  const handleCategoryNext = () => {
-    if (!bulkCategory.trim()) {
-      alert('Please select a category');
-      return;
-    }
-    setWizardPhase('subcategories');
   };
 
   const addSubcategory = () => {
@@ -117,6 +113,10 @@ const AdminProducts = () => {
   };
 
   const handleProceedToDetails = () => {
+    if (!bulkCategory.trim()) {
+      alert('Please select a category');
+      return;
+    }
     for (let i = 0; i < subcategories.length; i++) {
       const sub = subcategories[i];
       if (!sub.name.trim()) {
@@ -268,6 +268,40 @@ const AdminProducts = () => {
     }
   };
 
+  const handleVoiceConfirm = async (productList) => {
+    try {
+      // Group products by category
+      const categoryMap = {};
+      productList.forEach(p => {
+        const cat = p.category || 'Uncategorized';
+        if (!categoryMap[cat]) categoryMap[cat] = [];
+        categoryMap[cat].push({
+          name: p.name,
+          description: p.description || '',
+          price: Number(p.price),
+          stock: p.stock ? Number(p.stock) : 0,
+          subCategory: p.subcategory || '',
+          image: p.image || '',
+          modelName: '',
+          sizes: [],
+        });
+      });
+
+      // Submit each category group
+      for (const [categoryName, products] of Object.entries(categoryMap)) {
+        await api.post('/products/bulk', { categoryName, products });
+      }
+
+      setShowVoiceModal(false);
+      alert(`Successfully created ${productList.length} product(s) via voice!`);
+      fetchProducts();
+      fetchCategories();
+    } catch (error) {
+      console.error('Failed to create products from voice:', error.response?.data);
+      alert(error.response?.data?.error?.message || 'Failed to create products');
+    }
+  };
+
   const openEditModal = (product) => {
     setEditingProduct(product);
     setForm({
@@ -357,6 +391,8 @@ const AdminProducts = () => {
           <h1 className="admin-page-title">Products</h1>
           <div className="admin-header-actions">
             <button className="admin-add-btn" onClick={openAddModal}>+ Add Products</button>
+            <button className="admin-add-btn" onClick={() => setShowVoiceModal(true)}>Voice Add</button>
+            <button className="admin-add-btn" onClick={() => setShowBulkVoiceModal(true)}>Bulk Voice Add</button>
             <button className="admin-add-btn json-upload-btn" onClick={openJsonModal}>Add by JSON</button>
             <button className="admin-add-btn bulk-delete-btn" onClick={handleDeleteAll}>Delete All</button>
           </div>
@@ -634,20 +670,6 @@ const AdminProducts = () => {
                       onChange={(val) => setBulkCategory(val)}
                     />
                   </div>
-                  <div className="modal-actions">
-                    <button type="button" className="modal-cancel-btn" onClick={() => setShowBulkModal(false)}>
-                      Cancel
-                    </button>
-                    <button type="button" className="modal-save-btn" onClick={handleCategoryNext}>
-                      Next
-                    </button>
-                  </div>
-                </div>
-              ) : wizardPhase === 'subcategories' ? (
-                <div className="bulk-setup">
-                  <div className="bulk-category-header">
-                    Category: <strong>{bulkCategory}</strong>
-                  </div>
                   {subcategories.map((sub, si) => (
                     <div key={si} className="subcategory-block">
                       <div className="subcategory-header">
@@ -712,9 +734,6 @@ const AdminProducts = () => {
                   <div className="modal-actions">
                     <button type="button" className="modal-cancel-btn" onClick={() => setShowBulkModal(false)}>
                       Cancel
-                    </button>
-                    <button type="button" className="modal-back-btn" onClick={() => setWizardPhase('category')}>
-                      Back
                     </button>
                     <button type="button" className="modal-save-btn" onClick={handleProceedToDetails}>
                       Proceed to Product Details
@@ -885,7 +904,7 @@ const AdminProducts = () => {
                       Cancel
                     </button>
                     {currentStep === 0 ? (
-                      <button type="button" className="modal-back-btn" onClick={() => setWizardPhase('subcategories')}>
+                      <button type="button" className="modal-back-btn" onClick={() => setWizardPhase('category')}>
                         Back
                       </button>
                     ) : (
@@ -989,6 +1008,32 @@ const AdminProducts = () => {
                   {jsonSubmitting ? 'Uploading...' : 'Upload All Products'}
                 </button>
               </div>
+            </div>
+          </div>
+        )}
+
+        {/* Voice add product modal */}
+        {showVoiceModal && (
+          <div className="admin-modal-overlay" onClick={() => setShowVoiceModal(false)}>
+            <div className="admin-modal bulk-modal" onClick={e => e.stopPropagation()}>
+              <h2>Add Products by Voice</h2>
+              <VoiceProductInput
+                onConfirm={handleVoiceConfirm}
+                onCancel={() => setShowVoiceModal(false)}
+              />
+            </div>
+          </div>
+        )}
+
+        {/* Bulk voice add product modal */}
+        {showBulkVoiceModal && (
+          <div className="admin-modal-overlay" onClick={() => setShowBulkVoiceModal(false)}>
+            <div className="admin-modal bulk-modal" onClick={e => e.stopPropagation()}>
+              <h2>Bulk Voice Add Products</h2>
+              <BulkVoiceProductInput
+                onConfirm={handleVoiceConfirm}
+                onCancel={() => setShowBulkVoiceModal(false)}
+              />
             </div>
           </div>
         )}

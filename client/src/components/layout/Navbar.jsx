@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { useCart } from '../../contexts/CartContext';
+import { useAuthModal } from '../../contexts/AuthModalContext';
 import api from '../../api/axios';
 import useCatalogUpdates from '../../hooks/useCatalogUpdates';
 import SearchBar from '../search/SearchBar';
@@ -10,6 +11,7 @@ import './Navbar.css';
 const Navbar = () => {
   const { user, isAuthenticated, logout } = useAuth();
   const { cartCount } = useCart();
+  const { openLogin } = useAuthModal();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [categories, setCategories] = useState([]);
@@ -97,9 +99,9 @@ const Navbar = () => {
               )}
             </div>
           ) : (
-            <Link to="/login" className="nav-btn login-btn">
+            <button onClick={openLogin} className="nav-btn login-btn">
               Login
-            </Link>
+            </button>
           )}
 
           {categories.length > 0 && (

@@ -43,8 +43,8 @@ export const AuthProvider = ({ children }) => {
     return res.data;
   };
 
-  const login = async (email, password) => {
-    const res = await api.post('/auth/login', { email, password });
+  const login = async (email, password, isAdmin = false) => {
+    const res = await api.post('/auth/login', { email, password, isAdmin });
     const { accessToken, refreshToken, user: userData } = res.data.data;
 
     localStorage.setItem('accessToken', accessToken);
@@ -58,8 +58,6 @@ export const AuthProvider = ({ children }) => {
   };
 
   const logout = async () => {
-    showToast('Thank you for visiting. If there was any inconvenience from our side, we\'ll make sure to take care of it.', 'logout');
-
     try {
       const refreshToken = localStorage.getItem('refreshToken');
       await api.post('/auth/logout', { refreshToken });

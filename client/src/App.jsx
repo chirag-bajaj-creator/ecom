@@ -1,8 +1,10 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { useAuth } from './contexts/AuthContext';
+import { useAuthModal } from './contexts/AuthModalContext';
+import AuthModal from './components/common/AuthModal';
+import LoginForm from './components/auth/LoginForm';
+import SignupForm from './components/auth/SignupForm';
 import ProtectedRoute from './routes/ProtectedRoute';
-import Login from './pages/auth/Login';
-import Signup from './pages/auth/Signup';
 import ForgotPassword from './pages/auth/ForgotPassword';
 import ResetPassword from './pages/auth/ResetPassword';
 import LogoutPage from './pages/auth/LogoutPage';
@@ -27,6 +29,7 @@ import SellerDeliveryStatus from './pages/seller/SellerDeliveryStatus';
 import CategoryPage from './pages/customer/CategoryPage';
 import ProductDetail from './pages/customer/ProductDetail';
 import RewardProgram from './pages/customer/RewardProgram';
+import AdminLogin from './pages/auth/AdminLogin';
 
 // Redirect admin/delivery away from customer pages to their dashboard
 const CustomerOnly = ({ children, user }) => {
@@ -36,20 +39,32 @@ const CustomerOnly = ({ children, user }) => {
   return children;
 };
 
+function AuthModalRenderer() {
+  const { modalType, closeAuth } = useAuthModal();
+
+  return (
+    <AuthModal isOpen={modalType !== null} onClose={closeAuth}>
+      {modalType === 'login' && <LoginForm />}
+      {modalType === 'signup' && <SignupForm />}
+    </AuthModal>
+  );
+}
+
 function App() {
   const { user } = useAuth();
 
   return (
+    <>
+    <AuthModalRenderer />
     <Routes>
       {/* Public routes — admin/delivery get bounced to their dashboard */}
       <Route path="/" element={
         <CustomerOnly user={user}><Home /></CustomerOnly>
       } />
-      <Route path="/login" element={<Login />} />
       <Route path="/goodbye" element={<LogoutPage />} />
-      <Route path="/signup" element={<Signup />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/reset-password" element={<ResetPassword />} />
+      <Route path="/admin/login" element={<AdminLogin />} />
       <Route path="/search" element={<CustomerOnly user={user}><SearchResults /></CustomerOnly>} />
       <Route path="/category/:slug" element={<CustomerOnly user={user}><CategoryPage /></CustomerOnly>} />
       <Route path="/product/:id" element={<CustomerOnly user={user}><ProductDetail /></CustomerOnly>} />
@@ -173,6 +188,7 @@ function App() {
         <Navigate to="/" replace />
       } />
     </Routes>
+    </>
   );
 }
 

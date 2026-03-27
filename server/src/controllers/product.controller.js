@@ -22,6 +22,9 @@ const getProducts = async (req, res, next) => {
     const skip = (pageNum - 1) * limitNum;
 
     const filter = {};
+    if (req.query.adminOnly === 'true') {
+      filter.sellerId = null;
+    }
     if (category) {
       const cat = await Category.findOne({ slug: category });
       if (cat) filter.categoryId = cat._id;
@@ -298,7 +301,7 @@ const updateProduct = async (req, res, next) => {
 // DELETE /api/v1/products/:id (admin)
 const deleteProduct = async (req, res, next) => {
   try {
-    const product = await Product.findByIdAndDelete(req.params.id);
+    const product = await Product.findById(req.params.id);
     if (!product) {
       return res.status(404).json({
         success: false,
@@ -306,6 +309,14 @@ const deleteProduct = async (req, res, next) => {
       });
     }
 
+    if (product.sellerId) {
+      return res.status(403).json({
+        success: false,
+        error: { code: 'FORBIDDEN', message: 'Cannot delete products that belong to sellers' },
+      });
+    }
+
+    await Product.findByIdAndDelete(req.params.id);
     broadcastCatalogUpdate();
     res.json({ success: true, message: 'Product deleted' });
   } catch (error) {
@@ -438,4 +449,16 @@ const bulkMatchImages = async (req, res, next) => {
   }
 };
 
-module.exports = { getCategories, getProducts, searchProducts, getSuggestions, getProductById, createProduct, createBulkProducts, createBulkJsonProducts, updateProduct, deleteProduct, bulkMatchImages };
+const uploadSingleProductImage = async (req, res, next) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ success: false, error: { message: 'No image file provided' } });
+    }
+    const imageUrl = `/uploads/products/${req.file.filename}`;
+    res.json({ success: true, data: { imageUrl } });
+  } catch (error) {
+    next(error);
+  }
+};
+
+module.exports = { getCategories, getProducts, searchProducts, getSuggestions, getProductById, createProduct, createBulkProducts, createBulkJsonProducts, updateProduct, deleteProduct, bulkMatchImages, uploadSingleProductImage };
